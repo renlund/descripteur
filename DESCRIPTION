@@ -1,14 +1,15 @@
 Package: descripteur
 Type: Package
 Title: Describe Data Sets
-Version: 0.0.0.9000
+Version: 0.0.0.9002
 Author: Henrik Renlund
 Maintainer: Henrik Renlund <henrikrenlund@gmail.com>
-Description: An attempt to systematize data description
+Description: An attempt to systematize my data description
 License: GPL-3
 LazyData: TRUE
 Suggests:
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
