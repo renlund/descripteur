@@ -15,12 +15,11 @@ d.mean <- function(x, w = NULL, ...){
 }
 d.sd <- function(x, w = NULL, ...){
     if(is.null(w)) w <- rep(1, length(x))
-    y <- x*w*length(w)/sum(w)
+    y <- x*w*length(w[w!=0])/sum(w)
     sd(y, na.rm = TRUE)
 }
 d.median <- function(x, ...) median(x, na.rm = TRUE)
 d.IQR <- function(x, ...) IQR(x, na.rm = TRUE)
-
 dr_def <- list(
     "missing" = d.missing,
     "median" = d.median,
@@ -56,16 +55,16 @@ d.bnryify <- function(x){
     }
     factor(x, levels = lev)
 }
-d.level <- function(x, ...){
+d.ref_level <- function(x, ...){
     y <- d.bnryify(x)
     levels(y)[2]
 }
 d.p <- function(x, w = NULL, ...){
     y <- d.bnryify(x)
     if(is.null(w)) w <- rep(1, length(x))
-    z <- ifelse(y==d.level(y), 1L, 0L)
-    ##sum(y==d.level(y), na.rm = TRUE) / length(na.omit(y))
-    mean(w*z, na.rm = TRUE)
+    z <- ifelse(y==d.ref_level(y), 1L, 0L)
+    ##sum(y==d.ref_level(y), na.rm = TRUE) / length(na.omit(y))
+    mean(w*z*length(w[w!=0])/sum(w), na.rm = TRUE)
 }
 d.odds <- function(x, w = NULL, ...){
     y <- d.bnryify(x)
@@ -74,7 +73,7 @@ d.odds <- function(x, w = NULL, ...){
 }
 
 db_def <- list(
-    "level" = d.level,
+    "level" = d.ref_level,
     "missing" = d.missing,
     "p" = d.p,
     "odds" = d.odds
@@ -109,11 +108,11 @@ d.catgify <- function(x){
         factor(x)
     }
 }
-d.weighted_percent <- function(x, w = NULL){
+d.weighted_p <- function(x, w = NULL){
     if(is.null(w)) w <- rep(1L, length(x))
     mm <- model.matrix(~x)
     mm[,1] <- ifelse(rowSums(mm[,-1]) == 0, 1, 0)
-    as.numeric(colSums(w[!is.na(x)]*mm, na.rm = TRUE) / sum(w[!is.na(x)]))
+    as.numeric(colSums(w[!is.na(x)]*mm, na.rm = TRUE)*length(w[w!=0]) / sum(w[!is.na(x)]))
 }
 
 ## -- list functions --
@@ -122,15 +121,17 @@ d.levels <- function(x, useNA = TRUE, w = NULL, ...){
     if(useNA) c(levels(y), .missing_char) else levels(y)
 }
 d.percent <- function(x, useNA = TRUE, w = NULL){
+    if(!is.null(w)) message("percent function for catg does not use weights")
     y <- d.catgify(x)
     t <- as.numeric(table(y, useNA = "always")) / length(y)
     r <- if(useNA) t else t[-length(t)]
+    ## t <- d.weighted_p(x = y, w = w)
     100*r
 }
 d.tab <- function(x, useNA = TRUE, w = NULL){
     y <- d.catgify(x)
     ## t <- as.numeric(table(y)) / length(na.omit(y))
-    t <- d.weighted_percent(x = y, w = w)
+    t <- d.weighted_p(x = y, w = w)
     if(useNA) c(t, NA) else t
 }
 

@@ -5,7 +5,7 @@
 \title{create descriptive table}
 \usage{
 dtable(data, type, guide = NULL, desc = TRUE, comp = NULL, glist = NULL,
-  useNA = "ifany", ...)
+  w = NULL, useNA = "ifany", ...)
 }
 \arguments{
 \item{data}{a \code{data.frame} or such object}
@@ -19,6 +19,8 @@ dtable(data, type, guide = NULL, desc = TRUE, comp = NULL, glist = NULL,
 \item{comp}{want to apply a flist of comparers? (requires a glist)}
 
 \item{glist}{grouping list, if wanted}
+
+\item{w}{weights}
 
 \item{useNA}{how to handle \code{NA} (requires that functions in
 flist has this argument)}
