@@ -15,8 +15,14 @@ d.mean <- function(x, w = NULL, ...){
 }
 d.sd <- function(x, w = NULL, ...){
     if(is.null(w)) w <- rep(1, length(x))
-    y <- x*w*length(w[w!=0])/sum(w)
-    sd(y, na.rm = TRUE)
+    y <- x[!is.na(x)]
+    w <- w[!is.na(x)]
+    m <- weighted.mean(x = y, w = w)
+    ok <- w != 0
+    N <- sum(ok)
+    num <- sum(w*(y - m)^2)
+    den <- sum(w)
+    sqrt(num * N / (den * (N-1)))
 }
 d.median <- function(x, ...) median(x, na.rm = TRUE)
 d.IQR <- function(x, ...) IQR(x, na.rm = TRUE)
@@ -59,23 +65,22 @@ d.ref_level <- function(x, ...){
     y <- d.bnryify(x)
     levels(y)[2]
 }
-d.p <- function(x, w = NULL, ...){
+d.p.b <- function(x, w = NULL, ...){
     y <- d.bnryify(x)
     if(is.null(w)) w <- rep(1, length(x))
     z <- ifelse(y==d.ref_level(y), 1L, 0L)
-    ##sum(y==d.ref_level(y), na.rm = TRUE) / length(na.omit(y))
-    mean(w*z*length(w[w!=0])/sum(w), na.rm = TRUE)
+    weighted.mean(x = z, w = w, na.rm = TRUE)
 }
 d.odds <- function(x, w = NULL, ...){
     y <- d.bnryify(x)
     if(is.null(w)) w <- rep(1, length(x))
-    tryCatch(d.p(y, w = w)/(1-d.p(y, w = w)), error = function(e) NA)
+    tryCatch(d.p.b(y, w = w)/(1-d.p.b(y, w = w)), error = function(e) NA)
 }
 
 db_def <- list(
     "level" = d.ref_level,
     "missing" = d.missing,
-    "p" = d.p,
+    "p" = d.p.b,
     "odds" = d.odds
 )
 attr(db_def, "dtable") <- c("meta", "desc", "desc", "desc")
@@ -108,36 +113,45 @@ d.catgify <- function(x){
         factor(x)
     }
 }
-d.weighted_p <- function(x, w = NULL){
+.weighted_p <- function(x, w = NULL){
     if(is.null(w)) w <- rep(1L, length(x))
     mm <- model.matrix(~x)
     mm[,1] <- ifelse(rowSums(mm[,-1]) == 0, 1, 0)
-    as.numeric(colSums(w[!is.na(x)]*mm, na.rm = TRUE)*length(w[w!=0]) / sum(w[!is.na(x)]))
+    as.numeric(apply(X = mm, MARGIN = 2, FUN = weighted.mean, w = w[!is.na(x)]))
 }
-
+.weighted_tab <- function(x, w = NULL){
+    if(is.null(w)) w <- rep(1L, length(x))
+    y <- as.character(x)
+    lev <- if(is.factor(x)) levels(x) else unique(x)
+    y[is.na(x)] <- "dOntnAmeyOurlEveltOtHis"
+    u <- factor(y, levels = c(lev, "dOntnAmeyOurlEveltOtHis"))
+    mm <- model.matrix(~u)
+    mm[,1] <- ifelse(rowSums(mm[,-1]) == 0, 1, 0)
+    100*as.numeric(apply(X = mm, MARGIN = 2, FUN = weighted.mean, w = w))
+}
 ## -- list functions --
 d.levels <- function(x, useNA = TRUE, w = NULL, ...){
     y <- d.catgify(x)
     if(useNA) c(levels(y), .missing_char) else levels(y)
 }
 d.percent <- function(x, useNA = TRUE, w = NULL){
-    if(!is.null(w)) message("percent function for catg does not use weights")
+    ## if(!is.null(w)) message("percent function for catg does not use weights")
     y <- d.catgify(x)
-    t <- as.numeric(table(y, useNA = "always")) / length(y)
+    ## t <- as.numeric(table(y, useNA = "always")) / length(y)
+    t <- .weighted_tab(x = y, w = w)
     r <- if(useNA) t else t[-length(t)]
-    ## t <- d.weighted_p(x = y, w = w)
-    100*r
+    r
 }
-d.tab <- function(x, useNA = TRUE, w = NULL){
+d.p.c <- function(x, useNA = TRUE, w = NULL){
     y <- d.catgify(x)
     ## t <- as.numeric(table(y)) / length(na.omit(y))
-    t <- d.weighted_p(x = y, w = w)
+    t <- .weighted_p(x = y, w = w)
     if(useNA) c(t, NA) else t
 }
 
 dc_def <- list(
     "levels" = d.levels,
     "percent" = d.percent,
-    "p" = d.tab
+    "p" = d.p.c
 )
 attr(dc_def, "dtable") <- c("meta", "desc", "desc")
