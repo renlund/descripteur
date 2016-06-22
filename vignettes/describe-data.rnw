@@ -1,0 +1,188 @@
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{describe-data}
+%\VignetteEncoding{UTF-8}
+\documentclass{article}
+\addtolength{\hoffset}{-1cm}
+\addtolength{\textwidth}{2cm}
+% \addtolength{\voffset}{-1.5cm}
+% \addtolength{\textheight}{3cm}
+
+\title{describe-data}
+\author{Henrik Renlund}
+
+<<"setup", cache = FALSE, echo = FALSE, include = FALSE>>=
+library(knitr)
+library(descripteur)
+opts_chunk$set(include = TRUE, echo = TRUE)
+if(FALSE){
+    knit2pdf("describe-data.rnw")
+}
+@
+
+\begin{document}
+
+\maketitle
+
+\section{To do}
+
+\begin{itemize}
+ \item Some convience function to get latex tables from a dtable object.
+ \item More metadata; e.g. number of unique id:s if such is specified in the guide.
+ \item Possibility to describe across types with type-agnostic functions.
+\end{itemize}
+
+\section{Data description approach}
+
+\subsection{Describing and comparing}
+
+In this package, a description of a data frame (or similar object)
+consist of a grouping and 2 sets of functions, \emph{describers} and
+\emph{comparers}. The simplest grouping is the trivial grouping where we
+consider 1 group consisting of all the units, in which case there is
+nothing to compare and a description is the set of describing
+functions applied, in turn, to all relevant variables.
+
+If a grouping exists, we can apply comparing functions to the
+different groups. There are 2 different types of comparisons
+(\texttt{comp}) available:
+
+\begin{itemize}
+  \item  "overall" is when the grouping is fed to some function that makes
+an overall comparison, like an anova analysis (for arbitrary many
+groups) or a t-test (in which case there must be axactly 2 groups).
+  \item  "across" and "adjacent" are pairwise comparisons of each group
+  with respect to either the first, or the previous, group as given by
+  order of the grouping.
+\end{itemize}
+If a grouping exist, this will impact the description (\texttt{desc}) (unless
+specified elsewise):
+\begin{itemize}
+  \item  "each" is the describing functions applied to all groups, in
+    turn. This option will be default when considering an "overall"
+    comparison.
+  \item  "first" is the describing functions applied only to the first
+    group. This will be default when considerig an "across" or
+    "adjacent" comparison.
+\end{itemize}
+
+In all cases we can also choose to have description and comparisons
+set to \texttt{TRUE} or \texttt{FALSE}, to get the default behaviour or suppress the
+description/comparison, respectively. (\texttt{NULL} will enforce the default
+behaviour of always describing and always comparing in the presence of
+a grouping.)
+
+\subsection{Data types and a guide}
+
+We do not describe all kinds of data in the same manner. Thus, this
+package differentiates between different kinds of data types:
+
+\begin{itemize}
+ \item \texttt{real} real, i.e. numeric
+ \item \texttt{bnry} binary, i.e. variables with 2 distinct values
+ \item \texttt{catg} categorical, and
+ \item \texttt{date} (what it sais).
+\end{itemize}
+
+This will be determined by a 'guide', simply a data frame that for
+each variables specifies how it is to be described. Any variable with
+only 2 distinct values will be regarded as \texttt{bnry}, other text-
+and factor variables are \texttt{catg}, the classes 'Date' and
+'POSIXct' are \texttt{date} and numerical variables with enough
+distinct values (more than \texttt{real.tol}) are \texttt{real}.
+
+If you do not want to accept the defaults you can create a guide via
+\texttt{dtable\_guide} with non-default arguments, or manipulate the resulting
+object directly.
+
+<<>>=
+df <- data.frame(
+   r1 = 1:4 + .1,
+   r2 = 4:1 + .2,
+   b = rep(0:1, 2),
+   c = letters[c(1,2,3,3)],
+   d = as.Date("2000-01-01") + 1:4,
+   gr = rep(c("foo", "bar"), each = 2)
+)
+df$b[3] <- NA
+g <- dtable_guide(df, real.tol = 3, date.tol = 3)
+print(g)
+@
+
+\subsection{Function lists}
+
+You can supply the describing and comparing functions that you wish to use.
+There is one such list per type. (One downside is that you have to
+define these functions to allow '...' to make it all work.)
+
+There are additional attribute 'dtable' that will keep track of some
+meta information which can be set with \texttt{dattr} (a simple wrapper for
+\texttt{attr}). In short, this attributes should be the same length as the
+function list and have the values "desc" for descriptive functions,
+"comp" for comparative functions and "meta" for additional
+information. Meta information might be repeated in different
+functions, e.g.\ the levels of a categorical variable, but this should
+not be repeated when the parts of a description is being
+concatenated.
+
+Lets set up a descriptive and comparative function list.
+<<>>=
+Rdesc <- list(
+    "myMean" = function(x, ...) mean(x),
+    "myMeta" = function(x, ...) "info-ish"
+)
+dattr(Rdesc) <- c("desc", "meta")
+Rcomp <- list(
+    "myDiff" = function(x,glist,...){
+        mean(x[glist[[1]]], na.rm = TRUE) - mean(x[glist[[2]]], na.rm = TRUE)
+    },
+    "myMeta" = function(x, ...) "info-ish"
+)
+dattr(Rcomp) <- c("comp", "meta")
+opts_desc$set(
+        "describe_real" = Rdesc,
+        "compare_real"  = Rcomp
+        )
+@
+
+Now we can make a simple description of the \texttt{real} variables.
+<<>>=
+dtable(data = df, type = "real", guide = g)
+@
+(Note that the print method also shows the meta data.)
+
+Or an "overall" (the default) comparison on a grouping based on the
+variable \texttt{gr} (a binary variable)
+<<>>=
+dtable(data = df, type = "real", guide = g, glist = "gr")
+@
+
+This overall comparison need not include the description.
+<<>>=
+dtable(data = df, type = "real", guide = g, glist = "gr",
+       desc = FALSE)
+@
+
+We could also make comparisons "across" the \texttt{c} variable, a \texttt{catg}
+variable with 3 values. Here each group besides the first (i.e.\ "b"
+and "c") are compared to the first (here excluding description)
+
+<<>>=
+dtable(data = df, type = "real", guide = g, glist = "c",
+       desc = FALSE, comp = "across")
+@
+
+If we instead want to compare "b" to "a" and "c" to "b" we make the
+comparison "adjacent".
+
+<<>>=
+(dt <- dtable(data = df, type = "real", guide = g, glist = "c",
+       comp = "adjacent"))
+@
+
+A dtable will keep some additional information
+<<>>=
+attributes(dt)
+@
+
+
+\end{document}

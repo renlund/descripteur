@@ -17,6 +17,6 @@ cbind_dtable(x, y, groups = NULL)
 cbind dtables
 }
 \details{
-wrapper for \cod{cbind} which keeps dtable attributes sane
+wrapper for \code{cbind} which keeps dtable attributes sane
 }
 

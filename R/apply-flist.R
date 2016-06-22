@@ -22,9 +22,8 @@ apply_flist <- function(x, flist, ..., xname = NULL){
             tryCatch(as.character(flist[[k]]), error = function(e) "*anomalie*")
         }
     }
-    r <- as.data.frame(r)
+    r <- as.data.frame(r, stringsAsFactors = FALSE)
     class(r) <- c("dtable", "data.frame")
-    ## attr(r, "dtable") <- flist_attr_to_dtable(flist)
     attr(r, "dtable") <- c("meta", dattr(flist))
     r
 }

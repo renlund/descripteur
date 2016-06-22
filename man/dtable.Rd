@@ -4,7 +4,7 @@
 \alias{dtable}
 \title{create descriptive table}
 \usage{
-dtable(data, type, guide = NULL, desc = TRUE, comp = NULL, glist = NULL,
+dtable(data, type, guide = NULL, desc = NULL, comp = NULL, glist = NULL,
   w = NULL, useNA = "ifany", ...)
 }
 \arguments{

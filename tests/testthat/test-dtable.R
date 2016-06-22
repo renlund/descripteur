@@ -1,34 +1,27 @@
 test_that("dtable works", {
 
-    n <- 100
-    set.seed(20160216)
+    foo <- list("type" = "real", "mean" = mean)
+    dattr(foo) <- c("meta", "desc")
+    opts_desc$set("describe_real" = foo)
     df <- data.frame(
-        id = paste0("id", 1001:(1000 + n)),
-        r1 = round(rnorm(n, 20, 5)),
-        r2 = round(rexp(n, 1/20)),
-        c1 = sample(letters[1:5], size = n, replace = TRUE),
-        c2 = factor(sample(LETTERS[5:3], size = n, replace = TRUE)),
-        b1 = sample(LETTERS[6:7], size = n, replace = TRUE, prob = 2:3),
-        b2 = rbinom(n, 1, 0.1),
-        b3 = sample(c("No", "Yes"), size = n, replace = TRUE, prob = 1:2),
-        b4 = sample(c(TRUE, FALSE), size = n, replace = TRUE),
-        d1 = as.Date("2000-01-01") + rpois(n, 365),
-        d2 = as.Date(floor(rexp(n, 1/3650)), origin = "1975-01-01"),
-        stringsAsFactors = FALSE
+        id = 1:4,
+        g = LETTERS[c(1,1,2,2)],
+        r1 = 0:3 + 0.5,
+        r2 = seq(3.2, 3.8, len=4)
     )
-    misser <- function(x, m = length(x)){
-        p <- floor(runif(1, min = 1, max = m/2))
-        x[sample(1:n, size = p, replace = FALSE)] <- NA
-        x
-    }
-    df[2:length(df)] <- lapply(df[2:length(df)], misser)
-    df
-    (dtb <- dtable_guide(df))
-    gl <- make_glist("b1", ref = df)
-    gl3 <- list(
-        "abacus" = sample(c(T,F), size = n, replace =T),
-        "quuz" = sample(c(T,F), size = n, replace =T),
-        "k__7" = sample(c(T,F), size = n, replace =T)
-        )
+    guide <- dtable_guide(df, elim.set = "id")
+    guide$type[guide$variable %in% c("r1", "r2")] <- "real"
+    dt <- dtable(data = df, type = "real", guide = guide)
+    expect_equal(dattr(dt), c("meta", "meta", "desc"))
+    expect_equal(as.character(dt$variable), c("r1", "r2"))
+    expect_equal(as.character(dt$type), c("real", "real"))
+    expect_equal(dt$mean, c(2.0, 3.5))
+    dt <- dtable(data = df, type = "real", guide = guide,
+                 glist = "g", comp = FALSE)
+    expect_equal(dattr(dt), c("meta", "meta", "desc:A", "desc:B"))
+    expect_equal(names(dt), c("variable", "type", "mean", "mean"))
+    i <- which(names(dt) == "mean")
+    expect_equal(dt[[i[1]]], c(1.0, 3.3))
+    expect_equal(dt[[i[2]]], c(3.0, 3.7))
 
 })

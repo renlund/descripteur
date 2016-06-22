@@ -22,7 +22,7 @@ rbind_dtable <- function(x, y){
 
 ##' cbind dtables
 ##'
-##' wrapper for \cod{cbind} which keeps dtable attributes sane
+##' wrapper for \code{cbind} which keeps dtable attributes sane
 ##' @title rbind for dtables
 ##' @param x object 1
 ##' @param y object 2
@@ -49,7 +49,8 @@ cbind_dtable <- function(x, y, groups = NULL){
     ut <- n_b[n_b %in% n_a]
     if(all(mx$variable == my$variable)){
         tmp <- setdiff(names(my), ut)
-        y_mod <- subset(as.data.frame(my), TRUE, select = tmp)
+        ## y_mod <- subset(as.data.frame(my), TRUE, select = tmp)
+        y_mod <- prune_dtable(my, rm = ut)
         r <- cbind(as.data.frame(mx), as.data.frame(y_mod))
     } else {
         message("why is 'variable' off? I'll try to fix it")
@@ -58,7 +59,7 @@ cbind_dtable <- function(x, y, groups = NULL){
                         select = setdiff(names(my), ut2))
         r <- merge(mx, y_mod, by = "variable")
     }
-    attr(r, "dtable") <- c(a, na.omit(ifelse(names(my) %in% ut, NA,
+    attr(r, "dtable") <- c(a, stats::na.omit(ifelse(names(my) %in% ut, NA,
                                              b)))
     class(r) <- c("dtable", class(r))
     meta_order_dtable(r)

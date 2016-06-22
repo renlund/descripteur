@@ -1,9 +1,9 @@
-# These function creates and handles overall descripteur options
-# and will hopefully be elaborated. The options are stored in
-# an environment 'le_milieu'
+## These function creates and handles overall descripteur options
+## and will hopefully be elaborated. The options are stored in
+## an environment 'le_milieu'
 
-# @title le_milieu
-# @description an environment
+## @title le_milieu
+## @description an environment
 
 le_milieu <- new.env(parent = getNamespace("descripteur"))
 
@@ -45,15 +45,16 @@ desc_set <- function(...){
 # @description this function restores the default descripteur settings
 
 desc_restore <- function(){
-   assign(x="defaults", value=list(
-                            "describe_real" = dr_def,
-                            "describe_bnry" = db_def,
-                            "describe_catg" = dc_def,
-                            "describe_date" = dd_def,
-                            "compare_real"  = cr_def,
-                            "compare_bnry"  = cb_def,
-                            "compare_catg"  = cc_def,
-                            "compare_date"  = cd_def
+    assign(x="defaults",
+           value=list(
+               "describe_real" = flist(c("mean" = "d_mean", "sd" = "d_sd")),
+               "describe_bnry" = flist(c("p" = "d_p.b")),
+               "describe_catg" = flist(c("levels" = "d_levels", "p" = "d_p.c")),
+               "describe_date" = flist(c("min" = "d_min", "max" = "d_max")),
+               "compare_real"  = flist(c("std" = "c_std.r")),
+               "compare_bnry"  = flist(c("std" = "c_std.b", "OR" = "c_OR")),
+               "compare_catg"  = flist(c("diff" = "c_diff.c")),
+               "compare_date"  = flist(c("overlap" = "c_overlap.d"))
    ), envir=le_milieu)
    assign(x="value", value = names(get(x="defaults", envir=le_milieu)), envir=le_milieu)
    desc_check()

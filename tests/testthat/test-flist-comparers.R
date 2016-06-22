@@ -26,62 +26,62 @@
 ##     expect_equal(sd(x[2:4], na.rm = TRUE), sd(.weighter(x,v4)))
 ## })
 
-test_that(desc = "d.std.r works", code = {
+test_that(desc = "c_std.r works", code = {
     x  <- c(1,5,9, 1,6,11)
     w  <- c(1,1,1, 2,2,2)
     w2 <- c(1,0,1, 1,0,1)
     w3 <- c(1,4,1, 1,4,1)
     gl <- list("a" = rep(c(T, F), each = 3),
                "b" = rep(c(F, T), each = 3))
-    expect_equal(d.std.r(x = x, glist = gl),
+    expect_equal(c_std.r(x = x, glist = gl),
                 (5-6) / sqrt((4^2+5^2)/2))
-    expect_equal(d.std.r(x = x, glist = gl, w = w),
+    expect_equal(c_std.r(x = x, glist = gl, w = w),
     (5-6) / sqrt((4^2+5^2)/2))
-    expect_equal(d.std.r(x = x, glist = gl, w = w2),
+    expect_equal(c_std.r(x = x, glist = gl, w = w2),
     (5-6) / sqrt((32+50)/2))
     ## d.sd(x[1:3], w3[1:3])^2
     ## d.sd(x[4:6], w3[4:6])^2
-    expect_equal(d.std.r(x = x, glist = gl, w = w3), (5-6) / sqrt((8+12.5)/2))
+    expect_equal(c_std.r(x = x, glist = gl, w = w3), (5-6) / sqrt((8+12.5)/2))
 })
 
-test_that("d.OR works", {
+test_that("c_OR works", {
     x = factor(c(1,1, 1,0, 0,0, 0,0, NA), levels = 0:1)
     gl <- list("A" = c(T,T, F,F, T,T, F,F, F),
                "B" = c(F,F, T,T, F,F, T,T, F))
     w1 = as.numeric(x)
-    expect_equal(d.OR(x = x, glist = gl), 1/(1/3))
-    expect_equal(d.OR(x = x, glist = gl, w = w1), 2/(2/3))
+    expect_equal(c_OR(x = x, glist = gl), 1/(1/3))
+    expect_equal(c_OR(x = x, glist = gl, w = w1), 2/(2/3))
 })
 
-test_that("d.std.b works", {
+test_that("c_std.b works", {
     x = factor(c(1,1, 1,0, 0,0, 0,NA), levels = 0:1)
     gl <- list("A" = c(T,T, F,F, T,T, F,F),
                "B" = c(F,F, T,T, F,F, T,T))
     w1 = as.numeric(x)
-    expect_equal(d.std.b(x = x, glist = gl), (1/2-1/3)/sqrt((1/4+2/9)/2))
-    expect_equal(d.std.b(x = x, glist = gl), (2/3-1/2)/sqrt((2/9+1/4)/2))
+    expect_equal(c_std.b(x = x, glist = gl), (1/2-1/3)/sqrt((1/4+2/9)/2))
+    expect_equal(c_std.b(x = x, glist = gl), (2/3-1/2)/sqrt((2/9+1/4)/2))
 })
 
-test_that("d.cc_diff works", {
+test_that("c_diff.c works", {
     x <- letters[c(1,2,2,3, 1,1,1,2,3,3)]
     gl <- list("a"=rep(c(T,F), c(4,6)),
                "b"=rep(c(F,T), c(4,6)))
     w1 <- c(2,1,1,1, 2,2,2,1,1,1)
-    expect_equal(d.cc_diff(x, glist = gl, useNA=F),
+    expect_equal(c_diff.c(x, glist = gl, useNA=F),
                  c(1/4-1/2, 1/2-1/6,1/4-1/3))
-    expect_equal(d.cc_diff(x, glist = gl),
+    expect_equal(c_diff.c(x, glist = gl),
                  c(1/4-1/2, 1/2-1/6,1/4-1/3))
-    expect_equal(d.cc_diff(x, glist = gl, w=w1, useNA=F),
+    expect_equal(c_diff.c(x, glist = gl, w=w1, useNA=F),
                  c(2/5-6/9, 2/5-1/9, 1/5-2/9))
 })
 
-test_that("d.cc_OR works", {
+test_that("c_OR.c works", {
     x <- letters[c(1,2,2,3, 1,1,1,2,3,3)]
     gl <- list("a"=rep(c(T,F), c(4,6)),
                "b"=rep(c(F,T), c(4,6)))
     w1 <- c(2,1,1,1, 2,2,2,1,1,1)
-    expect_equal(d.cc_OR(x, glist = gl, useNA=F),
+    expect_equal(c_OR.c(x, glist = gl, useNA=F),
                  c(1/3, 5, 2/3))
-    expect_equal(d.cc_OR(x, glist = gl, w = w1, useNA=F),
+    expect_equal(c_OR.c(x, glist = gl, w = w1, useNA=F),
                  c((2/3)/2, (2/3)/(1/8), (1/4)/(2/7)))
 })

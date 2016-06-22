@@ -1,125 +1,124 @@
-## .weighter <- function(x, w){
-##     ok <- w != 0 & !is.na(x)
-##     if(sum(w[ok]) == 0) stop("weights (to be used) sum to 0")
-##     if(sum(w) == 0) warning("sum of weights is 0")
-##     (x * w * length(w[ok]) / sum(w[ok]))[ok]
-## }
 
      ## +----------------------------------------+ ##
      ## | comparing functions for real variables | ##
      ## +----------------------------------------+ ##
 
-d.shift <- function(x, glist, ...){
+c_shift <- function(x, glist, ...){
     x1 <- x[glist[[1]]]
     x2 <- x[glist[[2]]]
 
-    (median(x1, na.rm = TRUE) - median(x2, na.rm = TRUE)) /
-        IQR(x1, na.rm = TRUE)
+    (stats::median(x1, na.rm = TRUE) - stats::median(x2, na.rm = TRUE)) /
+        stats::IQR(x1, na.rm = TRUE)
 }
-cr_def <- list(
-    "shift" = d.shift
-)
-attr(cr_def, "dtable") <- "comp"
+attr(c_shift, "dtable") <- "comp"
 
-d.std.r <- function(x, glist, w = NULL, ...){
+## cr_def <- list(
+##     "shift" = c_shift
+## )
+## attr(cr_def, "dtable") <- "comp"
+
+c_std.r <- function(x, glist, w = NULL, ...){
     if(is.null(w)) w <- rep(1, length(x))
     x1 <- x[glist[[1]]]
     w1 <- w[glist[[1]]]
     x2 <- x[glist[[2]]]
     w2 <- w[glist[[2]]]
-    (d.mean(x = x1, w = w1) - d.mean(x = x2, w = w2)) /
-    sqrt((d.sd(x = x1, w = w1)^2 + d.sd(x = x2, w = w2)^2) / 2)
+    (d_mean(x = x1, w = w1) - d_mean(x = x2, w = w2)) /
+    sqrt((d_sd(x = x1, w = w1)^2 + d_sd(x = x2, w = w2)^2) / 2)
 }
+attr(c_std.r, "dtable") <- "comp"
 
-cr_sym <- list(
-    "std" = d.std.r
-)
-attr(cr_sym, "dtable") <- "comp"
+## cr_sym <- list(
+##     "std" = c_std.r
+## )
+## attr(cr_sym, "dtable") <- "comp"
 
      ## +----------------------------------------+ ##
      ## | comparing functions for bnry variables | ##
      ## +----------------------------------------+ ##
 
-d.RR <- function(x, glist, w = NULL, ...){
-    d.p(x[glist[[1]]], w = w[glist[[1]]]) /
-        d.p(x[glist[[2]]], w = w[glist[[2]]])
+c_RR <- function(x, glist, w = NULL, ...){
+    d_p.b(x[glist[[1]]], w = w[glist[[1]]]) /
+        d_p.b(x[glist[[2]]], w = w[glist[[2]]])
 }
-d.OR <- function(x, glist, w = NULL, ...){
+attr(c_RR, "dtable") <- "comp"
+c_OR <- function(x, glist, w = NULL, ...){
     if(is.null(w)) w <- rep(1, length(x))
     w1 <- w[glist[[1]]]
     w2 <- w[glist[[2]]]
     x1 <- x[glist[[1]]]
     x2 <- x[glist[[2]]]
-    d.odds(x = x1, w = w1) / d.odds(x2, w = w2)
+    d_odds(x = x1, w = w1) / d_odds(x2, w = w2)
 }
-
-d.std.b <- function(x, glist, w = NULL, ...){
+attr(c_OR, "dtable") <- "comp"
+c_std.b <- function(x, glist, w = NULL, ...){
     if(is.null(w)) w <- rep(1, length(x))
     w1 <- w[glist[[1]]]
     w2 <- w[glist[[2]]]
     x1 <- x[glist[[1]]]
     x2 <- x[glist[[2]]]
-    p1 <- d.p.b(x1, w = w1)
-    p2 <- d.p.b(x2, w = w2)
+    p1 <- d_p.b(x1, w = w1)
+    p2 <- d_p.b(x2, w = w2)
     (p1 - p2) / sqrt((p1*(1-p1) + p2*(1-p2)) / 2)
 }
-cb_def <- list(
-    ## "RR" = d.RR,
-    "std" = d.std.b,
-    "OR" = d.OR
-)
-attr(cb_def, "dtable") <- rep("comp", 2)
+attr(c_std.b, "dtable") <- "comp"
+## cb_def <- list(
+##     ## "RR" = c_RR,
+##     "std" = c_std.b,
+##     "OR" = c_OR
+## )
+## attr(cb_def, "dtable") <- rep("comp", 2)
 
      ## +----------------------------------------+ ##
      ## | comparing functions for date variables | ##
      ## +----------------------------------------+ ##
 
-d.overlap <- function(x, glist, ...){
+c_overlap.d <- function(x, glist, ...){
     x1 <- x[glist[[1]]]
     x2 <- x[glist[[2]]]
     a <- max(min(x1, na.rm = TRUE), min(x2, na.rm = TRUE))
     b <- min(max(x1, na.rm = TRUE), max(x2, na.rm = TRUE))
     sum(x >= a & x <= b, na.rm = TRUE) ## / sum(!is.na(x))
 }
-
-cd_def <- list(
-    "n.overlap" = d.overlap
-)
-attr(cd_def, "dtable") <- "comp"
+attr(c_overlap.d, "dtable") <- "comp"
+## cd_def <- list(
+##     "n.overlap" = c_overlap.d
+## )
+## attr(cd_def, "dtable") <- "comp"
 
      ## +----------------------------------------+ ##
      ## | comparing functions for catg variables | ##
      ## +----------------------------------------+ ##
 
-d.cc_diff <- function(x, glist, useNA = FALSE, w = NULL, ...){
+c_diff.c <- function(x, glist, useNA = FALSE, w = NULL, ...){
     w1 <- w[glist[[1]]]
     w2 <- w[glist[[2]]]
-    p1 <- d.p.c(x[glist[[1]]], w = w1, useNA = useNA)
-    p2 <- d.p.c(x[glist[[2]]], w = w2, useNA = useNA)
-    ## dp <- p1 - p2
-    ## if(useNA) c(dp, NA) else dp
+    p1 <- d_p.c(x[glist[[1]]], w = w1, useNA = useNA)
+    p2 <- d_p.c(x[glist[[2]]], w = w2, useNA = useNA)
     p1 - p2
 }
-
-d.cc_OR <- function(x, glist, useNA = FALSE, w = NULL, ...){
+attr(c_diff.c, "dtable") <- "comp"
+c_OR.c <- function(x, glist, useNA = FALSE, w = NULL, ...){
     w1 <- w[glist[[1]]]
     w2 <- w[glist[[2]]]
-    p1 <- d.p.c(x[glist[[1]]], w = w1, useNA=useNA)
-    p2 <- d.p.c(x[glist[[2]]], w = w2, useNA=useNA)
-    ## OR <- (p1 / (1-p1)) / (p2 / (1-p2))
-    ## if(useNA) c(OR, NA) else OR
+    p1 <- d_p.c(x[glist[[1]]], w = w1, useNA=useNA)
+    p2 <- d_p.c(x[glist[[2]]], w = w2, useNA=useNA)
     (p1 / (1-p1)) / (p2 / (1-p2))
 }
-## d.levels exists in two locations ... problem?
-d.levels <- function(x, useNA = TRUE, w = NULL, ...){
-    y <- d.catgify(x)
+attr(c_OR.c, "dtable") <- "comp"
+## d_levels exists in two locations ... problem?
+d_levels <- function(x, useNA = TRUE, w = NULL, ...){
+    y <- make_catg(x)
     if(useNA) c(levels(y), .missing_char) else levels(y)
 }
+attr(d_levels, "dtable") <- "desc"
 
-cc_def <- list(
-    "levels" = d.levels,
-    "diff" = d.cc_diff,
-    "OR" = d.cc_OR
-)
-attr(cc_def, "dtable") <- c("meta", "comp", "comp")
+## cc_def <- list(
+##     "levels" = d_levels,
+##     "diff" = c_diff.c,
+##     "OR" = c_OR.c
+## )
+## attr(cc_def, "dtable") <- c("meta", "comp", "comp")
+
+
 

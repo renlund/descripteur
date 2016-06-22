@@ -2,49 +2,53 @@
     ## | describing functions for real variables | ##
     ## +-----------------------------------------+ ##
 
-d.missing <- function(x, w = NULL, ...){
+d_missing <- function(x, w = NULL, ...){
     if(is.null(w)) w <- rep(1, length(x))
     sum(w[is.na(x)])
 }
-d.mean <- function(x, w = NULL, ...){
+attr(d_missing, "dtable") <- "desc"
+d_mean <- function(x, w = NULL, ...){
     if(is.null(w)){
         mean(x, na.rm = TRUE)
     } else {
-        weighted.mean(x, w = w, na.rm = TRUE)
+        stats::weighted.mean(x, w = w, na.rm = TRUE)
     }
 }
-d.sd <- function(x, w = NULL, ...){
+attr(d_mean, "dtable") <- "desc"
+d_sd <- function(x, w = NULL, ...){
     if(is.null(w)) w <- rep(1, length(x))
     y <- x[!is.na(x)]
     w <- w[!is.na(x)]
-    m <- weighted.mean(x = y, w = w)
+    m <- stats::weighted.mean(x = y, w = w)
     ok <- w != 0
     N <- sum(ok)
     num <- sum(w*(y - m)^2)
     den <- sum(w)
     sqrt(num * N / (den * (N-1)))
 }
-d.median <- function(x, ...) median(x, na.rm = TRUE)
-d.IQR <- function(x, ...) IQR(x, na.rm = TRUE)
-dr_def <- list(
-    "missing" = d.missing,
-    "median" = d.median,
-    "IQR" = d.IQR
-)
-attr(dr_def, "dtable") <- rep("desc", 3)
-
-dr_sym <- list(
-    "missing" = d.missing,
-    "mean" = d.mean,
-    "sd" = d.sd
-)
-attr(dr_sym, "dtable") <- rep("desc", 3)
+attr(d_sd, "dtable") <- "desc"
+d_median <- function(x, ...) stats::median(x, na.rm = TRUE)
+attr(d_median, "dtable") <- "desc"
+d_IQR <- function(x, ...) stats::IQR(x, na.rm = TRUE)
+attr(d_IQR, "dtable") <- "desc"
+## dr_def <- list(
+##     "missing" = d_missing,
+##     "median" = d_median,
+##     "IQR" = d_IQR
+## )
+## attr(dr_def, "dtable") <- rep("desc", 3)
+## dr_sym <- list(
+##     "missing" = d_missing,
+##     "mean" = d_mean,
+##     "sd" = d_sd
+## )
+## attr(dr_sym, "dtable") <- rep("desc", 3)
 
     ## +-----------------------------------------+ ##
     ## | describing functions for bnry variables | ##
     ## +-----------------------------------------+ ##
 
-d.bnryify <- function(x){
+make_bnry <- function(x){
     rev = FALSE ## let this be a setting in opts_desc ??
     if(is.factor(x)){
         if(length(levels(x)) == 2){
@@ -54,50 +58,60 @@ d.bnryify <- function(x){
             stop("trying to give binry stats on a non-binary variable")
         }
     }
-    lev <- na.omit(unique(x))
+    lev <- stats::na.omit(unique(x))
     if(rev) lev <- rev(lev)
     if(length(lev) != 2){
         stop("trying to give binry stats on a non-binary variable")
     }
     factor(x, levels = lev)
 }
-d.ref_level <- function(x, ...){
-    y <- d.bnryify(x)
+d_ref_level <- function(x, ...){
+    y <- make_bnry(x)
     levels(y)[2]
 }
-d.p.b <- function(x, w = NULL, ...){
-    y <- d.bnryify(x)
+attr(d_ref_level, "dtable") <- "desc"
+d_n.b <- function(x, w = NULL, ...){
+    y <- make_bnry(x)
     if(is.null(w)) w <- rep(1, length(x))
-    z <- ifelse(y==d.ref_level(y), 1L, 0L)
-    weighted.mean(x = z, w = w, na.rm = TRUE)
+    z <- ifelse(y==d_ref_level(y), 1L, 0L)
+    sum(w[z==1], na.rm = TRUE)
 }
-d.odds <- function(x, w = NULL, ...){
-    y <- d.bnryify(x)
+attr(d_n.b, "dtable") <- "desc"
+d_p.b <- function(x, w = NULL, ...){
+    y <- make_bnry(x)
     if(is.null(w)) w <- rep(1, length(x))
-    tryCatch(d.p.b(y, w = w)/(1-d.p.b(y, w = w)), error = function(e) NA)
+    z <- ifelse(y==d_ref_level(y), 1L, 0L)
+    stats::weighted.mean(x = z, w = w, na.rm = TRUE)
 }
-
-db_def <- list(
-    "level" = d.ref_level,
-    "missing" = d.missing,
-    "p" = d.p.b,
-    "odds" = d.odds
-)
-attr(db_def, "dtable") <- c("meta", "desc", "desc", "desc")
+attr(d_p.b, "dtable") <- "desc"
+d_odds <- function(x, w = NULL, ...){
+    y <- make_bnry(x)
+    if(is.null(w)) w <- rep(1, length(x))
+    tryCatch(d_p.b(y, w = w)/(1-d_p.b(y, w = w)), error = function(e) NA)
+}
+attr(d_odds, "dtable") <- "desc"
+## db_def <- list(
+##     "level" = d_ref_level,
+##     "missing" = d_missing,
+##     "p" = d_p.b,
+##     "odds" = d_odds
+## )
+## attr(db_def, "dtable") <- c("meta", "desc", "desc", "desc")
 
     ## +-----------------------------------------+ ##
     ## | describing functions for date variables | ##
     ## +-----------------------------------------+ ##
 
-d.min = function(x, ...) min(x, na.rm = TRUE)
-d.max = function(x, ...) max(x, na.rm = TRUE)
-
-dd_def <- list(
-    "missing" = d.missing,
-    "min" = d.min,
-    "max" = d.max
-)
-attr(dd_def, "dtable") <- rep("desc", 3)
+d_min = function(x, ...) min(x, na.rm = TRUE)
+attr(d_min, "dtable") <- "desc"
+d_max = function(x, ...) max(x, na.rm = TRUE)
+attr(d_max, "dtable") <- "desc"
+## dd_def <- list(
+##     "missing" = d_missing,
+##     "min" = d_min,
+##     "max" = d_max
+## )
+## attr(dd_def, "dtable") <- rep("desc", 3)
 
     ## +-----------------------------------------+ ##
     ## | describing functions for catg variables | ##
@@ -106,7 +120,7 @@ attr(dd_def, "dtable") <- rep("desc", 3)
 .missing_char <- "missing"
 
 ## -- helper functions --
-d.catgify <- function(x){
+make_catg <- function(x){
     if(is.factor(x)){
         x
     } else {
@@ -115,9 +129,9 @@ d.catgify <- function(x){
 }
 .weighted_p <- function(x, w = NULL){
     if(is.null(w)) w <- rep(1L, length(x))
-    mm <- model.matrix(~x)
+    mm <- stats::model.matrix(~x)
     mm[,1] <- ifelse(rowSums(mm[,-1]) == 0, 1, 0)
-    as.numeric(apply(X = mm, MARGIN = 2, FUN = weighted.mean, w = w[!is.na(x)]))
+    as.numeric(apply(X = mm, MARGIN = 2, FUN = stats::weighted.mean, w = w[!is.na(x)]))
 }
 .weighted_tab <- function(x, w = NULL){
     if(is.null(w)) w <- rep(1L, length(x))
@@ -125,33 +139,35 @@ d.catgify <- function(x){
     lev <- if(is.factor(x)) levels(x) else unique(x)
     y[is.na(x)] <- "dOntnAmeyOurlEveltOtHis"
     u <- factor(y, levels = c(lev, "dOntnAmeyOurlEveltOtHis"))
-    mm <- model.matrix(~u)
+    mm <- stats::model.matrix(~u)
     mm[,1] <- ifelse(rowSums(mm[,-1]) == 0, 1, 0)
-    100*as.numeric(apply(X = mm, MARGIN = 2, FUN = weighted.mean, w = w))
+    100*as.numeric(apply(X = mm, MARGIN = 2, FUN = stats::weighted.mean, w = w))
 }
 ## -- list functions --
-d.levels <- function(x, useNA = TRUE, w = NULL, ...){
-    y <- d.catgify(x)
+d_levels <- function(x, useNA = TRUE, w = NULL, ...){
+    y <- make_catg(x)
     if(useNA) c(levels(y), .missing_char) else levels(y)
 }
-d.percent <- function(x, useNA = TRUE, w = NULL){
+attr(d_levels, "dtable") <- "desc"
+d_percent <- function(x, useNA = TRUE, w = NULL){
     ## if(!is.null(w)) message("percent function for catg does not use weights")
-    y <- d.catgify(x)
+    y <- make_catg(x)
     ## t <- as.numeric(table(y, useNA = "always")) / length(y)
     t <- .weighted_tab(x = y, w = w)
     r <- if(useNA) t else t[-length(t)]
     r
 }
-d.p.c <- function(x, useNA = TRUE, w = NULL){
-    y <- d.catgify(x)
-    ## t <- as.numeric(table(y)) / length(na.omit(y))
+attr(d_percent, "dtable") <- "desc"
+d_p.c <- function(x, useNA = TRUE, w = NULL){
+    y <- make_catg(x)
+    ## t <- as.numeric(table(y)) / length(stats::na.omit(y))
     t <- .weighted_p(x = y, w = w)
     if(useNA) c(t, NA) else t
 }
-
-dc_def <- list(
-    "levels" = d.levels,
-    "percent" = d.percent,
-    "p" = d.p.c
-)
-attr(dc_def, "dtable") <- c("meta", "desc", "desc")
+attr(d_p.c, "dtable") <- "desc"
+## dc_def <- list(
+##     "levels" = d_levels,
+##     "percent" = d_percent,
+##     "p" = d_p.c
+## )
+## attr(dc_def, "dtable") <- c("meta", "desc", "desc")

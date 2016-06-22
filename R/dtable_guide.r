@@ -9,11 +9,12 @@
 #' @param date.tol force date data with few ($<= \code{date.tol}) unique data
 #'   points to be describes as categorical
 #' @param as.is if TRUE ignore all tolerence parameters
+#' @param id the row identifier
+#' @param unit.id the unit identifier
 #' @export
-
 dtable_guide <- function(data, elim.set = NULL, catg.tol = 6,
                            real.tol = catg.tol, date.tol = catg.tol,
-                           as.is = FALSE){
+                           as.is = FALSE, id = NULL, unit.id = NULL){
     if(catg.tol < 3 | real.tol < 3 | date.tol < 3) stop("be more tolerant...")
     data <- subset(data, TRUE, select = setdiff(names(data), elim.set))
     class2 <- function(x) class(x)[1]
@@ -36,7 +37,7 @@ dtable_guide <- function(data, elim.set = NULL, catg.tol = 6,
         b4 <- names(data)[bnry]
         d  <- names(data)[date]
     } else {
-        n_unique <- function(x) length(unique(na.omit(x)))
+        n_unique <- function(x) length(unique(stats::na.omit(x)))
         real_n <- lapply(subset(data,TRUE,names(data)[real]), n_unique)
         catg_n <- lapply(subset(data,TRUE,names(data)[catg]), n_unique)
         date_n <- lapply(subset(data,TRUE,names(data)[date]), n_unique)
@@ -68,5 +69,21 @@ dtable_guide <- function(data, elim.set = NULL, catg.tol = 6,
         L[[K]] <- levels(factor(data[[K]]))
     }
     if(!is.null(L)) attr(ret, "levels") <- L
+    if(!is.null(id)){
+        attr(ret, "id") <- if(id %in% names(data)){
+            id
+        } else {
+            warning("id variable does not seem to exist")
+            NULL
+        }
+    }
+    if(!is.null(unit.id)){
+        attr(ret, "unit.id") <- if(unit.id %in% names(data)){
+            unit.id
+        } else {
+            warning("unit.id variable does not seem to exist")
+            NULL
+        }
+    }
     ret
 }
