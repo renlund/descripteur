@@ -71,5 +71,21 @@ test_that("prune_dtable works",{
                   class = "data.frame",
                   row.names = c(NA, -1L),
                   dtable = c("foo"))
+    )
+    expect_equal(
+        prune_dtable(x = df, keep = "x"),
+        structure(list(x = 1, x = 2),
+                  .Names = c("x", "x"),
+                  class = "data.frame",
+                  row.names = c(NA, -1L),
+                  dtable = c("foo", "foo"))
+    )
+    expect_equal(
+        prune_dtable(x = df, keep = "y"),
+        structure(list(y = 1),
+                  .Names = "y",
+                  class = "data.frame",
+                  row.names = c(NA, -1L),
+                  dtable = "foo")
         )
 })

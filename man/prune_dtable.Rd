@@ -4,7 +4,7 @@
 \alias{prune_dtable}
 \title{prune dtable}
 \usage{
-prune_dtable(x, rm = NULL)
+prune_dtable(x, rm = NULL, keep = NULL)
 }
 \arguments{
 \item{x}{object}

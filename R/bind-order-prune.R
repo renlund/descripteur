@@ -86,18 +86,42 @@ meta_order_dtable <- function(x){
 ##' @param x object
 ##' @param rm index or variable name to remove
 ##' @export
-
-prune_dtable <- function(x, rm = NULL){
-    if(is.null(rm)) return(x)
+prune_dtable <- function(x, rm = NULL, keep = NULL){
+    if(is.null(rm) & is.null(keep)) return(x)
+    if(!is.null(rm) & !is.null(keep)){
+        warning("It does not like to remove and keep.\nIt will only remove.")
+        keep <- NULL
+    }
     d <- dattr(x)
-    if(is.character(rm)){
-        rm <- which(names(x) %in% rm)
+    if(!is.null(rm)){
+        if(is.character(rm)){
+            rm <- which(names(x) %in% rm)
+        }
+    } else {
+        if(is.character(keep)){
+            rm <- which(!names(x) %in% keep)
+        } else {
+            rm <- setdiff(1:ncol(x), keep)
+        }
     }
     r <- x[,-rm, drop = FALSE]
     names(r) <- names(x)[-rm]
     dattr(r) <- dattr(x)[-rm]
     r
 }
+
+## prune_dtable <- function(x, rm = NULL){
+##     if(is.null(rm)) return(x)
+##     d <- dattr(x)
+##     if(is.character(rm)){
+##         rm <- which(names(x) %in% rm)
+##     }
+##     r <- x[,-rm, drop = FALSE]
+##     names(r) <- names(x)[-rm]
+##     dattr(r) <- dattr(x)[-rm]
+##     r
+## }
+
 ##' turn dtable into data.frame
 ##'
 ##' this will just change the class attribute
