@@ -4,16 +4,14 @@
 \alias{dtable_latex}
 \title{latexify a dtable}
 \usage{
-dtable_latex(dt, bling = TRUE, format = FALSE, file = "", where = "htb",
-  rowname = NULL, ..., format.param = as.list(NULL))
+dtable_latex(dt, bling = TRUE, file = "", where = "htb", rowname = NULL,
+  ..., format = FALSE, format.param = as.list(NULL))
 }
 \arguments{
 \item{dt}{a dtable}
 
 \item{bling}{shall we compose suitable table bling from the
 attributes? (default \code{TRUE})}
-
-\item{format}{use \code{dtable_format}?}
 
 \item{file}{(default empty string) passed to \code{Hmisc::latex}}
 
@@ -22,6 +20,8 @@ attributes? (default \code{TRUE})}
 \item{rowname}{(default \code{NULL}) passed to \code{Hmisc::latex}}
 
 \item{...}{passed to \code{Hmisc::latex}}
+
+\item{format}{use \code{dtable_format}?}
 
 \item{format.param}{list of parameters to pass to
 \code{dtable_format} (only used if \code{format = TRUE}).}

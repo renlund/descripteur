@@ -31,6 +31,16 @@ d_median <- function(x, ...) stats::median(x, na.rm = TRUE)
 attr(d_median, "dtable") <- "desc"
 d_IQR <- function(x, ...) stats::IQR(x, na.rm = TRUE)
 attr(d_IQR, "dtable") <- "desc"
+d_sum <- function(x, w = NULL, ...){
+    if(is.null(w)) w <- rep(1, length(x))
+    s <- if(is.null(w)){
+        mean(x, na.rm = TRUE)
+    } else {
+        stats::weighted.mean(x, w = w, na.rm = TRUE)
+    }
+    length(x) * s
+}
+attr(d_sum, "dtable") <- "desc"
 ## dr_def <- list(
 ##     "missing" = d_missing,
 ##     "median" = d_median,

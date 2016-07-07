@@ -71,6 +71,7 @@ dtable <- function(data, type, guide = NULL, desc = NULL, comp = NULL,
                 for(k in seq_along(glist)){ ## k = 1
                     tmp <- apply_flist(x = x[glist[[k]]],
                                        flist = d_fnc,
+                                       useNA = use_na,
                                        w = w[glist[[k]]],
                                        xname = g)##, ...)
                     R0 <- cbind_dtable(x = R0, y = tmp,
@@ -100,8 +101,8 @@ dtable <- function(data, type, guide = NULL, desc = NULL, comp = NULL,
                 for(k in 2:length(glist)){ ## k = 2
                     ref.index <- if(P$comp.style == "across") 1 else k-1
                     tmp <- apply_flist(x = x, glist = glist[c(ref.index,k)],
-                                       flist = c_fnc,
-                                       xname = g)
+                                       flist = c_fnc, useNA = use_na,
+                                       xname = g, ...)
                     R0 <- cbind_dtable(R0, tmp,
                                        groups = names(glist)[k])
                 }
