@@ -26,7 +26,7 @@ different groups. There are 2 different types of comparisons
 
   +  "overall" is when the grouping is fed to some function that makes
 an overall comparison, like an anova analysis (for arbitrary many
-groups) or a t-test (in which case there must be axactly 2 groups).
+groups) or a t-test (in which case there must be exactly 2 groups).
   +  "across" and "adjacent" are pairwise comparisons of each group
   with respect to either the first, or the previous, group as given by
   order of the grouping.
@@ -47,20 +47,20 @@ specified elsewise):
 We do not describe all kinds of data in the same manner. Thus, this
 package differentiates between different kinds of data types:
 
- + *real* real, i.e. numeric
- + *bnry* binary, i.e. variables with 2 distinct values
- + *catg* categorical, and
- + *date* (what it sais).
+ + `real` real, i.e. numeric
+ + `bnry` binary, i.e. variables with 2 distinct values
+ + `catg` categorical, and
+ + `date` (what it sais).
 
 This will be determined by a 'guide', simply a data frame that for
 each variables specifies how it is to be described. Any variable with
-only 2 distinct values will be regarded as *bnry*, other text-
-and factor variables are *catg*, the classes 'Date' and
-'POSIXct' are *date* and numerical variables with enough
-distinct values (more than *real.tol*) are *real*.
+only 2 distinct values will be regarded as `bnry`, other text-
+and factor variables are `catg`, the classes 'Date' and
+'POSIXct' are `date` and numerical variables with enough
+distinct values (more than `real.tol`) are `real`.
 
 If you do not want to accept the defaults you can create a guide via
-*dtable\_guide* with non-default arguments, or manipulate the resulting
+`dtable_guide` with non-default arguments, or manipulate the resulting
 object directly.
 
 ### More details ...

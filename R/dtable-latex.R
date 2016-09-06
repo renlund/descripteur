@@ -94,7 +94,7 @@ if(FALSE){
 ##'
 ##' overall, low-precision formatting of dtable objects - quick and
 ##'     dirty way of getting something ok (hopefully), fast. could be
-##'     developed... it's weird argument structure (all parametes
+##'     developed... its weird argument structure (all parameters
 ##'     gathered in a list) is due to it being
 ##'     considered most useful when called from other functions.
 ##' @param dt a  dtable
@@ -102,12 +102,14 @@ if(FALSE){
 ##' @export
 dtable_format <- function(dt, param = as.list(NULL)){
     ## get default values
-    if(is.null(b    <- param$b))    b <- 1
-    if(is.null(bh   <- param$bh))   bh <- 1
-    if(is.null(hfnc <- param$hfnc)) hfnc <- base::round
-    if(is.null(bl   <- param$bl))   bl <- 2
-    if(is.null(lfnc <- param$lfnc)) lfnc <- base::signif
-    if(is.null(p_b  <- param$p_b))  p_b <- 0.0001
+    if(is.null(b    <- param$b))    b <- 1 ## boundary
+    if(is.null(bh   <- param$bh))   bh <- 1 ## digits arguments for hfnc
+    if(is.null(hfnc <- param$hfnc)) hfnc <- base::round ## format fnc
+    ## for numbers all > boundary
+    if(is.null(bl   <- param$bl))   bl <- 2 ## digits argument for lfnc
+    if(is.null(lfnc <- param$lfnc)) lfnc <- base::signif ## format fnc
+    ## for numbers all < boundary
+    if(is.null(p_b  <- param$p_b))  p_b <- 0.0001 ## threshold for p-values
     if(is.null(tmax <- param$tmax)) tmax <- 30
     ## format numeric part
     n <- ncol(dt)

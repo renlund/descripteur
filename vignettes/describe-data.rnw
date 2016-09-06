@@ -12,7 +12,8 @@
 
 <<"setup", cache = FALSE, echo = FALSE, include = FALSE>>=
 library(knitr)
-library(descripteur)
+## library(descripteur)
+devtools::load_all()
 opts_chunk$set(include = TRUE, echo = TRUE)
 if(FALSE){
     knit2pdf("describe-data.rnw")
@@ -181,7 +182,38 @@ comparison "adjacent".
 
 A dtable will keep some additional information
 <<>>=
+(dt <- dtable(data = df, type = "real", guide = g, glist = "c",
+       comp = "adjacent"))
 attributes(dt)
+@
+
+\section{A wrapper for \texttt{Hmisc::latex}}
+
+<<results = 'asis'>>=
+
+opts_desc$restore()
+foo <- function(x, glist, ...){
+    t.test(x = x[glist[[1]]], y = x[glist[[2]]])$p.value
+}
+dattr(foo) <- "comp"
+opts_desc$set("compare_real" = flist(c("c_std.r", "foo" = "foo")))
+dt <- dtable(data = df, type = "real", guide = g, glist = "gr",
+       comp = "adjacent")
+dt$foo[1] <- 0.000056576
+dtable_format(dt)
+dtable_latex(dt, caption = "Default table", format = T)
+@
+
+<<results = 'asis', eval = FALSE>>=
+
+Hmisc::latex(as.data.frame(dt), file = "", where = "htb", rowname = NULL,
+             cgroup = c("", "a", "b", "c", "comp"),
+             n.cgroup = c(2, 1, 1, 1, 1),
+             insert.top = "Some text",
+             insert.bottom = "{\\small\\emph{A foo bar baz}}",
+             caption = "A kind of table")
+
+
 @
 
 
