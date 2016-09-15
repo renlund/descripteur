@@ -49,14 +49,14 @@ package differentiates between different kinds of data types:
 
  + `real` real, i.e. numeric
  + `bnry` binary, i.e. variables with 2 distinct values
- + `catg` categorical, and
- + `date` (what it sais).
+ + `catg` categorical,
+ + `date` date (duh!), and
+ + `surv` class Surv from the survival package.
 
-This will be determined by a 'guide', simply a data frame that for
-each variables specifies how it is to be described. Any variable with
-only 2 distinct values will be regarded as `bnry`, other text-
-and factor variables are `catg`, the classes 'Date' and
-'POSIXct' are `date` and numerical variables with enough
+This will be determined by a 'guide', which is a data frame that for each
+variables specifies how it is to be described. Any variable with only 2 distinct
+values will be regarded as `bnry`, other text- and factor variables are `catg`,
+the classes 'Date' and 'POSIXct' are `date` and numerical variables with enough
 distinct values (more than `real.tol`) are `real`.
 
 If you do not want to accept the defaults you can create a guide via
@@ -64,4 +64,4 @@ If you do not want to accept the defaults you can create a guide via
 object directly.
 
 ### More details ...
-... to appear
+... see the vignette.
