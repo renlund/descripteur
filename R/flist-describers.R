@@ -2,6 +2,11 @@
     ## | describing functions for real variables | ##
     ## +-----------------------------------------+ ##
 
+d_n <- function(x, w = NULL, ...){
+    if(is.null(w)) w <- rep(1, length(x))
+    sum(w)
+}
+attr(d_n, "dtable") <- "desc"
 d_missing <- function(x, w = NULL, ...){
     if(is.null(w)) w <- rep(1, length(x))
     sum(w[is.na(x)])
@@ -41,18 +46,6 @@ d_sum <- function(x, w = NULL, ...){
     length(x) * s
 }
 attr(d_sum, "dtable") <- "desc"
-## dr_def <- list(
-##     "missing" = d_missing,
-##     "median" = d_median,
-##     "IQR" = d_IQR
-## )
-## attr(dr_def, "dtable") <- rep("desc", 3)
-## dr_sym <- list(
-##     "missing" = d_missing,
-##     "mean" = d_mean,
-##     "sd" = d_sd
-## )
-## attr(dr_sym, "dtable") <- rep("desc", 3)
 
     ## +-----------------------------------------+ ##
     ## | describing functions for bnry variables | ##
@@ -100,13 +93,6 @@ d_odds <- function(x, w = NULL, ...){
     tryCatch(d_p.b(y, w = w)/(1-d_p.b(y, w = w)), error = function(e) NA)
 }
 attr(d_odds, "dtable") <- "desc"
-## db_def <- list(
-##     "level" = d_ref_level,
-##     "missing" = d_missing,
-##     "p" = d_p.b,
-##     "odds" = d_odds
-## )
-## attr(db_def, "dtable") <- c("meta", "desc", "desc", "desc")
 
     ## +-----------------------------------------+ ##
     ## | describing functions for date variables | ##
@@ -116,12 +102,6 @@ d_min = function(x, ...) min(x, na.rm = TRUE)
 attr(d_min, "dtable") <- "desc"
 d_max = function(x, ...) max(x, na.rm = TRUE)
 attr(d_max, "dtable") <- "desc"
-## dd_def <- list(
-##     "missing" = d_missing,
-##     "min" = d_min,
-##     "max" = d_max
-## )
-## attr(dd_def, "dtable") <- rep("desc", 3)
 
     ## +-----------------------------------------+ ##
     ## | describing functions for catg variables | ##
@@ -154,12 +134,12 @@ make_catg <- function(x){
     100*as.numeric(apply(X = mm, MARGIN = 2, FUN = stats::weighted.mean, w = w))
 }
 ## -- list functions --
-d_levels <- function(x, useNA = TRUE, w = NULL, ...){
+d_levels <- function(x, useNA = FALSE, w = NULL, ...){
     y <- make_catg(x)
     if(useNA) c(levels(y), .missing_char) else levels(y)
 }
-attr(d_levels, "dtable") <- "desc"
-d_percent <- function(x, useNA = TRUE, w = NULL){
+attr(d_levels, "dtable") <- "meta"
+d_percent <- function(x, useNA = FALSE, w = NULL){
     ## if(!is.null(w)) message("percent function for catg does not use weights")
     y <- make_catg(x)
     ## t <- as.numeric(table(y, useNA = "always")) / length(y)
@@ -168,16 +148,70 @@ d_percent <- function(x, useNA = TRUE, w = NULL){
     r
 }
 attr(d_percent, "dtable") <- "desc"
-d_p.c <- function(x, useNA = TRUE, w = NULL){
+d_p.c <- function(x, useNA = FALSE, w = NULL){
     y <- make_catg(x)
     ## t <- as.numeric(table(y)) / length(stats::na.omit(y))
     t <- .weighted_p(x = y, w = w)
     if(useNA) c(t, NA) else t
 }
 attr(d_p.c, "dtable") <- "desc"
-## dc_def <- list(
-##     "levels" = d_levels,
-##     "percent" = d_percent,
-##     "p" = d_p.c
-## )
-## attr(dc_def, "dtable") <- c("meta", "desc", "desc")
+
+    ## +-----------------------------------------+ ##
+    ## | describing functions for surv variables | ##
+    ## +-----------------------------------------+ ##
+
+survcheck <- function(x){
+    if(!"Surv" %in% class(x)) warning("object not of class 'Surv'")
+    invisible(NULL)
+}
+rightcheck <- function(x){
+    if(attr(x, "type") != "right") warning("object type not 'right'")
+    invisible(NULL)
+}
+consurv <- function(x, type = "right"){
+    survcheck(x)
+    if(type == "right"){
+        rightcheck(x)
+        n <- length(x)
+        data.frame(
+            time = as.numeric(x)[1:(n/2)],
+            event = as.numeric(x)[(n/2+1):n]
+        )
+    } else {
+        stop("no type but 'right' has been implemented")
+    }
+}
+d_tsum.s <- function(x, type = "right", w = NULL, ...){
+    survcheck(x)
+    if(is.null(w)) w <- rep(1L, length(x)/2)
+    if(type == "right"){
+        rightcheck(x)
+        d <- consurv(x, type)
+        d_sum(d$time, w)
+    } else {
+        stop("no type but 'right' has been implemented")
+    }
+}
+attr(d_tsum.s, "dtable") <- "desc"
+d_esum.s <- function(x, type = "right", w = NULL, ...){
+    survcheck(x)
+    if(is.null(w)) w <- rep(1L, length(x)/2)
+    if(type == "right"){
+        rightcheck(x)
+        d <- consurv(x, type)
+        d_sum(d$event, w)
+    } else {
+        stop("no type but 'right' has been implemented")
+    }
+}
+attr(d_esum.s, "dtable") <- "desc"
+d_rate.s <- function(x, type = "right", w = NULL, ...){
+    survcheck(x)
+    if(type == "right"){
+        rightcheck(x)
+        d_esum.s(x, type, w) / d_tsum.s(x, type, w)
+    } else {
+        stop("no type but 'right' has been implemented")
+    }
+}
+attr(d_rate.s, "dtable") <- "desc"

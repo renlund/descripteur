@@ -12,11 +12,6 @@ c_shift <- function(x, glist, ...){
 }
 attr(c_shift, "dtable") <- "comp"
 
-## cr_def <- list(
-##     "shift" = c_shift
-## )
-## attr(cr_def, "dtable") <- "comp"
-
 c_std.r <- function(x, glist, w = NULL, ...){
     if(is.null(w)) w <- rep(1, length(x))
     x1 <- x[glist[[1]]]
@@ -27,11 +22,6 @@ c_std.r <- function(x, glist, w = NULL, ...){
     sqrt((d_sd(x = x1, w = w1)^2 + d_sd(x = x2, w = w2)^2) / 2)
 }
 attr(c_std.r, "dtable") <- "comp"
-
-## cr_sym <- list(
-##     "std" = c_std.r
-## )
-## attr(cr_sym, "dtable") <- "comp"
 
      ## +----------------------------------------+ ##
      ## | comparing functions for bnry variables | ##
@@ -62,12 +52,6 @@ c_std.b <- function(x, glist, w = NULL, ...){
     (p1 - p2) / sqrt((p1*(1-p1) + p2*(1-p2)) / 2)
 }
 attr(c_std.b, "dtable") <- "comp"
-## cb_def <- list(
-##     ## "RR" = c_RR,
-##     "std" = c_std.b,
-##     "OR" = c_OR
-## )
-## attr(cb_def, "dtable") <- rep("comp", 2)
 
      ## +----------------------------------------+ ##
      ## | comparing functions for date variables | ##
@@ -81,10 +65,6 @@ c_overlap.d <- function(x, glist, ...){
     sum(x >= a & x <= b, na.rm = TRUE) ## / sum(!is.na(x))
 }
 attr(c_overlap.d, "dtable") <- "comp"
-## cd_def <- list(
-##     "n.overlap" = c_overlap.d
-## )
-## attr(cd_def, "dtable") <- "comp"
 
      ## +----------------------------------------+ ##
      ## | comparing functions for catg variables | ##
@@ -107,18 +87,28 @@ c_OR.c <- function(x, glist, useNA = FALSE, w = NULL, ...){
 }
 attr(c_OR.c, "dtable") <- "comp"
 ## d_levels exists in two locations ... problem?
-d_levels <- function(x, useNA = TRUE, w = NULL, ...){
+d_levels <- function(x, useNA = FALSE, w = NULL, ...){
     y <- make_catg(x)
     if(useNA) c(levels(y), .missing_char) else levels(y)
 }
 attr(d_levels, "dtable") <- "desc"
 
-## cc_def <- list(
-##     "levels" = d_levels,
-##     "diff" = c_diff.c,
-##     "OR" = c_OR.c
-## )
-## attr(cc_def, "dtable") <- c("meta", "comp", "comp")
+     ## +----------------------------------------+ ##
+     ## | comparing functions for surv variables | ##
+     ## +----------------------------------------+ ##
 
-
-
+c_rr.s <- function(x, glist, type = "right", w = NULL, ...){
+    survcheck(x)
+    if(is.null(w)) w <- rep(1, length(x)/2)
+    x1 <- x[glist[[1]]]
+    x2 <- x[glist[[2]]]
+    w1 <- w[glist[[1]]]
+    w2 <- w[glist[[2]]]
+    if(type == "right"){
+        rightcheck(x)
+        d_rate.s(x1, type, w1) / d_rate.s(x2, type, w2)
+    } else {
+        stop("no type but 'right' has been implemented")
+    }
+}
+attr(c_rr.s, "dtable") <- "comp"
