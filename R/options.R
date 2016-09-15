@@ -51,10 +51,13 @@ desc_restore <- function(){
                "describe_bnry" = flist(c("p" = "d_p.b")),
                "describe_catg" = flist(c("levels" = "d_levels", "p" = "d_p.c")),
                "describe_date" = flist(c("min" = "d_min", "max" = "d_max")),
+               "describe_surv" = flist(c("time" = "d_tsum.s",
+                                 "events" = "d_esum.s", "rate" = "d_rate.s")),
                "compare_real"  = flist(c("std" = "c_std.r")),
                "compare_bnry"  = flist(c("std" = "c_std.b", "OR" = "c_OR")),
-               "compare_catg"  = flist(c("diff" = "c_diff.c")),
-               "compare_date"  = flist(c("overlap" = "c_overlap.d"))
+               "compare_catg"  = flist(c("levels" = "d_levels", "diff" = "c_diff.c")),
+               "compare_date"  = flist(c("overlap" = "c_overlap.d")),
+               "compare_surv"  = flist(c("RR" = "c_rr.s"))
    ), envir=le_milieu)
    assign(x="value", value = names(get(x="defaults", envir=le_milieu)), envir=le_milieu)
    desc_check()

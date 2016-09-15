@@ -14,7 +14,7 @@ dtable_format(dt, param = as.list(NULL))
 \description{
 overall, low-precision formatting of dtable objects - quick and
     dirty way of getting something ok (hopefully), fast. could be
-    developed... it's weird argument structure (all parametes
+    developed... its weird argument structure (all parameters
     gathered in a list) is due to it being
     considered most useful when called from other functions.
 }

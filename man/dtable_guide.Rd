@@ -4,8 +4,8 @@
 \alias{dtable_guide}
 \title{Description guide}
 \usage{
-dtable_guide(data, elim.set = NULL, catg.tol = 6, real.tol = catg.tol,
-  date.tol = catg.tol, as.is = FALSE, id = NULL, unit.id = NULL)
+dtable_guide(data, elim.set = NULL, catg.tol = 20, real.tol = 5,
+  as.is = FALSE, id = NULL, unit.id = NULL)
 }
 \arguments{
 \item{data}{a data frame}
@@ -16,16 +16,25 @@ dtable_guide(data, elim.set = NULL, catg.tol = 6, real.tol = catg.tol,
 many unique values}
 
 \item{real.tol}{force numeric data with few ($<= \code{real.tol}) unique data
-points to be describes as categorical}
-
-\item{date.tol}{force date data with few ($<= \code{date.tol}) unique data
-points to be describes as categorical}
+points to be described as categorical}
 
 \item{as.is}{if TRUE ignore all tolerence parameters}
 
 \item{id}{the row identifier}
 
 \item{unit.id}{the unit identifier}
+}
+\value{
+a data frame describing each variable in the data set (excluding
+    \code{elim.set}, \code{id}, and \code{unit.id}). each variable has
+    \itemize{
+      \item{type}{this decides how other descripteur functions handles the variables}
+      \item{imposed_class}{this is the class we impose}
+      \item{original_class}{what the variable was}
+      \item{has_missing}{is there missing in the data frame for this variable}
+    }
+   The return object will also hold some information on id-variables and
+    factorial levels within its attributes
 }
 \description{
 Determine how to describe a data frame

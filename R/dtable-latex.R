@@ -115,11 +115,14 @@ dtable_format <- function(dt, param = as.list(NULL)){
     n <- ncol(dt)
     R <- as.data.frame(dt)
     classy <- unlist(lapply(R, function(x) class(x)[1]))
+    datum <- which(classy %in% c("Date", "POSIXlt", "POSIXct"))
+    R[datum] <- lapply(R[datum], as.character)
     num <- which(classy == "numeric")
     l <- unlist(lapply(R[num], function(x) min(abs(x), na.rm = TRUE)))
     h <- unlist(lapply(R[num], function(x) max(abs(x), na.rm = TRUE)))
-    p <- which(unlist(lapply(R[num], function(x) min(x, na.rm = TRUE) >= 0 &
-                                           max(x, na.rm = TRUE) <= 1)))
+    p0 <- unlist(lapply(R[num], function(x) min(x, na.rm = TRUE) >= 0 &
+                                            max(x, na.rm = TRUE) <= 1))
+    p <- if(!is.null(p0)) which(p0) else NULL
     il <- num[which(l>b)]
     R[il] <- lapply(R[il], hfnc, digits = bh)
     ih <- num[which(h<=b)]

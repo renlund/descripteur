@@ -4,8 +4,9 @@
 \alias{dtable}
 \title{create descriptive table}
 \usage{
-dtable(data, type, guide = NULL, desc = NULL, comp = NULL, glist = NULL,
-  w = NULL, useNA = "ifany", ...)
+dtable(data, type, guide = NULL, desc = NULL, desc.flist = NULL,
+  comp = NULL, comp.flist = NULL, glist = NULL, w = NULL,
+  useNA = "no", ...)
 }
 \arguments{
 \item{data}{a \code{data.frame} or such object}
@@ -14,13 +15,17 @@ dtable(data, type, guide = NULL, desc = NULL, comp = NULL, glist = NULL,
 
 \item{guide}{point to guide or get the default}
 
-\item{desc}{want to decribe variables?}
+\item{desc}{if to decribe variables}
 
-\item{comp}{want to apply a flist of comparers? (requires a glist)}
+\item{desc.flist}{list of describers, i.e. describing functions}
+
+\item{comp}{if, and how to, compare variables (requires a glist)}
+
+\item{comp.flist}{list of comparers, i.e. comparing functions}
 
 \item{glist}{grouping list, if wanted}
 
-\item{w}{weights}
+\item{w}{weights, if wanted}
 
 \item{useNA}{how to handle \code{NA} (requires that functions in
 flist has this argument)}

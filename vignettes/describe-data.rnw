@@ -24,13 +24,11 @@ if(FALSE){
 
 \maketitle
 
-\section{To do}
+\tableofcontents
 
-\begin{itemize}
- \item Some convience function to get latex tables from a dtable object.
- \item More metadata; e.g. number of unique id:s if such is specified in the guide.
- \item Possibility to describe across types with type-agnostic functions.
-\end{itemize}
+
+
+\newpage
 
 \section{Data description approach}
 
@@ -50,7 +48,7 @@ different groups. There are 2 different types of comparisons
 \begin{itemize}
   \item  "overall" is when the grouping is fed to some function that makes
 an overall comparison, like an anova analysis (for arbitrary many
-groups) or a t-test (in which case there must be axactly 2 groups).
+groups) or a t-test (in which case there must be exactly 2 groups).
   \item  "across" and "adjacent" are pairwise comparisons of each group
   with respect to either the first, or the previous, group as given by
   order of the grouping.
@@ -80,20 +78,24 @@ package differentiates between different kinds of data types:
 \begin{itemize}
  \item \texttt{real} real, i.e. numeric
  \item \texttt{bnry} binary, i.e. variables with 2 distinct values
- \item \texttt{catg} categorical, and
- \item \texttt{date} (what it sais).
+ \item \texttt{catg} categorical,
+ \item \texttt{date} (what it sais), and
+ \item \texttt{surv} Surv (from the survival package).
 \end{itemize}
 
-This will be determined by a 'guide', simply a data frame that for
-each variables specifies how it is to be described. Any variable with
-only 2 distinct values will be regarded as \texttt{bnry}, other text-
-and factor variables are \texttt{catg}, the classes 'Date' and
-'POSIXct' are \texttt{date} and numerical variables with enough
-distinct values (more than \texttt{real.tol}) are \texttt{real}.
+This will be determined by a 'guide', in the form of a data frame that for each
+variables specifies how it is to be described. By default, any (numeric or text)
+variable with only 2 distinct values will be regarded as \texttt{bnry}, other
+text- and factor variables are \texttt{catg} (but they will be ignored if the
+number of unique values exceed \texttt{catg.tol}, to exclude id variables), the
+classes 'Date' and 'POSIXct' (and POSIXlt) are \texttt{date} and numerical
+variables with enough distinct values (more than \texttt{real.tol}) are
+\texttt{real}.
 
 If you do not want to accept the defaults you can create a guide via
-\texttt{dtable\_guide} with non-default arguments, or manipulate the resulting
-object directly.
+\texttt{dtable\_guide} with non-default arguments (e.g.\ by setting
+\texttt{as.is} to \texttt{TRUE} to treat variables according to their class), or
+manipulate the resulting object directly.
 
 <<>>=
 df <- data.frame(
@@ -102,56 +104,96 @@ df <- data.frame(
    b = rep(0:1, 2),
    c = letters[c(1,2,3,3)],
    d = as.Date("2000-01-01") + 1:4,
-   gr = rep(c("foo", "bar"), each = 2)
+   gr = rep(c("foo", "bar"), each = 2),
+   s = survival::Surv(1:4, c(1,0,1,0))
 )
 df$b[3] <- NA
-g <- dtable_guide(df, real.tol = 3, date.tol = 3)
+g <- dtable_guide(df, real.tol = 3)
 print(g)
 @
 
+
 \subsection{Function lists}
 
-You can supply the describing and comparing functions that you wish to use.
-There is one such list per type. (One downside is that you have to
-define these functions to allow '...' to make it all work.)
+You can supply the describing and comparing functions that you wish to use, one
+list each. There are a few restrictions and/or features:
+\begin{itemize}
+\item If a function has a 'weight'-parameter, this should be called \texttt{w}.
+\item Functions need to have the argument \texttt{...} for technical reasons
+  (all parameters are passed to the function lists, so functions must be able to
+  ignore parameter values that they do not use).
+\item We keep track of metadata by assigning values \texttt{desc} and
+  \texttt{comp} to attribute \texttt{dattr} of the functions that describe and
+  compare, respectively. If the function list supplied do not have this
+  attribute it is set automatically.
 
-There are additional attribute 'dtable' that will keep track of some
-meta information which can be set with \texttt{dattr} (a simple wrapper for
-\texttt{attr}). In short, this attributes should be the same length as the
-function list and have the values "desc" for descriptive functions,
-"comp" for comparative functions and "meta" for additional
-information. Meta information might be repeated in different
-functions, e.g.\ the levels of a categorical variable, but this should
-not be repeated when the parts of a description is being
-concatenated.
+  There is also a \texttt{meta} value that is mostly used internally but can be
+  useful for things that should not be copied when a table is being put
+  together. E.g.\ a function list for categorical data might include simply
+  listing the levels, but this need only be done once. The \texttt{dattr} can be
+  set with the function \texttt{dattr}, which is a simple wrapper function for
+  \texttt{attr}.
+\item Comparing functions need to take a \texttt{glist} argument and the glist
+  will be a logical list (indices) for the subgroups. A pairwise comparer thus
+  needs to compare \texttt{x[glist[[1]]]} to \texttt{x[glist[[2]]]}.
+\item Functions can utilize a \texttt{useNA} that is \texttt{TRUE/FALSE} that in
+  turn will be managed by \texttt{dtable} via the the possible values
+  \texttt{ifany}, \texttt{always} and \texttt{no} such that, in the case
+  of \texttt{ifany}, it look in the guide to see if there are any missing
+  values. This is due to the fact that if a function handles \texttt{NA} in some
+  way this should be uniform over all subgroups (since some subgroups might have
+  missing values and others might not). \textbf{This ``feature'' is currently a
+    bit\ldots suboptimal.}
+\end{itemize}
 
-Lets set up a descriptive and comparative function list.
+Lets set up both a descriptive and a comparative function list.
 <<>>=
 Rdesc <- list(
     "myMean" = function(x, ...) mean(x),
-    "myMeta" = function(x, ...) "info-ish"
+    "myMeta" = function(x, ...) "some info"
 )
 dattr(Rdesc) <- c("desc", "meta")
 Rcomp <- list(
     "myDiff" = function(x,glist,...){
         mean(x[glist[[1]]], na.rm = TRUE) - mean(x[glist[[2]]], na.rm = TRUE)
     },
-    "myMeta" = function(x, ...) "info-ish"
+    "myMeta" = function(x, ...) "some info"
 )
 dattr(Rcomp) <- c("comp", "meta")
+@
+
+Now we can make a simple description of the \texttt{real} variables.
+<<>>=
+dtable(data = df, type = "real", guide = g,
+       desc.flist = Rdesc, comp.flist = Rcomp)
+@
+(Note that the print method also shows the meta data.)
+
+
+
+However, we anticipate that the describers and comparers are typically wanted
+for repeat use in which case one can change the default values. The default
+values are viewed with \texttt{opts\_desc\$get()}, changes with
+\texttt{opts\_desc\$set} and restored with \texttt{opts\_desc\$restore()} (in line
+with global parameter settings in \textbf{knitr}).
+
+With the function list we defined above, we can change to default describers and
+comparers for the \texttt{real} type with the following:
+<<>>=
 opts_desc$set(
         "describe_real" = Rdesc,
         "compare_real"  = Rcomp
         )
 @
 
-Now we can make a simple description of the \texttt{real} variables.
-<<>>=
-dtable(data = df, type = "real", guide = g)
-@
-(Note that the print method also shows the meta data.)
+Subgroup comparisons can be made by supplying a logical list of indices for the
+subgroups (in this manner the subgroups can be overlapping). In our experience
+however, the typical use of subgroups is via some categorical variable. The
+argument \texttt{glist} will this take a logical list, or if given a character
+string the function will create the logical list from the corresponding variable
+in the data set.
 
-Or an "overall" (the default) comparison on a grouping based on the
+E.g.\ an "overall" (the default) comparison on a grouping based on the
 variable \texttt{gr} (a binary variable)
 <<>>=
 dtable(data = df, type = "real", guide = g, glist = "gr")
@@ -168,8 +210,7 @@ variable with 3 values. Here each group besides the first (i.e.\ "b"
 and "c") are compared to the first (here excluding description)
 
 <<>>=
-dtable(data = df, type = "real", guide = g, glist = "c",
-       desc = FALSE, comp = "across")
+dtable(data = df, type = "real", guide = g, glist = "c",comp = "across")
 @
 
 If we instead want to compare "b" to "a" and "c" to "b" we make the
@@ -182,39 +223,211 @@ comparison "adjacent".
 
 A dtable will keep some additional information
 <<>>=
-(dt <- dtable(data = df, type = "real", guide = g, glist = "c",
-       comp = "adjacent"))
 attributes(dt)
 @
 
-\section{A wrapper for \texttt{Hmisc::latex}}
+
+\subsection{A wrapper for \texttt{Hmisc::latex}}
+
+The package comes with a wrapper for \texttt{Hmisc::latex} that will use the
+metadata to create a (hopefully) decent table. It can also invoke a format
+funtion if wanted.
 
 <<results = 'asis'>>=
 
 opts_desc$restore()
-foo <- function(x, glist, ...){
-    t.test(x = x[glist[[1]]], y = x[glist[[2]]])$p.value
-}
-dattr(foo) <- "comp"
-opts_desc$set("compare_real" = flist(c("c_std.r", "foo" = "foo")))
-dt <- dtable(data = df, type = "real", guide = g, glist = "gr",
-       comp = "adjacent")
-dt$foo[1] <- 0.000056576
-dtable_format(dt)
+dt <- dtable(data = df, type = "real", guide = g, glist = "gr")
 dtable_latex(dt, caption = "Default table", format = T)
-@
-
-<<results = 'asis', eval = FALSE>>=
-
-Hmisc::latex(as.data.frame(dt), file = "", where = "htb", rowname = NULL,
-             cgroup = c("", "a", "b", "c", "comp"),
-             n.cgroup = c(2, 1, 1, 1, 1),
-             insert.top = "Some text",
-             insert.bottom = "{\\small\\emph{A foo bar baz}}",
-             caption = "A kind of table")
-
 
 @
+
+
+
+\subsection{Predefined comparers and describers}
+
+There are many predefined comparers and describers within the package. These can
+be easily chosen with the \texttt{flist} function. E.g. there are describers for
+counting the number of records and number of missing, \texttt{d\_n} and
+\texttt{d\_missing}, respectively. To choose these as the default describers for
+\texttt{real} variables, with names ``count'' and ``count\_missing'',
+respectively:
+
+<<eval = FALSE>>=
+opts_desc$set("describe_real" =
+                  flist(c("count" = "d_n", "count_missing" = "d_missing")))
+@
+
+\newpage
+
+\section{A more realistic example with default values}
+
+Create some fake data
+<<>>=
+n <- 200
+set.seed(20160216)
+df <- data.frame(
+    id = paste0("id", 1001:(1000 + n)),
+    r1 = round(rnorm(n, 20, 5)),
+    r2 = round(rexp(n, 1/20)),
+    c1 = sample(letters[1:5], size = n, replace = TRUE),
+    c2 = factor(sample(LETTERS[5:3], size = n, replace = TRUE)),
+    b1 = sample(LETTERS[6:7], size = n, replace = TRUE, prob = 2:3),
+    b2 = rbinom(n, 1, 0.1),
+    b3 = sample(c("No", "Yes"), size = n, replace = TRUE, prob = 1:2),
+    b4 = sample(c(TRUE, FALSE), size = n, replace = TRUE),
+    d1 = as.Date("2000-01-01") + rpois(n, 365),
+    d2 = as.Date(floor(rexp(n, 1/3650)), origin = "1975-01-01"),
+    s1 = survival::Surv(time = rnorm(n, 50, 7), event = rbinom(n, 1, 0.1)),
+    s2 = survival::Surv(time = rexp(n, 1/40), event = rbinom(n, 1, 0.2)),
+    stringsAsFactors = FALSE
+)
+misser <- function(x, m = length(x)){
+    p <- floor(runif(1, min = 1, max = m/10))
+    x[sample(1:n, size = p, replace = FALSE)] <- NA
+    x
+}
+df[2:length(df)] <- lapply(df[2:length(df)], misser)
+dtg <- dtable_guide(df)
+gl <- make_glist("b1", ref = df)
+gl3 <- list(
+    "abacus" = sample(c(T,F), size = n, replace =T),
+    "quuz" = sample(c(T,F), size = n, replace =T),
+    "blazt" = sample(c(T,F), size = n, replace =T)
+)
+vikt <- rpois(n, 1.5) + 1
+opts_desc$restore()
+@
+
+Look at the guide
+
+<<>>=
+dtg
+@
+
+\clearpage
+\subsection{Type \texttt{real}}
+<<results = 'asis'>>=
+dtable_latex(dtable(df, type = "real", glist = gl), format = T,
+             caption = "Two groups described and compared for type \\texttt{real}.")
+@
+<<results = 'asis'>>=
+dtable_latex(dtable(df, type = "real", glist = gl3, w = vikt, comp = "across"),
+             format = T,
+             caption = "Three weighted groups described and compared 'across' for type \\texttt{real}.")
+@
+
+\clearpage
+\subsection{Type \texttt{bnry}}
+<<results = 'asis'>>=
+dtable_latex(dtable(df, type = "bnry", glist = gl), format = T,
+             caption = "Two groups described and compared for type \\texttt{bnry}.")
+@
+<<results = 'asis'>>=
+dtable_latex(dtable(df, type = "bnry", glist = gl3, w = vikt, comp = "across"),
+             format = T,
+             caption = "Three weighted groups described and compared 'across' for type \\texttt{bnry}.")
+@
+
+\clearpage
+\subsection{Type \texttt{catg}}
+<<results = 'asis'>>=
+dtable_latex(dtable(df, type = "catg", glist = gl), format = T,
+             caption = "Two groups described and compared for type \\texttt{catg}.")
+@
+<<results = 'asis'>>=
+dtable_latex(dtable(df, type = "catg", glist = gl3, w = vikt, comp = "across"),
+             format = T,
+             caption = "Three weighted groups described and compared 'across' for type \\texttt{catg}.")
+@
+
+\newpage
+\subsubsection{What is the deal with \texttt{useNA}?}
+There are not (currently) many uses for the \texttt{useNA} option. One of the
+few is for controlling wether to explicitly describe this as a value for
+categorical variables. However, this sort of forces all functions relating to
+categorical variables to have this option\ldots \textbf{Should this be removed?}
+
+<<results = 'asis'>>=
+opts_desc$set("describe_catg" = flist(c(
+                  "levels" = "d_levels",
+                  "percent" = "d_percent",
+                  "est. proportion" = "d_p.c")))
+dtable_latex(dtable(df, type = "catg", glist = gl, useNA = "ifany"), format = T,
+             caption = "Two groups described and compared for type \\texttt{catg}.")
+opts_desc$restore()
+@
+
+\clearpage
+\subsection{Type \texttt{date}}
+<<results = 'asis'>>=
+dtable_latex(dtable(df, type = "date", glist = gl), format = T,
+             caption = "Two groups described and compared for type \\texttt{date}.")
+@
+<<results = 'asis'>>=
+dtable_latex(dtable(df, type = "date", glist = gl3, w = vikt, comp = "across"),
+             format = T,
+             caption = "Three weighted groups described and compared 'across' for type \\texttt{date}.")
+@
+
+\clearpage
+\subsection{Type \texttt{surv}}
+<<results = 'asis'>>=
+dtable_latex(dtable(df, type = "surv", glist = gl), format = T,
+             caption = "Two groups described and compared for type \\texttt{surv}.")
+@
+<<results = 'asis'>>=
+dtable_latex(dtable(df, type = "surv", glist = gl3, w = vikt, comp = "across"),
+             format = T,
+             caption = "Three weighted groups described and compared 'across' for type \\texttt{surv}.")
+@
+
+\newpage
+\section{To do}
+
+\begin{itemize}
+ \item Documentation and ability to browse/view the predefined functions
+ \item implementation of labels
+ \item Ability to describe an imputed data set (i.e. a \texttt{mids} object).
+   %% perhaps by expanding a mids object to a single data frame, keeping a list
+   %% of indices for the values that are imputed
+ \item More metadata; e.g. number of unique id:s if such is specified in the guide.
+ \item Possibility to describe across types with type-agnostic functions?
+ \item separate convience function to describe number of missing values
+ \item latex option to use variable names as rgroup?
+\end{itemize}
 
 
 \end{document}
+
+
+<<eval = FALSE, echo = FALSE>>=
+
+## chunk for testing
+
+dtable(df, type = "catg")
+dtable(df, type = "catg", useNA = "always")
+
+dtable(df, type = "catg", glist = gl)
+dtable(data = df, type = "catg", glist = gl, useNA = "always", desc = FALSE)
+
+data = df
+type = "catg"
+glist = gl
+useNA = "always"
+desc = FALSE
+guide = NULL
+desc.flist = NULL
+comp = NULL
+comp.flist = NULL
+w = NULL
+
+
+dtable(df, type = "catg", glist = gl, useNA = "always", comp = FALSE)
+dtable(df, type = "catg", glist = gl, useNA = "always")
+
+descripteur:::c_diff.c(df$c1, glist = gl, useNA = TRUE)
+descripteur:::d_levels(df$c1, glist = gl, useNA = TRUE)
+
+descripteur:::c_diff.c(df$c1, glist = gl, useNA = FALSE)
+
+@

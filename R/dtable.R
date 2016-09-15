@@ -6,22 +6,26 @@
 ##' @param data a \code{data.frame} or such object
 ##' @param type what kind of variables to you want to describe?
 ##' @param guide point to guide or get the default
-##' @param desc want to decribe variables?
-##' @param comp want to apply a flist of comparers? (requires a glist)
+##' @param desc if to decribe variables
+##' @param desc.flist list of describers, i.e. describing functions
+##' @param comp if, and how to, compare variables (requires a glist)
+##' @param comp.flist list of comparers, i.e. comparing functions
 ##' @param glist grouping list, if wanted
-##' @param w weights
+##' @param w weights, if wanted
 ##' @param useNA how to handle \code{NA} (requires that functions in
 ##'     flist has this argument)
 ##' @param ... arguments passed
 ##' @export
-dtable <- function(data, type, guide = NULL, desc = NULL, comp = NULL,
-                   glist = NULL, w = NULL, useNA = "ifany", ...){
-    if(!type %in% c("real","bnry", "date", "catg")){
+dtable <- function(data, type, guide = NULL,
+                   desc = NULL, desc.flist = NULL,
+                   comp = NULL, comp.flist = NULL,
+                   glist = NULL, w = NULL, useNA = "no", ...){
+    if(!type %in% c("real","bnry", "date", "catg", "surv")){
         stop("type not supported")
     }
     if(!useNA %in% c("ifany", "always", "no")){
-        message("wrong useNA specification")
-        useNA <- "ifany"
+        message("wrong useNA specification (set to 'no')")
+        useNA <- "no"
     }
     P <- dc_param(desc = desc, comp = comp, glist = glist)
     if(is.null(glist)){
@@ -50,13 +54,31 @@ dtable <- function(data, type, guide = NULL, desc = NULL, comp = NULL,
     if(!P$desc & !P$comp) return(NULL)
     if(is.null(guide)) guide <- dtable_guide(data = data)
     gvar <- guide[guide$type == type,]
-    d_fnc <- opts_desc$get(paste0("describe_", type))
-    c_fnc <- opts_desc$get(paste0("compare_", type))
+    d_fnc <- if(!is.null(desc.flist)){
+                 desc.flist
+             } else {
+                 opts_desc$get(paste0("describe_", type))
+             }
+    dattr_d_fnc <- attr(d_fnc, "dtable")
+    if(length(dattr_d_fnc) != length(d_fnc)){
+        warning("dattr for describers is off, reset to 'desc'")
+        attr(d_fnc, "dtable") <- rep("desc", length(d_fnc))
+    }
+    c_fnc <- if(!is.null(comp.flist)){
+                 comp.flist
+             } else {
+                 opts_desc$get(paste0("compare_", type))
+             }
+    dattr_c_fnc <- attr(c_fnc, "dtable")
+    if(length(dattr_c_fnc) != length(c_fnc)){
+        warning("dattr for comparers is off, reset to 'comp'")
+        attr(c_fnc, "dtable") <- rep("comp", length(c_fnc))
+    }
     R1 <- NULL
     R2 <- NULL
+    has_na <- any(gvar$has_missing)
+    use_na <- if(useNA != "ifany") useNA == "always" else has_na
     if(P$desc){
-        has_na <- any(gvar$has_missing)
-        use_na <- if(useNA != "ifany") useNA == "always" else has_na
         for(g in gvar$variable){ ## g <- gvar$variable[1]
             x <- if(type %in% c("bnry", "catg")){
                 factor(data[[g]], levels = attr(guide, "levels")[[g]])
@@ -83,7 +105,7 @@ dtable <- function(data, type, guide = NULL, desc = NULL, comp = NULL,
         }
     }
     if(P$comp){
-        for(g in gvar$variable){ ## g = gvar$variable[2]
+        for(g in gvar$variable){ ## g = gvar$variable[1]
             x <- if(type %in% c("bnry", "catg")){
                 factor(data[[g]], levels = attr(guide, "levels")[[g]])
             } else {
@@ -94,7 +116,7 @@ dtable <- function(data, type, guide = NULL, desc = NULL, comp = NULL,
                 ##                    apply_flist(x = x, flist = c_fnc,
                 ##                       glist = glist, w = w, xname =
                 ##                                                 g))##,...))
-                R0 <- apply_flist(x = x, flist = c_fnc,
+                R0 <- apply_flist(x = x, flist = c_fnc, useNA = use_na, ## <----------
                                       glist = glist, w = w, xname = g) ##,...)
             } else {
                 R0 <- NULL
@@ -143,10 +165,12 @@ if(FALSE){ ## TESTS, some of which are also in tests
         b4 = sample(c(TRUE, FALSE), size = n, replace = TRUE),
         d1 = as.Date("2000-01-01") + rpois(n, 365),
         d2 = as.Date(floor(rexp(n, 1/3650)), origin = "1975-01-01"),
+        s1 = survival::Surv(time = rnorm(n, 50, 7), event = rbinom(n, 1, 0.1)),
+        s2 = survival::Surv(time = rexp(n, 1/40), event = rbinom(n, 1, 0.2)),
         stringsAsFactors = FALSE
     )
     misser <- function(x, m = length(x)){
-        p <- floor(runif(1, min = 1, max = m/2))
+        p <- floor(runif(1, min = 1, max = m/10))
         x[sample(1:n, size = p, replace = FALSE)] <- NA
         x
     }
@@ -166,14 +190,16 @@ if(FALSE){ ## TESTS, some of which are also in tests
     dtable(data = df, type = "real", guide = dtb, glist = gl3, comp = F)
     dtable(data = df, type = "real", guide = dtb, glist = gl, comp = FALSE)
     dtable(data = df, type = "real", guide = dtb, glist = gl, desc = F)
+    dtable(data = df, type = "real", guide = dtb, glist = gl3, desc = F,
+           comp = "across")
+    dtable(data = df, type = "real", guide = dtb, glist = gl3, desc = F,
+           comp = "adjacent")
 
-    opts_desc$set("describe_real" = descripteur:::dr_sym)
-    opts_desc$set("compare_real" = descripteur:::cr_sym)
-    dtable(data = df, type = "real", guide = dtb)
-    dtable(data = df, type = "real", guide = dtb, glist = gl)
-    dtable(data = df, type = "real", guide = dtb, glist = gl3, comp = F)
-    dtable(data = df, type = "real", guide = dtb, glist = gl, comp = FALSE)
-    dtable(data = df, type = "real", guide = dtb, glist = gl, desc = F)
+    ## dtable(data = df, type = "real", guide = dtb)
+    ## dtable(data = df, type = "real", guide = dtb, glist = gl)
+    ## dtable(data = df, type = "real", guide = dtb, glist = gl3, comp = F)
+    ## dtable(data = df, type = "real", guide = dtb, glist = gl, comp = FALSE)
+    ## dtable(data = df, type = "real", guide = dtb, glist = gl, desc = F)
 
     dtable(data = df, type = "real", guide = dtb, glist = gl, w = vikt)
     dtable(data = df, type = "real", guide = dtb, glist = gl3, w = vikt)
@@ -188,6 +214,7 @@ if(FALSE){ ## TESTS, some of which are also in tests
 
     dtable(data = df, type = "catg", guide = dtb)
     dtable(data = df, type = "catg", guide = dtb, useNA = "no")
+
     dtable(data = df, type = "catg", guide = dtb, glist = gl)
     dtable(data = df, type = "catg", guide = dtb, glist = gl3, comp = F)
     dtable(data = df, type = "catg", guide = dtb, glist = gl, desc = F)
@@ -197,6 +224,12 @@ if(FALSE){ ## TESTS, some of which are also in tests
     dtable(data = df, type = "date", guide = dtb)
     dtable(data = df, type = "date", guide = dtb, glist = gl)
     dtable(data = df, type = "date", guide = dtb, glist = gl3, comp = F)
+
+    dtable(data = df, type = "surv", guide = dtb)
+    dtable(data = df, type = "surv", guide = dtb, glist = gl)
+    dtable(data = df, type = "surv", guide = dtb, glist = gl3,
+           comp = "across")
+
 
     fix <- function(s){
         x <- eval(parse(text=s))

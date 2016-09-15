@@ -2,6 +2,7 @@
 dc_param <- function(desc = NULL, comp = NULL, glist = NULL){
     desc.style <- NULL
     comp.style <- NULL
+    if(is.null(desc)) desc <- TRUE
     if(is.character(desc)){
         if(!desc %in% c("each", "first")){
             warning("desc misspecified, we'll fix")
@@ -24,20 +25,16 @@ dc_param <- function(desc = NULL, comp = NULL, glist = NULL){
             warning("cannot compare without a glist")
             comp <- FALSE
         }
-        if(is.null(desc)){
-            desc <- TRUE
-            desc.style <- "each" ## ?
-        }
         if(!desc){
             warning("strange to not want to describe now...")
         }
     } else {
         if(is.null(comp) | is.logical(comp)){
             if(is.null(comp)) comp <- TRUE
-            comp.style <- if(comp) "overall" else NULL
+            if(is.null(comp.style)) comp.style <- "overall"
+            if(!comp) comp.style <- NULL
         }
-        if(is.null(desc)){
-            desc <- TRUE
+        if(desc){
             desc.style <- if(comp){
                 if(comp.style == "overall") "each" else "first"
             } else {
@@ -53,6 +50,7 @@ dc_param <- function(desc = NULL, comp = NULL, glist = NULL){
 
 if(FALSE){
     dc_param()
+    dc_param(desc = T, glist = 1)
     dc_param(glist=1)
     dc_param(comp = "across", glist = 1)
     dc_param(comp = "adjacent", glist = 1)
