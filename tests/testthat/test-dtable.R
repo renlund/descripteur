@@ -1,5 +1,4 @@
 test_that("dtable works", {
-
     foo <- list("type" = "real", "mean" = mean)
     dattr(foo) <- c("meta", "desc")
     opts_desc$set("describe_real" = foo)

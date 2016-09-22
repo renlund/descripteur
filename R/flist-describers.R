@@ -43,7 +43,7 @@ d_sum <- function(x, w = NULL, ...){
     } else {
         stats::weighted.mean(x, w = w, na.rm = TRUE)
     }
-    length(x) * s
+    length(na.omit(x)) * s
 }
 attr(d_sum, "dtable") <- "desc"
 
@@ -124,6 +124,8 @@ make_catg <- function(x){
     as.numeric(apply(X = mm, MARGIN = 2, FUN = stats::weighted.mean, w = w[!is.na(x)]))
 }
 .weighted_tab <- function(x, w = NULL){
+    tryCatch(
+        expr = {
     if(is.null(w)) w <- rep(1L, length(x))
     y <- as.character(x)
     lev <- if(is.factor(x)) levels(x) else unique(x)
@@ -131,7 +133,11 @@ make_catg <- function(x){
     u <- factor(y, levels = c(lev, "dOntnAmeyOurlEveltOtHis"))
     mm <- stats::model.matrix(~u)
     mm[,1] <- ifelse(rowSums(mm[,-1]) == 0, 1, 0)
-    100*as.numeric(apply(X = mm, MARGIN = 2, FUN = stats::weighted.mean, w = w))
+    100*as.numeric(apply(X = mm, MARGIN = 2, FUN = stats::weighted.mean,
+                              w = w))
+    }, error = function(e)
+        stop(paste0("descripteur internal function .weighted_tab fails with error:\n", e))
+    )
 }
 ## -- list functions --
 d_levels <- function(x, useNA = FALSE, w = NULL, ...){
@@ -140,11 +146,12 @@ d_levels <- function(x, useNA = FALSE, w = NULL, ...){
 }
 attr(d_levels, "dtable") <- "meta"
 d_percent <- function(x, useNA = FALSE, w = NULL){
-    ## if(!is.null(w)) message("percent function for catg does not use weights")
+    ##cat("\nuseNA nu:", useNA, "\n\n")
     y <- make_catg(x)
-    ## t <- as.numeric(table(y, useNA = "always")) / length(y)
-    t <- .weighted_tab(x = y, w = w)
-    r <- if(useNA) t else t[-length(t)]
+    ta <- .weighted_tab(x = y, w = w)
+    ##cat("wtf:", length(ta), "\n", "ta:", ta, "\nta[-length(ta)]",
+    ##    ta[-length(ta)], "\n", "useNA:", useNA, "\n")
+    r <- if(useNA) ta else ta[-length(ta)]
     r
 }
 attr(d_percent, "dtable") <- "desc"

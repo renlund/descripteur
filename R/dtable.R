@@ -50,6 +50,9 @@ dtable <- function(data, type, guide = NULL,
         }
         if(length(w) != nrow(data))
             stop("bad weighting")
+        if(any(is.na(w))){
+            warning("weight has NA:s")
+        }
     }
     if(!P$desc & !P$comp) return(NULL)
     if(is.null(guide)) guide <- dtable_guide(data = data)
