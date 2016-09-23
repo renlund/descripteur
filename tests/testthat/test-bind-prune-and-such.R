@@ -17,7 +17,7 @@ test_that("dtable_rbind works", {
     )
 })
 
-test_that("cbind_dtable", {
+test_that("dtable_cbind", {
     df1 <- data.frame(variable = 1, y = 1, z = 2,
                       check.names = FALSE)
     class(df1) <- c("dtable", "data.frame")
@@ -27,7 +27,7 @@ test_that("cbind_dtable", {
     dattr(df2) <- c("meta", "HY", "meta")
     class(df2) <- c("dtable", "data.frame")
     expect_equal(
-        cbind_dtable(x = NULL, y = df1),
+        dtable_cbind(x = NULL, y = df1),
         structure(list(variable = 1, y = 1, z = 2),
                   .Names = c("variable", "y", "z"),
                   class = c("dtable", "data.frame"),
@@ -35,7 +35,7 @@ test_that("cbind_dtable", {
                   dtable = c("meta", "HY", "HY"))
     )
     expect_equal(
-        cbind_dtable(x = NULL, y = df1, groups = "A"),
+        dtable_cbind(x = NULL, y = df1, groups = "A"),
         structure(list(variable = 1, y = 1, z = 2),
                   .Names = c("variable", "y", "z"),
                   class = c("dtable", "data.frame"),
@@ -43,7 +43,7 @@ test_that("cbind_dtable", {
                   dtable = c("meta", "HY:A", "HY:A"))
         )
     expect_equal(
-        cbind_dtable(x = df1, y = df2, groups = letters[1:2]),
+        dtable_cbind(x = df1, y = df2, groups = letters[1:2]),
         structure(list(variable = 1, u = 3, y = 1, z = 2, y = 2),
                   .Names = c("variable", "u", "y", "z", "y"),
                   class = c("dtable", "data.frame"),

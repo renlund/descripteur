@@ -29,7 +29,7 @@ dtable_rbind <- function(x, y){
 ##' @param groups add meta info to the groups
 ##' @export
 
-cbind_dtable <- function(x, y, groups = NULL){
+dtable_cbind <- function(x, y, groups = NULL){
     mx <- dtable_order(x)
     my <- dtable_order(y)
     a <- attr(mx, "dtable")
@@ -90,7 +90,7 @@ dtable_order <- function(x){
 dtable_prune <- function(x, rm = NULL, keep = NULL){
     if(is.null(rm) & is.null(keep)) return(x)
     if(!is.null(rm) & !is.null(keep)){
-        warning("It does not like to remove and keep.\nIt will only remove.")
+        warning("It does not like to remove AND keep.\nIt will only remove.")
         keep <- NULL
     }
     d <- dattr(x)
@@ -110,18 +110,6 @@ dtable_prune <- function(x, rm = NULL, keep = NULL){
     dattr(r) <- dattr(x)[-rm]
     r
 }
-
-## dtable_prune <- function(x, rm = NULL){
-##     if(is.null(rm)) return(x)
-##     d <- dattr(x)
-##     if(is.character(rm)){
-##         rm <- which(names(x) %in% rm)
-##     }
-##     r <- x[,-rm, drop = FALSE]
-##     names(r) <- names(x)[-rm]
-##     dattr(r) <- dattr(x)[-rm]
-##     r
-## }
 
 ##' turn dtable into data.frame
 ##'
@@ -172,27 +160,27 @@ if(FALSE){
                     gee = c(3,4),
                     mush = c("baz", "quuz"))
     attr(y, "dtable")  <- c("meta", "desc", "meta")
-    (r <- cbind_dtable(x, y, groups = c("hoy", "jupp")))
+    (r <- dtable_cbind(x, y, groups = c("hoy", "jupp")))
     attr(r, "dtable")
 
     z <- data.frame(gee = c(5,6),
                     variable = c("foo", "bar"),
                     mush = c("baz", "quuz"))
     attr(z, "dtable")  <- c("desc", "meta", "meta")
-    (r2 <- cbind_dtable(x = r, y = z, groups = c("bazooka")))
+    (r2 <- dtable_cbind(x = r, y = z, groups = c("bazooka")))
     attr(r2, "dtable")
 
     u <- data.frame(fruuu = c(7,8),
                     variable = c("foo", "bar"))
     attr(u, "dtable")  <- c("comp", "meta")
-    (r3 <- cbind_dtable(x = r2, y = u))
+    (r3 <- dtable_cbind(x = r2, y = u))
     attr(r3, "dtable")
 
     (x <- apply_flist(1:10, flist = dr_def))
     attr(x, "dtable")
     (y <- apply_flist(2:10, flist = dr_sym))
     attr(y, "dtable")
-    (r <- cbind_dtable(x, y))
+    (r <- dtable_cbind(x, y))
 
     tmp1 <- structure(list(variable = structure(1L, .Label = "r1", class = "factor"),
     missing = 15, median = 19, IQR = 5), .Names = c("variable",
@@ -204,7 +192,7 @@ if(FALSE){
 "missing", "median", "IQR"), row.names = c(NA, -1L), class = c("dtable",
 "data.frame"), dtable = c("meta", "desc", "desc", "desc"))
 
-    (tmp <- cbind_dtable(x = tmp1, y = tmp2, groups = letters[1:2]))
+    (tmp <- dtable_cbind(x = tmp1, y = tmp2, groups = letters[1:2]))
     attr(tmp, "dtable")
 
     x <- data.frame(variable = c("foo", "bar"),
@@ -215,27 +203,27 @@ if(FALSE){
                     gee = c(3,4),
                     mush = c("baz", "quuz"))
     attr(y, "dtable")  <- c("meta", "desc", "meta")
-    (r <- cbind_dtable(x, y, groups = c("hoy", "jupp")))
+    (r <- dtable_cbind(x, y, groups = c("hoy", "jupp")))
     attr(r, "dtable")
 
     z <- data.frame(gee = c(5,6),
                     variable = c("foo", "bar"),
                     mush = c("baz", "quuz"))
     attr(z, "dtable")  <- c("desc", "meta", "meta")
-    (r2 <- cbind_dtable(x = r, y = z, groups = c("bazooka")))
+    (r2 <- dtable_cbind(x = r, y = z, groups = c("bazooka")))
     attr(r2, "dtable")
 
     u <- data.frame(fruuu = c(7,8),
                     variable = c("foo", "bar"))
     attr(u, "dtable")  <- c("comp", "meta")
-    (r3 <- cbind_dtable(x = r2, y = u))
+    (r3 <- dtable_cbind(x = r2, y = u))
     attr(r3, "dtable")
 
     (x <- apply_flist(1:10, flist = dr_def))
     attr(x, "dtable")
     (y <- apply_flist(2:10, flist = dr_sym))
     attr(y, "dtable")
-    (r <- cbind_dtable(x, y))
+    (r <- dtable_cbind(x, y))
 
     tmp1 <- structure(list(variable = structure(1L, .Label = "r1", class = "factor"),
     missing = 15, median = 19, IQR = 5), .Names = c("variable",
@@ -247,7 +235,7 @@ if(FALSE){
 "missing", "median", "IQR"), row.names = c(NA, -1L), class = c("dtable",
 "data.frame"), dtable = c("meta", "desc", "desc", "desc"))
 
-    (tmp <- cbind_dtable(x = tmp1, y = tmp2, groups = letters[1:2]))
+    (tmp <- dtable_cbind(x = tmp1, y = tmp2, groups = letters[1:2]))
     attr(tmp, "dtable")
 
 }

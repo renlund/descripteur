@@ -99,7 +99,7 @@ dtable <- function(data, type, guide = NULL,
                                        useNA = use_na,
                                        w = w[glist[[k]]],
                                        xname = g)##, ...)
-                    R0 <- cbind_dtable(x = R0, y = tmp,
+                    R0 <- dtable_cbind(x = R0, y = tmp,
                                        groups = names(glist)[k])
                     if(P$desc.style == "first") break
                 }
@@ -128,7 +128,7 @@ dtable <- function(data, type, guide = NULL,
                     tmp <- apply_flist(x = x, glist = glist[c(ref.index,k)],
                                        flist = c_fnc, useNA = use_na,
                                        xname = g, ...)
-                    R0 <- cbind_dtable(R0, tmp,
+                    R0 <- dtable_cbind(R0, tmp,
                                        groups = names(glist)[k])
                 }
             }
@@ -138,7 +138,7 @@ dtable <- function(data, type, guide = NULL,
     R <- dtable_order(if(is.null(R1)  | is.null(R2)){
         if(!is.null(R1)) R1 else R2
     } else {
-        cbind_dtable(R1, R2)
+        dtable_cbind(R1, R2)
     })
     if(!is.null(glist)){
         attr(R, "glist_size") <- unlist(lapply(glist, sum, na.rm = TRUE))
