@@ -127,7 +127,7 @@ dtable_format <- function(dt, param = as.list(NULL)){
     R[il] <- lapply(R[il], hfnc, digits = bh)
     ih <- num[which(h<=b)]
     R[ih] <- lapply(R[ih], lfnc, digits = bl)
-    R[num[p]] <- lapply(R[num[p]], function(x) ifelse(x < p_b, paste0("<", p_b), x))
+    R[num[p]] <- lapply(R[num[p]], function(x) ifelse(x < p_b & x > 0, paste0("<", p_b), x))
     i_rest <- setdiff(num, c(il, ih))
     R[i_rest] <- lapply(R[i_rest], round, 2)
     ## format character

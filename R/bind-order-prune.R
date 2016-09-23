@@ -6,7 +6,7 @@
 ##' @param y object 2
 ##' @export
 
-rbind_dtable <- function(x, y){
+dtable_rbind <- function(x, y){
     if(is.null(x) | is.null(y)){
         r <- if(is.null(x)) return(y) else return(x)
     }
@@ -30,8 +30,8 @@ rbind_dtable <- function(x, y){
 ##' @export
 
 cbind_dtable <- function(x, y, groups = NULL){
-    mx <- meta_order_dtable(x)
-    my <- meta_order_dtable(y)
+    mx <- dtable_order(x)
+    my <- dtable_order(y)
     a <- attr(mx, "dtable")
     b <- attr(my, "dtable")
     if(!is.null(groups)){
@@ -50,7 +50,7 @@ cbind_dtable <- function(x, y, groups = NULL){
     if(all(mx$variable == my$variable)){
         tmp <- setdiff(names(my), ut)
         ## y_mod <- subset(as.data.frame(my), TRUE, select = tmp)
-        y_mod <- prune_dtable(my, rm = ut)
+        y_mod <- dtable_prune(my, rm = ut)
         r <- cbind(as.data.frame(mx), as.data.frame(y_mod))
     } else {
         message("why is 'variable' off? I'll try to fix it")
@@ -62,7 +62,7 @@ cbind_dtable <- function(x, y, groups = NULL){
     attr(r, "dtable") <- c(a, stats::na.omit(ifelse(names(my) %in% ut, NA,
                                              b)))
     class(r) <- c("dtable", class(r))
-    meta_order_dtable(r)
+    dtable_order(r)
 }
 ##' order dtables according to meta info
 ##'
@@ -71,7 +71,7 @@ cbind_dtable <- function(x, y, groups = NULL){
 ##' @param x object
 ##' @export
 
-meta_order_dtable <- function(x){
+dtable_order <- function(x){
     a <- attr(x, "dtable")
     i <- c(which(a == "meta"), which(a != "meta"))
     r <- x[,i]
@@ -85,8 +85,9 @@ meta_order_dtable <- function(x){
 ##' @title prune dtable
 ##' @param x object
 ##' @param rm index or variable name to remove
+##' @param keep index or variable name to keep
 ##' @export
-prune_dtable <- function(x, rm = NULL, keep = NULL){
+dtable_prune <- function(x, rm = NULL, keep = NULL){
     if(is.null(rm) & is.null(keep)) return(x)
     if(!is.null(rm) & !is.null(keep)){
         warning("It does not like to remove and keep.\nIt will only remove.")
@@ -110,7 +111,7 @@ prune_dtable <- function(x, rm = NULL, keep = NULL){
     r
 }
 
-## prune_dtable <- function(x, rm = NULL){
+## dtable_prune <- function(x, rm = NULL){
 ##     if(is.null(rm)) return(x)
 ##     d <- dattr(x)
 ##     if(is.character(rm)){

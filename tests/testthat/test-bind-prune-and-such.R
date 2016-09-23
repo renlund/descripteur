@@ -1,4 +1,4 @@
-test_that("rbind_dtable works", {
+test_that("dtable_rbind works", {
     df1 <- data.frame(x = 1, y = 1, x = 2,
                       check.names = FALSE)
     class(df1) <- c("dtable", "data.frame")
@@ -12,7 +12,7 @@ test_that("rbind_dtable works", {
     class(df) <- c("dtable", "data.frame")
     dattr(df) <- rep("foo", 3)
     expect_equal(
-        rbind_dtable(x = df1, y = df2),
+        dtable_rbind(x = df1, y = df2),
         df
     )
 })
@@ -52,28 +52,28 @@ test_that("cbind_dtable", {
         )
 })
 
-## test_that("meta_order_dtable works", {})
+## test_that("dtable_order works", {})
 
-test_that("prune_dtable works",{
+test_that("dtable_prune works",{
     df <- data.frame(x = 1, y = 1, x = 2,
                      check.names = FALSE)
     dattr(df) <- rep("foo", 3)
     expect_equal(
-        prune_dtable(df, 1),
+        dtable_prune(df, 1),
         structure(list(y = 1, x = 2), .Names = c("y", "x"),
                   class = "data.frame",
                   row.names = c(NA, -1L),
                   dtable = c("foo", "foo"))
     )
     expect_equal(
-       prune_dtable(x = df, rm = "x"),
+       dtable_prune(x = df, rm = "x"),
         structure(list(y = 1), .Names = c("y"),
                   class = "data.frame",
                   row.names = c(NA, -1L),
                   dtable = c("foo"))
     )
     expect_equal(
-        prune_dtable(x = df, keep = "x"),
+        dtable_prune(x = df, keep = "x"),
         structure(list(x = 1, x = 2),
                   .Names = c("x", "x"),
                   class = "data.frame",
@@ -81,7 +81,7 @@ test_that("prune_dtable works",{
                   dtable = c("foo", "foo"))
     )
     expect_equal(
-        prune_dtable(x = df, keep = "y"),
+        dtable_prune(x = df, keep = "y"),
         structure(list(y = 1),
                   .Names = "y",
                   class = "data.frame",

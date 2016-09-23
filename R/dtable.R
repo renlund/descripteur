@@ -104,7 +104,7 @@ dtable <- function(data, type, guide = NULL,
                     if(P$desc.style == "first") break
                 }
             }
-            R1 <- if(is.null(R1)) R0 else rbind_dtable(R1, R0)
+            R1 <- if(is.null(R1)) R0 else dtable_rbind(R1, R0)
         }
     }
     if(P$comp){
@@ -115,7 +115,7 @@ dtable <- function(data, type, guide = NULL,
                 data[[g]]
             }
             if(P$comp.style == "overall"){
-                ## R2 <- rbind_dtable(R2,
+                ## R2 <- dtable_rbind(R2,
                 ##                    apply_flist(x = x, flist = c_fnc,
                 ##                       glist = glist, w = w, xname =
                 ##                                                 g))##,...))
@@ -132,10 +132,10 @@ dtable <- function(data, type, guide = NULL,
                                        groups = names(glist)[k])
                 }
             }
-            R2 <- rbind_dtable(R2, R0)
+            R2 <- dtable_rbind(R2, R0)
         }
     }
-    R <- meta_order_dtable(if(is.null(R1)  | is.null(R2)){
+    R <- dtable_order(if(is.null(R1)  | is.null(R2)){
         if(!is.null(R1)) R1 else R2
     } else {
         cbind_dtable(R1, R2)
