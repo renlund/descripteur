@@ -28,11 +28,7 @@ dtable <- function(data, type, guide = NULL,
         useNA <- "no"
     }
     P <- dc_param(desc = desc, comp = comp, glist = glist)
-    if(is.null(glist)){
-        ## if(is.null(comp)) comp <- FALSE
-        ## if(comp) message("comparisons require a glist")
-        ## comp <- FALSE
-    } else {
+    if(!is.null(glist)){
         if(is.character(glist)) glist <- make_glist(x = glist, ref = data)
         if(!is.list(glist)){
             glist <- tryCatch(make_glist(glist, ref = data[[1]]),
@@ -40,7 +36,6 @@ dtable <- function(data, type, guide = NULL,
                                   stop("cannot make glist from this glist-argument"))
         }
         if(length(glist) == 1) stop("only 1 subgroup defined by glist")
-        ## if(length(glist) >  1 & is.null(P$comp)) comp <- TRUE
     }
     if(!is.null(w)){
         if(is.character(w)){
@@ -53,8 +48,11 @@ dtable <- function(data, type, guide = NULL,
         if(any(is.na(w))){
             warning("weight has NA:s")
         }
+        if(any(w<0)){
+            warning("weight has negative elements")
+        }
     }
-    if(!P$desc & !P$comp) return(NULL)
+    if(!P$desc & !P$comp) return(as.data.frame(NULL))
     if(is.null(guide)) guide <- dtable_guide(data = data)
     gvar <- guide[guide$type == type,]
     d_fnc <- if(!is.null(desc.flist)){
@@ -115,12 +113,8 @@ dtable <- function(data, type, guide = NULL,
                 data[[g]]
             }
             if(P$comp.style == "overall"){
-                ## R2 <- dtable_rbind(R2,
-                ##                    apply_flist(x = x, flist = c_fnc,
-                ##                       glist = glist, w = w, xname =
-                ##                                                 g))##,...))
-                R0 <- apply_flist(x = x, flist = c_fnc, useNA = use_na, ## <----------
-                                      glist = glist, w = w, xname = g) ##,...)
+                R0 <- apply_flist(x = x, flist = c_fnc, useNA = use_na,
+                                      glist = glist, w = w, xname = g, ...)
             } else {
                 R0 <- NULL
                 for(k in 2:length(glist)){ ## k = 2
@@ -147,7 +141,6 @@ dtable <- function(data, type, guide = NULL,
                 unlist(lapply(glist, function(x) sum(w[x], na.rm =TRUE)))
         }
     }
-    ## R
     attr(R, "dc_param") <- P
     R
 }

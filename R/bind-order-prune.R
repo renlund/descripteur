@@ -47,17 +47,17 @@ dtable_cbind <- function(x, y, groups = NULL){
     n_a <- names(mx)[a == "meta"]
     n_b <- names(my)[b == "meta"]
     ut <- n_b[n_b %in% n_a]
-    if(all(mx$variable == my$variable)){
+    if(all(mx$variable == my$variable & nrow(mx) == nrow(my))){
         tmp <- setdiff(names(my), ut)
-        ## y_mod <- subset(as.data.frame(my), TRUE, select = tmp)
         y_mod <- dtable_prune(my, rm = ut)
         r <- cbind(as.data.frame(mx), as.data.frame(y_mod))
     } else {
-        message("why is 'variable' off? I'll try to fix it")
-        ut2 <- setdiff(ut, "variable")
-        y_mod <- subset(my, TRUE,
-                        select = setdiff(names(my), ut2))
-        r <- merge(mx, y_mod, by = "variable")
+        message("Something doesn't quite add up. I'll try to fix it - but please check the results.")
+        ax <- ay <- FALSE
+        if(nrow(mx) >= nrow(y)) ax <- TRUE else ay <- TRUE
+        r <- merge(as.data.frame(mx), as.data.frame(my), by = ut,
+                   all.x = ax, all.y = ay)
+        names(r) <- sub("\\.(x|y)$", "", names(r))
     }
     attr(r, "dtable") <- c(a, stats::na.omit(ifelse(names(my) %in% ut, NA,
                                              b)))
