@@ -37,7 +37,7 @@ make_glist <- function(x, ref = NULL){
 factorize_glist <- function(glist){
     g <- as.data.frame(glist)
     rS <- rowSums(g)
-    if(any(is.na(rS)) | any(na.omit(rS) != 1)){
+    if(any(is.na(rS)) | any(stats::na.omit(rS) != 1)){
         text1 <- "[descripteur/factorize_glist]: The grouping in glist is not equivalent to a categorical variable"
         ss <- all(rowSums(g, na.rm = TRUE) <= 1)
         text2 <- if(ss) "\n -- But there may be a natural subset that is!" else NULL
