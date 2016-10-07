@@ -1,31 +1,3 @@
-## test_that(".weighter works", {
-##     x = 1:5
-##     v1 = rep(1, 5)
-##     v2 = 2.7*v1
-##     v3 = c(4,2,1,2,4)
-##     v4 = c(0,1,1,1,0)
-##     v5 = c(-1,1,2,1,-1)
-##     expect_equal(weighted.mean(x, v1), mean(.weighter(x, v1)))
-##     expect_equal(weighted.mean(x, v2), mean(.weighter(x, v2)))
-##     expect_equal(weighted.mean(x, v3), mean(.weighter(x, v3)))
-##     expect_equal(weighted.mean(x, v4), mean(.weighter(x, v4)))
-##     expect_equal(weighted.mean(x, v5), mean(.weighter(x, v5)))
-##     x[3] <- NA
-##     expect_equal(weighted.mean(x, v1, na.rm = TRUE),mean(.weighter(x, v1)))
-##     expect_equal(weighted.mean(x, v2, na.rm = TRUE),mean(.weighter(x, v2)))
-##     expect_equal(weighted.mean(x, v3, na.rm = TRUE),mean(.weighter(x, v3)))
-##     expect_equal(weighted.mean(x, v4, na.rm = TRUE),mean(.weighter(x, v4)))
-##     expect_error(mean(.weighter(x, v5)))
-##     x[3] <- 3
-##     expect_equal(sd(x), sd(.weighter(x,v1)))
-##     expect_equal(sd(x), sd(.weighter(x,v2)))
-##     expect_equal(sd(x[2:4]), sd(.weighter(x,v4)))
-##     x[3] <- NA
-##     expect_equal(sd(x, na.rm = TRUE), sd(.weighter(x,v1)))
-##     expect_equal(sd(x, na.rm = TRUE), sd(.weighter(x,v2)))
-##     expect_equal(sd(x[2:4], na.rm = TRUE), sd(.weighter(x,v4)))
-## })
-
 test_that(desc = "c_rstd works", code = {
     x  <- c(1,5,9, 1,6,11)
     w  <- c(1,1,1, 2,2,2)

@@ -1,7 +1,7 @@
 Package: descripteur
 Type: Package
 Title: Describe Data Sets
-Version: 0.0.2.9010
+Version: 0.0.2.9011
 Author: Henrik Renlund
 Maintainer: Henrik Renlund <henrikrenlund@gmail.com>
 Description: An attempt to systematize my data description.
@@ -10,7 +10,6 @@ LazyData: TRUE
 Suggests:
     knitr,
     rmarkdown,
-    testthat,
-    qpdf
+    testthat
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
