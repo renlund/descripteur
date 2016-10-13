@@ -83,10 +83,10 @@ test_that("d_percent works", {
     expect_equal(d_percent(x = x,  w = w), c(2, 3, 5)*100/17)
 })
 
-test_that("d_p.c works", {
-    expect_equal(d_p.c(x, useNA = FALSE), c(1,1,1)/3)
-    expect_equal(d_p.c(x, useNA =TRUE), c(1,1,1,NA)/3)
-    expect_equal(d_p.c(x, w=w, useNA = FALSE), c(2,3,5)/10)
-    expect_equal(d_p.c(x, useNA =TRUE, w=w), c(2,3,5, NA)/10)
+test_that("d_cp works", {
+    expect_equal(d_cp(x, useNA = FALSE), c(1,1,1)/3)
+    expect_equal(d_cp(x, useNA =TRUE), c(1,1,1,NA)/3)
+    expect_equal(d_cp(x, w=w, useNA = FALSE), c(2,3,5)/10)
+    expect_equal(d_cp(x, useNA =TRUE, w=w), c(2,3,5, NA)/10)
 })
 rm(x, w, y, v)

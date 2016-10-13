@@ -34,6 +34,31 @@ c_rstd <- function(x, glist, w = NULL, ...){
 }
 attr(c_rstd, "dtable") <- "comp"
 
+##' @describeIn c_real t.test p-value, 2 groups only (could be made with weights
+##'     but not implemented yet)
+##' @export
+c_t.test.p <- function(x, glist, ...){
+    stats::t.test(x = x[glist[[1]]], y = x[glist[[2]]])$p.value
+}
+attr(c_t.test.p, "dtable") <- "comp"
+
+##' @describeIn c_real t.test p-value, 2 groups only (could be made with weights
+##'     but not implemented yet)
+##' @export
+c_wilcox.p <- function(x, glist, ...){
+    stats::wilcox.test(x = x[glist[[1]]], y = x[glist[[2]]], exact = FALSE)$p.value
+}
+attr(c_wilcox.p, "dtable") <- "comp"
+
+##' @describeIn c_real anova test p-value, any number of groups
+##' @export
+c_anova.p <- function(x, glist, ...){
+    fg <- factorize_glist(glist)
+    a <- stats::anova(stats::lm(x~fg))
+    a[["Pr(>F)"]][1]
+}
+attr(c_anova.p, "dtable") <- "comp"
+
      ## +----------------------------------------+ ##
      ## | comparing functions for bnry variables | ##
      ## +----------------------------------------+ ##
@@ -122,8 +147,8 @@ c_catg <- function(...) invisible(NULL)
 c_pdiff <- function(x, glist, useNA = FALSE, w = NULL, ...){
     w1 <- w[glist[[1]]]
     w2 <- w[glist[[2]]]
-    p1 <- d_p.c(x[glist[[1]]], w = w1, useNA = useNA)
-    p2 <- d_p.c(x[glist[[2]]], w = w2, useNA = useNA)
+    p1 <- d_cp(x[glist[[1]]], w = w1, useNA = useNA)
+    p2 <- d_cp(x[glist[[2]]], w = w2, useNA = useNA)
     p1 - p2
 }
 attr(c_pdiff, "dtable") <- "comp"
@@ -133,8 +158,8 @@ attr(c_pdiff, "dtable") <- "comp"
 c_cOR <- function(x, glist, useNA = FALSE, w = NULL, ...){
     w1 <- w[glist[[1]]]
     w2 <- w[glist[[2]]]
-    p1 <- d_p.c(x[glist[[1]]], w = w1, useNA=useNA)
-    p2 <- d_p.c(x[glist[[2]]], w = w2, useNA=useNA)
+    p1 <- d_cp(x[glist[[1]]], w = w1, useNA=useNA)
+    p2 <- d_cp(x[glist[[2]]], w = w2, useNA=useNA)
     (p1 / (1-p1)) / (p2 / (1-p2))
 }
 attr(c_cOR, "dtable") <- "comp"
@@ -154,14 +179,14 @@ attr(c_cOR, "dtable") <- "comp"
 ##'
 ##' @param x vector
 ##' @param glist a grouping list
-##' @param type type of censoring
 ##' @param w weight
+##' @param type type of censoring
 ##' @param ... this is to be able to tolerate unnecessary arguments
 c_surv <- function(...) invisible(NULL)
 
 ##' @describeIn c_surv rate ratio, 2 groups only
 ##' @export
-c_rr <- function(x, glist, type = "right", w = NULL, ...){
+c_rr <- function(x, glist, w = NULL, type = "right", ...){
     survcheck(x)
     if(is.null(w)) w <- rep(1, length(x)/2)
     x1 <- x[glist[[1]]]
@@ -170,7 +195,7 @@ c_rr <- function(x, glist, type = "right", w = NULL, ...){
     w2 <- w[glist[[2]]]
     if(type == "right"){
         check_right(x)
-        d_rate(x1, type, w1) / d_rate(x2, type, w2)
+        d_rate(x1, w = w1, type = type) / d_rate(x2, w = w2, type = type)
     } else {
         stop("no type but 'right' has been implemented")
     }

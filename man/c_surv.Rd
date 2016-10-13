@@ -7,7 +7,7 @@
 \usage{
 c_surv(...)
 
-c_rr(x, glist, type = "right", w = NULL, ...)
+c_rr(x, glist, w = NULL, type = "right", ...)
 }
 \arguments{
 \item{...}{this is to be able to tolerate unnecessary arguments}
@@ -16,9 +16,9 @@ c_rr(x, glist, type = "right", w = NULL, ...)
 
 \item{glist}{a grouping list}
 
-\item{type}{type of censoring}
-
 \item{w}{weight}
+
+\item{type}{type of censoring}
 }
 \description{
 various comparer functions for surv types

@@ -23,7 +23,7 @@ dtable_rbind <- function(x, y){
 ##' cbind dtables
 ##'
 ##' wrapper for \code{cbind} which keeps dtable attributes sane
-##' @title rbind for dtables
+##' @title cbind for dtables
 ##' @param x object 1
 ##' @param y object 2
 ##' @param groups add meta info to the groups

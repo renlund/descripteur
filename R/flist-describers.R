@@ -143,7 +143,7 @@ d_ref_level <- function(x, ...){
     y <- make_bnry(x)
     levels(y)[2]
 }
-attr(d_ref_level, "dtable") <- "desc"
+attr(d_ref_level, "dtable") <- "meta"
 
 ##' @describeIn d_bnry number of occurences of the reference value
 ##' @export
@@ -248,12 +248,12 @@ attr(d_percent, "dtable") <- "desc"
 
 ##' @describeIn d_catg the estimated proportion of each level
 ##' @export
-d_p.c <- function(x, useNA = FALSE, w = NULL){
+d_cp <- function(x, useNA = FALSE, w = NULL){
     y <- make_catg(x)
     t <- weighted_p(x = y, w = w)
     if(useNA) c(t, NA) else t
 }
-attr(d_p.c, "dtable") <- "desc"
+attr(d_cp, "dtable") <- "desc"
 
     ## +-----------------------------------------+ ##
     ## | describing functions for surv variables | ##
@@ -325,7 +325,7 @@ d_rate <- function(x, w = NULL, type = "right", ...){
     survcheck(x)
     if(type == "right"){
         check_right(x)
-        d_esum(x, type, w) / d_tsum(x, type, w)
+        d_esum(x, w = w, type = type) / d_tsum(x, w = w, type = type)
     } else {
         stop("no type but 'right' has been implemented")
     }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/bind-order-prune.R
 \name{dtable_cbind}
 \alias{dtable_cbind}
-\title{rbind for dtables}
+\title{cbind for dtables}
 \usage{
 dtable_cbind(x, y, groups = NULL)
 }

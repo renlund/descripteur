@@ -48,16 +48,16 @@ desc_restore <- function(){
     assign(x="defaults",
            value=list(
                "describe_real" = flist(c("mean" = "d_mean", "sd" = "d_sd")),
-               "describe_bnry" = flist(c("p" = "d_p.b")),
-               "describe_catg" = flist(c("levels" = "d_levels", "p" = "d_p.c")),
+               "describe_bnry" = flist(c("value" = "d_ref_level", "prop" = "d_bp")),
+               "describe_catg" = flist(c("levels" = "d_levels", "p" = "d_cp")),
                "describe_date" = flist(c("min" = "d_min", "max" = "d_max")),
-               "describe_surv" = flist(c("time" = "d_tsum.s",
-                                 "events" = "d_esum.s", "rate" = "d_rate.s")),
-               "compare_real"  = flist(c("std" = "c_std.r")),
-               "compare_bnry"  = flist(c("std" = "c_std.b", "OR" = "c_OR")),
-               "compare_catg"  = flist(c("levels" = "d_levels", "diff" = "c_diff.c")),
-               "compare_date"  = flist(c("overlap" = "c_overlap.d")),
-               "compare_surv"  = flist(c("RR" = "c_rr.s"))
+               "describe_surv" = flist(c("time" = "d_tsum",
+                                 "events" = "d_esum", "rate" = "d_rate")),
+               "compare_real"  = flist(c("std" = "c_rstd")),
+               "compare_bnry"  = flist(c("std" = "c_bstd", "OR" = "c_OR")),
+               "compare_catg"  = flist(c("levels" = "d_levels", "diff" = "c_pdiff")),
+               "compare_date"  = flist(c("overlap" = "c_overlap")),
+               "compare_surv"  = flist(c("RR" = "c_rr"))
    ), envir=le_milieu)
    assign(x="value", value = names(get(x="defaults", envir=le_milieu)), envir=le_milieu)
    desc_check()

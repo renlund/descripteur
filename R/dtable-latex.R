@@ -11,7 +11,6 @@
 ##' @param format use \code{dtable_format}?
 ##' @param format.param list of parameters to pass to
 ##'     \code{dtable_format} (only used if \code{format = TRUE}).
-##' @importFrom Hmisc latex
 ##' @export
 dtable_latex <- function(dt, bling = TRUE,
                          file = "", where = "htb", rowname = NULL,

@@ -12,11 +12,11 @@
 
 <<"setup", cache = FALSE, echo = FALSE, include = FALSE>>=
 library(knitr)
-## library(descripteur)
-devtools::load_all()
-opts_chunk$set(include = TRUE, echo = TRUE)
+library(descripteur)
+## devtools::load_all()
+opts_chunk$set(include = TRUE, echo = TRUE, cache = FALSE)
 if(FALSE){
-    knit2pdf("describe-data.rnw")
+    knitr::knit2pdf("describe-data.rnw", clean = TRUE)
 }
 @
 
@@ -286,9 +286,9 @@ misser <- function(x, m = length(x)){
     x[sample(1:n, size = p, replace = FALSE)] <- NA
     x
 }
-df[2:length(df)] <- lapply(df[2:length(df)], misser)
+df[2:(length(df)-2)] <- lapply(df[2:(length(df)-2)], misser)
 dtg <- dtable_guide(df)
-gl <- make_glist("b1", ref = df)
+gl <- descripteur:::make_glist("b1", ref = df)
 gl3 <- list(
     "abacus" = sample(c(T,F), size = n, replace =T),
     "quuz" = sample(c(T,F), size = n, replace =T),
@@ -351,7 +351,7 @@ categorical variables to have this option\ldots \textbf{Should this be removed?}
 opts_desc$set("describe_catg" = flist(c(
                   "levels" = "d_levels",
                   "percent" = "d_percent",
-                  "est. proportion" = "d_p.c")))
+                  "proportion" = "d_cp")))
 dtable_latex(dtable(df, type = "catg", glist = gl, useNA = "ifany"), format = T,
              caption = "Two groups described and compared for type \\texttt{catg}.")
 opts_desc$restore()
@@ -385,7 +385,8 @@ dtable_latex(dtable(df, type = "surv", glist = gl3, w = vikt, comp = "across"),
 \section{To do}
 
 \begin{itemize}
- \item Documentation and ability to browse/view the predefined functions
+ \item Documentation and ability to browse/view the predefined functions\\
+   $\rightarrow$ They are now all exported with a short explanaition
  \item implementation of labels
  \item Ability to describe an imputed data set (i.e. a \texttt{mids} object).
    %% perhaps by expanding a mids object to a single data frame, keeping a list

@@ -28,9 +28,14 @@ dtable <- function(data, type, guide = NULL,
         useNA <- "no"
     }
     P <- dc_param(desc = desc, comp = comp, glist = glist)
+    glist.variable <- NULL
     if(!is.null(glist)){
-        if(is.character(glist)) glist <- make_glist(x = glist, ref = data)
+        if(is.character(glist)){
+            glist.variable <- data[[glist]]
+            glist <- make_glist(x = glist, ref = data)
+        }
         if(!is.list(glist)){
+            glist.variable <- glist
             glist <- tryCatch(make_glist(glist, ref = data[[1]]),
                               error = function(e)
                                   stop("cannot make glist from this glist-argument"))
