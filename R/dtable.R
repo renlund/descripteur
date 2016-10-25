@@ -139,11 +139,24 @@ dtable <- function(data, type, guide = NULL,
     } else {
         dtable_cbind(R1, R2)
     })
+    attr(R, "size") <- nrow(data)
+    if(!is.null(w)) attr(R, "weight") <- sum(w)
+    if(!is.null(row_id <- attr(guide, "row.id"))){
+        ## This currently does not do much
+    }
+    if(!is.null(unit_id <- attr(guide, "unit.id"))){
+        tmp_f <- function(x) length(unique(stats::na.omit(x)))
+        attr(R, "units") <- tmp_f(data[[unit_id]])
+    }
     if(!is.null(glist)){
         attr(R, "glist_size") <- unlist(lapply(glist, sum, na.rm = TRUE))
         if(!is.null(w)){
             attr(R, "glist_weight") <-
                 unlist(lapply(glist, function(x) sum(w[x], na.rm =TRUE)))
+        }
+        if(!is.null(unit_id)){
+            tmp_g <- function(x) tmp_f(data[[unit_id]][x])
+            attr(R, "glist_units") <- unlist(lapply(glist, tmp_g))
         }
     }
     attr(R, "dc_param") <- P
@@ -155,7 +168,7 @@ if(FALSE){ ## TESTS, some of which are also in tests
     n <- 100
     set.seed(20160216)
     df <- data.frame(
-        id = paste0("id", 1001:(1000 + n)),
+        id = sample(paste0("id", 1001:(1000 + n)), n, T),
         r1 = round(rnorm(n, 20, 5)),
         r2 = round(rexp(n, 1/20)),
         c1 = sample(letters[1:5], size = n, replace = TRUE),
@@ -177,8 +190,8 @@ if(FALSE){ ## TESTS, some of which are also in tests
     }
     df[2:length(df)] <- lapply(df[2:length(df)], misser)
     df
-    (dtb <- dtable_guide(df))
-    gl <- make_glist("b1", ref = df)
+    (dtb <- dtable_guide(data = df, unit.id = "id"))
+    gl <- descripteur:::make_glist("b1", ref = df)
     gl3 <- list(
         "abacus" = sample(c(T,F), size = n, replace =T),
         "quuz" = sample(c(T,F), size = n, replace =T),
@@ -187,7 +200,9 @@ if(FALSE){ ## TESTS, some of which are also in tests
     vikt <- rpois(n, 1.5) + 1
 
     dtable(data = df, type = "real", guide = dtb)
-    dtable(data = df, type = "real", guide = dtb, glist = gl)
+    (dt <- dtable(data = df, type = "real", guide = dtb, glist = gl, w = vikt))
+    attributes(dt)
+
     dtable(data = df, type = "real", guide = dtb, glist = gl3, comp = F)
     dtable(data = df, type = "real", guide = dtb, glist = gl, comp = FALSE)
     dtable(data = df, type = "real", guide = dtb, glist = gl, desc = F)

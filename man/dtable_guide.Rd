@@ -5,7 +5,7 @@
 \title{Description guide}
 \usage{
 dtable_guide(data, elim.set = NULL, catg.tol = 20, real.tol = 5,
-  as.is = FALSE, id = NULL, unit.id = NULL)
+  as.is = FALSE, row.id = NULL, unit.id = NULL)
 }
 \arguments{
 \item{data}{a data frame}
@@ -20,7 +20,7 @@ points to be described as categorical}
 
 \item{as.is}{if TRUE ignore all tolerence parameters}
 
-\item{id}{the row identifier}
+\item{row.id}{the row identifier}
 
 \item{unit.id}{the unit identifier}
 }

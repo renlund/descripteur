@@ -26,11 +26,13 @@ dtable_latex <- function(dt, bling = TRUE,
     r <- rle(d2)
     gs <- A$glist_size
     gw <- A$glist_weight
+    gu <- A$glist_units
     foo <- function(s) paste(paste0(names(s), " ", s), collapse = ", ")
     s_text <- if(!is.null(gs)) paste0("Count: ", foo(gs), ".") else NULL
     w_text <- if(!is.null(gw)) paste0("Weight: ", foo(gw), ".") else NULL
-    text <- if(!is.null(gs) | !is.null(gw)){
-        paste0("{\\small\\emph{",s_text, " ", w_text, "}}")
+    u_text <- if(!is.null(gu)) paste0("Unique units: ", foo(gu), ".") else NULL
+    text <- if(!is.null(gs) | !is.null(gw) | !is.null(gu)){
+        paste0("{\\small\\emph{",s_text, " ", w_text, " ", u_text, "}}")
     } else NULL
     if(all(d2 == "")) bling <- FALSE
     if(bling){

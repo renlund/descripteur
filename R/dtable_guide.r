@@ -7,7 +7,7 @@
 #' @param real.tol force numeric data with few ($<= \code{real.tol}) unique data
 #'   points to be described as categorical
 #' @param as.is if TRUE ignore all tolerence parameters
-#' @param id the row identifier
+#' @param row.id the row identifier
 #' @param unit.id the unit identifier
 #' @return a data frame describing each variable in the data set (excluding
 #'     \code{elim.set}, \code{id}, and \code{unit.id}). each variable has
@@ -22,10 +22,11 @@
 #' @export
 dtable_guide <- function(data, elim.set = NULL,
                          catg.tol = 20, real.tol = 5,
-                         as.is = FALSE, id = NULL, unit.id = NULL){
+                         as.is = FALSE, row.id = NULL, unit.id = NULL){
     if(catg.tol < 3 | real.tol < 3) stop("be more tolerant...")
-    data <- subset(data, TRUE,
-                   select = setdiff(names(data), c(elim.set, id, unit.id)))
+    org_data <- data
+    data <- subset(org_data, TRUE,
+                   select = setdiff(names(data), c(elim.set, row.id, unit.id)))
     class2 <- function(x) class(x)[1]
     classy <- lapply(data, class2)
     any_na <- function(x) any(is.na(x))
@@ -63,9 +64,6 @@ dtable_guide <- function(data, elim.set = NULL,
         type = rep(c("real", "catg", "bnry", "date", "surv"),
                    c(length(r), length(c(c1, c2)), length(c(b1,b2,b3,b4)),
                      length(d), length(s))),
-        ## imposed_class = rep(c("numeric", "factor", "Date", "Surv"),
-        ##                    c(length(r), length(c(c1, c2, b1, b2, b3, b4)),
-        ##                      length(d), length(s))),
         original_class = unlist(classy[c(r, c1, c2, b1, b2, b3, b4, d, s)]),
         has_missing = unlist(lapply(data[,c(r, c1, c2, b1, b2, b3, b4, d, s)], any_na)),
         check.names = FALSE,
@@ -77,16 +75,20 @@ dtable_guide <- function(data, elim.set = NULL,
         L[[K]] <- levels(factor(data[[K]]))
     }
     if(!is.null(L)) attr(ret, "levels") <- L
-    if(!is.null(id)){
-        attr(ret, "id") <- if(id %in% names(data)){
-            id
+    if(!is.null(row.id)){
+        attr(ret, "row.id") <- if(row.id %in% names(org_data)){
+            if(length(data[[row.id]]) != nrow(data)){
+                warning(paste0("row.id does not seem to identify the rows\n",
+                               "(there are too few unique values)\n"))
+            }
+            row.id
         } else {
-            warning("id variable does not seem to exist")
+            warning("row.id variable does not seem to exist")
             NULL
         }
     }
     if(!is.null(unit.id)){
-        attr(ret, "unit.id") <- if(unit.id %in% names(data)){
+        attr(ret, "unit.id") <- if(unit.id %in% names(org_data)){
             unit.id
         } else {
             warning("unit.id variable does not seem to exist")
