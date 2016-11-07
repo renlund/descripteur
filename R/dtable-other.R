@@ -9,7 +9,7 @@
 print.dtable_other <- function(x, ..., sep = "\n"){
     dtable_other <- attr(x, "dtable_other")
     class(x) <- setdiff(class(x), "dtable_other")
-    co <- capture.output(print(x))
+    co <- utils::capture.output(print(x))
     co.n <- max(nchar(co))
     w <- options("width")$width
     print(x)

@@ -7,11 +7,11 @@ Maintainer: Henrik Renlund <henrikrenlund@gmail.com>
 Description: An attempt to systematize my data description.
 License: GPL-3
 LazyData: TRUE
-Depends: survival
 Suggests:
     knitr,
     rmarkdown,
     testthat,
-    Hmisc
+    Hmisc,
+    survival
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1

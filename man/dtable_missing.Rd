@@ -12,6 +12,8 @@ dtable_missing(data = NULL, v = NULL, glist = NULL)
 \item{v}{if \code{NULL} all variables are included, else a character vector of the
 names of wanted variables or a formula (if data is null it will look for
 the variables in the global workspace, but they need to be of the same length)}
+
+\item{glist}{an index list or name of grouping variable}
 }
 \value{
 a data.frame with

@@ -143,7 +143,7 @@ dtable <- function(data, type, guide = NULL,
                           })
     }
     attr(R, "size") <- nrow(data)
-    attr(R, "cc") <- sum(complete.cases(data))
+    attr(R, "cc") <- sum(stats::complete.cases(data))
     if(!is.null(w)) attr(R, "weight") <- sum(w)
     if(!is.null(row_id <- attr(guide, "row.id"))){
         ## This currently does not do much
@@ -162,73 +162,14 @@ dtable <- function(data, type, guide = NULL,
             tmp_g <- function(x) tmp_f(data[[unit_id]][x])
             attr(R, "glist_units") <- unlist(lapply(glist, tmp_g))
         }
-        tmp_fnc <- function(x, Y = data) sum(complete.cases(Y[x,]))
+        tmp_fnc <- function(x, Y = data) sum(stats::complete.cases(Y[x,]))
         attr(R, "glist_cc") <- unlist(lapply(glist, tmp_fnc))
     }
     attr(R, "dc_param") <- P
     R
 }
 
-
-dtable_attr <- function(dt, perc = FALSE, perc.sign = "%"){
-    a <- attributes(dt)
-    n <- a$size
-    ccn <- a$cc
-    w <- a$weight
-    u <- a$units
-    R <- data.frame(
-        measure = c(
-            if(!is.null(n))   "size"   else NULL,
-            if(!is.null(ccn)) "cc"     else NULL,
-            if(!is.null(w))   "weight" else NULL,
-            if(!is.null(u))   "units"  else NULL
-        ),
-        total = c(n, ccn, w, u)
-    )
-    fnc <- function(a, b, p){
-        r <- if(is.null(a)){
-            NULL
-        } else {
-            if(p) paste0(roundisch(100*a/b), perc.sign) else a
-        }
-        setNames(r, names(a))
-    }
-    if(!is.null(a$glist_size)){
-             size =   fnc(a$glist_size, n, perc)
-             cc =     fnc(a$glist_cc, a$glist_size, perc)
-             weight = fnc(a$glist_weight, w, perc)
-             units =  fnc(a$glist_units, u, perc)
-             tmp <- rbind(size, cc, weight, units)
-             Q <- as.data.frame(tmp)
-             Q$measure <- rownames(tmp)
-             rownames(Q) <- NULL
-             merge(R, Q, sort = FALSE)
-    } else {
-        R
-    }
-}
-
-attr2text <- function(dt, perc = FALSE, perc.sign = "%"){
-    da <- dtable_attr(dt, perc, perc.sign)
-    gr <- setdiff(names(da), c("measure", "total"))
-    n <- length(gr)
-    foo <- function(m, g, text){
-        x <- subset(da, measure == m)
-        if(nrow(x)==0) return(NULL)
-        a <- x$total
-        b <- if(g) setNames(as.character(x[1, 3:(2+n)]), gr) else NULL
-        c <- if(g){
-                 paste0(" (", paste0(paste0(gr, ":", b), collapse = ", "), ")")
-             } else NULL
-        paste0(text, " ", a, c)
-    }
-    c(
-        foo("size", n>0, "Rows:"),
-        foo("cc", n>0, "Complete Cases:"),
-        foo("weight", n>0, "Weight:"),
-        foo("units", n>0, "Units:")
-    )
-}
+####################################################################
 
 
 if(FALSE){ ## TESTS, some of which are also in tests

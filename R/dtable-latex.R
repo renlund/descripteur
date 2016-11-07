@@ -48,55 +48,6 @@ dtable_latex <- function(dt, bling = TRUE,
     }
 }
 
-
-
-if(FALSE){
-
-    n <- 100
-    set.seed(20160216)
-    df <- data.frame(
-        id = paste0("id", 1001:(1000 + n)),
-        r1 = round(rnorm(n, 20, 5)),
-        r2 = round(rexp(n, 1/20)),
-        c1 = sample(letters[1:5], size = n, replace = TRUE),
-        c2 = factor(sample(LETTERS[5:3], size = n, replace = TRUE)),
-        b1 = sample(LETTERS[6:7], size = n, replace = TRUE, prob = 2:3),
-        b2 = rbinom(n, 1, 0.1),
-        b3 = sample(c("No", "Yes"), size = n, replace = TRUE, prob = 1:2),
-        b4 = sample(c(TRUE, FALSE), size = n, replace = TRUE),
-        d1 = as.Date("2000-01-01") + rpois(n, 365),
-        d2 = as.Date(floor(rexp(n, 1/3650)), origin = "1975-01-01"),
-        stringsAsFactors = FALSE
-    )
-    misser <- function(x, m = length(x)){
-        p <- floor(runif(1, min = 1, max = m/2))
-        x[sample(1:n, size = p, replace = FALSE)] <- NA
-        x
-    }
-    df[2:length(df)] <- lapply(df[2:length(df)], misser)
-    df
-    vikt <- 0.5 + rbinom(n, 2, 0.4)
-
-    g <- dtable_guide(df)
-    dt <- dtable(data = df, type = "real", guide = g)
-    dt <- dtable(data = df, type = "real", glist = "b1", guide = g, w
-    = vikt)
-
-    r <- rle(c("", "A", "A", "B", "B", "FOo"))
-
-    dtable_latex(dt = dt)
-    attributes(dt)
-
-    foo <- function(x, glist, ...){
-        t.test(x = x[glist[[1]]], y = x[glist[[2]]])$p.value
-    }
-    dattr(foo) <- "comp"
-    opts_desc$set("compare_real" = flist(c("c_std.r", "foo" = "foo")))
-    dt <- dtable(data = df, type = "real", glist = "b1",
-                 guide = g, w = vikt)
-    dtable_format(dt)
-
-}
 ##' format a dtable
 ##'
 ##' overall, low-precision formatting of dtable objects - quick and
@@ -153,4 +104,55 @@ dtable_format <- function(dt, param = as.list(NULL)){
     R[chr] <- lapply(R[chr], foo)
     attributes(R) <- attributes(dt)
     R
+}
+
+
+#####################################################################
+
+if(FALSE){
+
+    n <- 100
+    set.seed(20160216)
+    df <- data.frame(
+        id = paste0("id", 1001:(1000 + n)),
+        r1 = round(rnorm(n, 20, 5)),
+        r2 = round(rexp(n, 1/20)),
+        c1 = sample(letters[1:5], size = n, replace = TRUE),
+        c2 = factor(sample(LETTERS[5:3], size = n, replace = TRUE)),
+        b1 = sample(LETTERS[6:7], size = n, replace = TRUE, prob = 2:3),
+        b2 = rbinom(n, 1, 0.1),
+        b3 = sample(c("No", "Yes"), size = n, replace = TRUE, prob = 1:2),
+        b4 = sample(c(TRUE, FALSE), size = n, replace = TRUE),
+        d1 = as.Date("2000-01-01") + rpois(n, 365),
+        d2 = as.Date(floor(rexp(n, 1/3650)), origin = "1975-01-01"),
+        stringsAsFactors = FALSE
+    )
+    misser <- function(x, m = length(x)){
+        p <- floor(runif(1, min = 1, max = m/2))
+        x[sample(1:n, size = p, replace = FALSE)] <- NA
+        x
+    }
+    df[2:length(df)] <- lapply(df[2:length(df)], misser)
+    df
+    vikt <- 0.5 + rbinom(n, 2, 0.4)
+
+    g <- dtable_guide(df)
+    dt <- dtable(data = df, type = "real", guide = g)
+    dt <- dtable(data = df, type = "real", glist = "b1", guide = g, w
+    = vikt)
+
+    r <- rle(c("", "A", "A", "B", "B", "FOo"))
+
+    dtable_latex(dt = dt)
+    attributes(dt)
+
+    foo <- function(x, glist, ...){
+        t.test(x = x[glist[[1]]], y = x[glist[[2]]])$p.value
+    }
+    dattr(foo) <- "comp"
+    opts_desc$set("compare_real" = flist(c("c_std.r", "foo" = "foo")))
+    dt <- dtable(data = df, type = "real", glist = "b1",
+                 guide = g, w = vikt)
+    dtable_format(dt)
+
 }
