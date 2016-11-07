@@ -9,7 +9,8 @@ dtable_format(dt, param = as.list(NULL))
 \arguments{
 \item{dt}{a  dtable}
 
-\item{param}{list of parameter values}
+\item{param}{list of parameter values ... these should be documented but
+aren't yet.}
 }
 \description{
 overall, low-precision formatting of dtable objects - quick and

@@ -25,16 +25,19 @@ dtable_latex <- function(dt, bling = TRUE,
     d2 <- gsub("comp", "Comparison", d1)
     r <- rle(d2)
     gs <- A$glist_size
+    gc <- A$glist_cc
     gw <- A$glist_weight
     gu <- A$glist_units
-    foo <- function(s) paste(paste0(names(s), " ", s), collapse = ", ")
-    s_text <- if(!is.null(gs)) paste0("Count: ", foo(gs), ".") else NULL
-    w_text <- if(!is.null(gw)) paste0("Weight: ", foo(gw), ".") else NULL
-    u_text <- if(!is.null(gu)) paste0("Unique units: ", foo(gu), ".") else NULL
-    text <- if(!is.null(gs) | !is.null(gw) | !is.null(gu)){
-        paste0("{\\small\\emph{",s_text, " ", w_text, " ", u_text, "}}")
-    } else NULL
-    if(all(d2 == "")) bling <- FALSE
+    ## foo <- function(s) paste(paste0(names(s), " ", s), collapse = ", ")
+    ## s_text <- if(!is.null(gs)) paste0("Count: ", foo(gs), ".") else NULL
+    ## c_text <- if(!is.null(gs)) paste0("Complete case: ", foo(gc), ".") else NULL
+    ## w_text <- if(!is.null(gw)) paste0("Weight: ", foo(gw), ".") else NULL
+    ## u_text <- if(!is.null(gu)) paste0("Unique units: ", foo(gu), ".") else NULL
+    ## text <- if(!is.null(gs) | !is.null(gw) | !is.null(gu)){
+    ##     paste0("{\\small\\emph{",s_text, " ", c_text, " ", w_text, " ", u_text, "}}")
+    ## } else NULL
+    ## if(all(d2 == "")) bling <- FALSE
+    text <- paste0("{\\small\\emph{", paste0(attr2text(dt), collapse = ". "), "}}")
     if(bling){
         Hmisc::latex(object = x, file = file, where = where,
                      rowname = rowname, cgroup = r$values,
@@ -44,6 +47,8 @@ dtable_latex <- function(dt, bling = TRUE,
                      rowname = rowname, ...)
     }
 }
+
+
 
 if(FALSE){
 
@@ -100,7 +105,8 @@ if(FALSE){
 ##'     gathered in a list) is due to it being
 ##'     considered most useful when called from other functions.
 ##' @param dt a  dtable
-##' @param param list of parameter values
+##' @param param list of parameter values ... these should be documented but
+##'     aren't yet.
 ##' @export
 dtable_format <- function(dt, param = as.list(NULL)){
     ## get default values
@@ -112,7 +118,8 @@ dtable_format <- function(dt, param = as.list(NULL)){
     if(is.null(lfnc <- param$lfnc)) lfnc <- base::signif ## format fnc
     ## for numbers all < boundary
     if(is.null(p_b  <- param$p_b))  p_b <- 0.0001 ## threshold for p-values
-    if(is.null(tmax <- param$tmax)) tmax <- 30
+    if(is.null(peq0 <- param$peq0)) peq0 <- TRUE ## can p be zero?
+    if(is.null(tmax <- param$tmax)) tmax <- 30 ## max chars to print for text
     ## format numeric part
     n <- ncol(dt)
     R <- as.data.frame(dt)
@@ -129,7 +136,10 @@ dtable_format <- function(dt, param = as.list(NULL)){
     R[il] <- lapply(R[il], hfnc, digits = bh)
     ih <- num[which(h<=b)]
     R[ih] <- lapply(R[ih], lfnc, digits = bl)
-    R[num[p]] <- lapply(R[num[p]], function(x) ifelse(x < p_b & x > 0, paste0("<", p_b), x))
+    not_zero <- function(x) ifelse(x < p_b & x > 0, paste0("<", p_b), x)
+    maybe_zero <- function(x) ifelse(x < p_b & x >= 0, paste0("<", p_b), x)
+    zero <- function(x, not) if(not) not_zero(x) else maybe_zero(x)
+    R[num[p]] <- lapply(R[num[p]], zero, not = peq0)
     i_rest <- setdiff(num, c(il, ih))
     R[i_rest] <- lapply(R[i_rest], round, 2)
     ## format character

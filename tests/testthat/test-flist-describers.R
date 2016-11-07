@@ -14,6 +14,11 @@ test_that("d_missing works", {
     expect_equal(d_missing(x, w), 2)
 })
 
+test_that("d_missing.perc works", {
+    expect_equal(d_missing.perc(x), 100/3)
+    expect_equal(d_missing.perc(x, w), 200/7)
+})
+
 test_that("d_mean works", {
     expect_equal(d_mean(x), 1.5)
     expect_equal(d_mean(x, w), 9/5)

@@ -8,6 +8,7 @@
 \alias{d_median}
 \alias{d_min}
 \alias{d_missing}
+\alias{d_missing.perc}
 \alias{d_n}
 \alias{d_real}
 \alias{d_sd}
@@ -21,6 +22,8 @@ d_n(x, w = NULL, ...)
 d_length(x, ...)
 
 d_missing(x, w = NULL, ...)
+
+d_missing.perc(x, w = NULL, ...)
 
 d_sum(x, w = NULL, ...)
 
@@ -53,6 +56,8 @@ various describer functions for real types
 \item \code{d_length}: number of  elements
 
 \item \code{d_missing}: Count missing
+
+\item \code{d_missing.perc}: Percent missing
 
 \item \code{d_sum}: sum of all elements
 

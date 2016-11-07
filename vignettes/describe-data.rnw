@@ -17,6 +17,7 @@ library(descripteur)
 opts_chunk$set(include = TRUE, echo = TRUE, cache = FALSE)
 if(FALSE){
     knitr::knit2pdf("describe-data.rnw", clean = TRUE)
+    shell.exec("describe-data.pdf")
 }
 @
 
@@ -233,11 +234,25 @@ The package comes with a wrapper for \texttt{Hmisc::latex} that will use the
 metadata to create a (hopefully) decent table. It can also invoke a format
 funtion if wanted.
 
+Table \ref{tab:1} and \ref{tab:2} shows the default tables created with and
+without groups, respectively.
+
+<<results = 'asis'>>=
+
+opts_desc$restore()
+dt <- dtable(data = df, type = "real", guide = g)
+dtable_latex(dt, caption = "Default table without groups",
+             format = T, label = "tab:1")
+
+@
+
+
 <<results = 'asis'>>=
 
 opts_desc$restore()
 dt <- dtable(data = df, type = "real", guide = g, glist = "gr")
-dtable_latex(dt, caption = "Default table", format = T)
+dtable_latex(dt, caption = "Default table with groups",
+             format = T, label = "tab:2")
 
 @
 
@@ -380,22 +395,6 @@ dtable_latex(dtable(df, type = "surv", glist = gl3, w = vikt, comp = "across"),
              format = T,
              caption = "Three weighted groups described and compared 'across' for type \\texttt{surv}.")
 @
-
-\newpage
-\section{To do}
-
-\begin{itemize}
- \item Documentation and ability to browse/view the predefined functions\\
-   $\rightarrow$ They are now all exported with a short explanaition
- \item implementation of labels
- \item Ability to describe an imputed data set (i.e. a \texttt{mids} object).
-   %% perhaps by expanding a mids object to a single data frame, keeping a list
-   %% of indices for the values that are imputed
- \item More metadata; e.g. number of unique id:s if such is specified in the guide.
- \item Possibility to describe across types with type-agnostic functions?
- \item separate convience function to describe number of missing values
- \item latex option to use variable names as rgroup?
-\end{itemize}
 
 
 \end{document}
