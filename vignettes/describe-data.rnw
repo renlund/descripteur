@@ -302,7 +302,12 @@ misser <- function(x, m = length(x)){
     x
 }
 df[2:(length(df)-2)] <- lapply(df[2:(length(df)-2)], misser)
-dtg <- dtable_guide(df)
+dtg <- dtable_guide(df, unit.id = "id")
+dtg$label <- c("binary 1", "bengt", "bio", "bam",
+               "cats are fun", "cool",
+               "datum", "doey", "IdEnTiFiEr",
+               "roYe", "RandomNessy",
+               "Slipp", "Slopp")
 gl <- descripteur:::make_glist("b1", ref = df)
 gl3 <- list(
     "abacus" = sample(c(T,F), size = n, replace =T),
@@ -327,7 +332,7 @@ dtable_latex(dtable(df, type = "real", glist = gl), format = T,
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "real", glist = gl3, w = vikt, comp = "across"),
-             format = T,
+             format = T, guide = dtg,
              caption = "Three weighted groups described and compared 'across' for type \\texttt{real}.")
 @
 
@@ -339,7 +344,7 @@ dtable_latex(dtable(df, type = "bnry", glist = gl), format = T,
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "bnry", glist = gl3, w = vikt, comp = "across"),
-             format = T,
+             format = T, guide = dtg,
              caption = "Three weighted groups described and compared 'across' for type \\texttt{bnry}.")
 @
 
@@ -351,7 +356,7 @@ dtable_latex(dtable(df, type = "catg", glist = gl), format = T,
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "catg", glist = gl3, w = vikt, comp = "across"),
-             format = T,
+             format = T, guide = dtg,
              caption = "Three weighted groups described and compared 'across' for type \\texttt{catg}.")
 @
 
@@ -380,7 +385,7 @@ dtable_latex(dtable(df, type = "date", glist = gl), format = T,
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "date", glist = gl3, w = vikt, comp = "across"),
-             format = T,
+             format = T,  guide = dtg,
              caption = "Three weighted groups described and compared 'across' for type \\texttt{date}.")
 @
 
@@ -392,52 +397,31 @@ dtable_latex(dtable(df, type = "surv", glist = gl), format = T,
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "surv", glist = gl3, w = vikt, comp = "across"),
-             format = T,
+             format = T,  guide = dtg,
              caption = "Three weighted groups described and compared 'across' for type \\texttt{surv}.")
 @
 
 
 \section{Additional Functions}
 
-<<results = 'asis'>>=
+\subsection{Simple description of attributes and missing, respectively}
+\texttt{dtable\_missing} provides counts and percentages for variables in a data
+frame (regardless of type). \texttt{dtable\_attr} returns some attributes in a
+tidy format. Both these have grouping.
+
+<<>>=
 dm <- dtable_missing(df, glist = gl)
-dtable_attr(dm)
-dtable_latex(dm, format = TRUE, caption = "Information on missing")
 @
+
+<<>>=
+dtable_attr(dm)
+@
+
+<<results = 'asis'>>=
+dtable_latex(dm, format = TRUE, guide = dtg,
+             caption = "Information on missing")
+@
+
+
 
 \end{document}
-
-
-<<eval = FALSE, echo = FALSE>>=
-
-## chunk for testing
-
-dtable(df, type = "catg")
-dtable(df, type = "catg", useNA = "always")
-
-dtable(df, type = "catg", glist = gl)
-dtable(data = df, type = "catg", glist = gl, useNA = "always", desc = FALSE)
-
-data = df
-type = "catg"
-glist = gl
-useNA = "always"
-desc = FALSE
-guide = NULL
-desc.flist = NULL
-comp = NULL
-comp.flist = NULL
-w = NULL
-
-
-dtable(df, type = "catg", glist = gl, useNA = "always", comp = FALSE)
-dtable(df, type = "catg", glist = gl, useNA = "always")
-
-descripteur:::c_diff.c(df$c1, glist = gl, useNA = TRUE)
-descripteur:::d_levels(df$c1, glist = gl, useNA = TRUE)
-
-descripteur:::c_diff.c(df$c1, glist = gl, useNA = FALSE)
-
-@
-
-

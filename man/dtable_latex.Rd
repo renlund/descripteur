@@ -5,7 +5,7 @@
 \title{latexify a dtable}
 \usage{
 dtable_latex(dt, bling = TRUE, file = "", where = "htb", rowname = NULL,
-  ..., format = FALSE, format.param = as.list(NULL))
+  ..., guide = NULL, format = FALSE, format.param = as.list(NULL))
 }
 \arguments{
 \item{dt}{a dtable}
@@ -20,6 +20,9 @@ attributes? (default \code{TRUE})}
 \item{rowname}{(default \code{NULL}) passed to \code{Hmisc::latex}}
 
 \item{...}{passed to \code{Hmisc::latex}}
+
+\item{guide}{a guide to provide labels, minimally a data frame with
+variables 'variable' and 'label'}
 
 \item{format}{use \code{dtable_format}?}
 

@@ -8,6 +8,8 @@
 ##' @param where (default "htb") passed to \code{Hmisc::latex}
 ##' @param rowname (default \code{NULL}) passed to \code{Hmisc::latex}
 ##' @param ... passed to \code{Hmisc::latex}
+##' @param guide a guide to provide labels, minimally a data frame with
+##'     variables 'variable' and 'label'
 ##' @param format use \code{dtable_format}?
 ##' @param format.param list of parameters to pass to
 ##'     \code{dtable_format} (only used if \code{format = TRUE}).
@@ -15,10 +17,15 @@
 dtable_latex <- function(dt, bling = TRUE,
                          file = "", where = "htb", rowname = NULL,
                          ...,
+                         guide = NULL,
                          format = FALSE,
                          format.param = as.list(NULL)){
     if(format) dt <- dtable_format(dt, param = format.param)
     x <- as.data.frame.dtable(dt)
+    if("variable" %in% names(x) & !is.null(guide)){
+        lab <- stats::setNames(guide$label, guide$variable)
+        x$variable <- lab[x$variable]
+    }
     A <- attributes(dt)
     d <- A$dtable
     d1 <- gsub("(meta)|(desc:*)", "", d)
