@@ -24,20 +24,12 @@ dtable_latex <- function(dt, bling = TRUE,
     d1 <- gsub("(meta)|(desc:*)", "", d)
     d2 <- gsub("comp", "Comparison", d1)
     r <- rle(d2)
-    gs <- A$glist_size
-    gc <- A$glist_cc
-    gw <- A$glist_weight
-    gu <- A$glist_units
-    ## foo <- function(s) paste(paste0(names(s), " ", s), collapse = ", ")
-    ## s_text <- if(!is.null(gs)) paste0("Count: ", foo(gs), ".") else NULL
-    ## c_text <- if(!is.null(gs)) paste0("Complete case: ", foo(gc), ".") else NULL
-    ## w_text <- if(!is.null(gw)) paste0("Weight: ", foo(gw), ".") else NULL
-    ## u_text <- if(!is.null(gu)) paste0("Unique units: ", foo(gu), ".") else NULL
-    ## text <- if(!is.null(gs) | !is.null(gw) | !is.null(gu)){
-    ##     paste0("{\\small\\emph{",s_text, " ", c_text, " ", w_text, " ", u_text, "}}")
-    ## } else NULL
-    ## if(all(d2 == "")) bling <- FALSE
-    text <- paste0("{\\small\\emph{", paste0(attr2text(dt), collapse = ". "), "}}")
+    if(all(d2 == "")){
+        r <- NULL ## nullify the cgroup and n.cgroup args of Hmisc::latex
+    }
+    text <- paste0("{\\small\\begin{center}\\emph{",
+                   paste0(attr2text(dt), collapse = ". "),
+                   "}\\end{center}}")
     if(bling){
         Hmisc::latex(object = x, file = file, where = where,
                      rowname = rowname, cgroup = r$values,

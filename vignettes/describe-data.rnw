@@ -12,8 +12,8 @@
 
 <<"setup", cache = FALSE, echo = FALSE, include = FALSE>>=
 library(knitr)
-library(descripteur)
-## devtools::load_all()
+## library(descripteur)
+devtools::load_all()
 opts_chunk$set(include = TRUE, echo = TRUE, cache = FALSE)
 if(FALSE){
     knitr::knit2pdf("describe-data.rnw", clean = TRUE)
@@ -397,6 +397,14 @@ dtable_latex(dtable(df, type = "surv", glist = gl3, w = vikt, comp = "across"),
 @
 
 
+\section{Additional Functions}
+
+<<results = 'asis'>>=
+dm <- dtable_missing(df, glist = gl)
+dtable_attr(dm)
+dtable_latex(dm, format = TRUE, caption = "Information on missing")
+@
+
 \end{document}
 
 
@@ -431,3 +439,5 @@ descripteur:::d_levels(df$c1, glist = gl, useNA = TRUE)
 descripteur:::c_diff.c(df$c1, glist = gl, useNA = FALSE)
 
 @
+
+
