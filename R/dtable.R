@@ -49,7 +49,7 @@ dtable <- function(data, type, guide = NULL,
                 warning("weighting variable does not exist in data")
         }
         if(length(w) != nrow(data))
-            stop("bad weighting")
+            stop("bad weighting (want same length as data)")
         if(any(is.na(w))){
             warning("weight has NA:s")
         }
@@ -57,89 +57,93 @@ dtable <- function(data, type, guide = NULL,
             warning("weight has negative elements")
         }
     }
-    if(!P$desc & !P$comp) return(as.data.frame(NULL))
     if(is.null(guide)) guide <- dtable_guide(data = data)
     gvar <- guide[guide$type == type,]
-    d_fnc <- if(!is.null(desc.flist)){
-                 desc.flist
-             } else {
-                 opts_desc$get(paste0("describe_", type))
-             }
-    dattr_d_fnc <- attr(d_fnc, "dtable")
-    if(length(dattr_d_fnc) != length(d_fnc)){
-        warning("dattr for describers is off, reset to 'desc'")
-        attr(d_fnc, "dtable") <- rep("desc", length(d_fnc))
-    }
-    c_fnc <- if(!is.null(comp.flist)){
-                 comp.flist
-             } else {
-                 opts_desc$get(paste0("compare_", type))
-             }
-    dattr_c_fnc <- attr(c_fnc, "dtable")
-    if(length(dattr_c_fnc) != length(c_fnc)){
-        warning("dattr for comparers is off, reset to 'comp'")
-        attr(c_fnc, "dtable") <- rep("comp", length(c_fnc))
-    }
-    R1 <- NULL
-    R2 <- NULL
-    has_na <- any(gvar$has_missing)
-    use_na <- if(useNA != "ifany") useNA == "always" else has_na
-    if(P$desc){
-        for(g in gvar$variable){ ## g <- gvar$variable[1]
-            x <- if(type %in% c("bnry", "catg")){
-                factor(data[[g]], levels = attr(guide, "levels")[[g]])
-            } else {
-                data[[g]]
-            }
-            R0 <- NULL
-            if(is.null(glist)){
-                R0 <- apply_flist(x = x, flist = d_fnc, w = w,
-                                  useNA = use_na, xname = g)##, ...)
-            } else {
-                for(k in seq_along(glist)){ ## k = 1
-                    tmp <- apply_flist(x = x[glist[[k]]],
-                                       flist = d_fnc,
-                                       useNA = use_na,
-                                       w = w[glist[[k]]],
-                                       xname = g)##, ...)
-                    R0 <- dtable_cbind(x = R0, y = tmp,
-                                       groups = names(glist)[k])
-                    if(P$desc.style == "first") break
-                }
-            }
-            R1 <- if(is.null(R1)) R0 else dtable_rbind(R1, R0)
-        }
-    }
-    if(P$comp){
-        for(g in gvar$variable){ ## g = gvar$variable[1]
-            x <- if(type %in% c("bnry", "catg")){
-                factor(data[[g]], levels = attr(guide, "levels")[[g]])
-            } else {
-                data[[g]]
-            }
-            if(P$comp.style == "overall"){
-                R0 <- apply_flist(x = x, flist = c_fnc, useNA = use_na,
-                                      glist = glist, w = w, xname = g, ...)
-            } else {
-                R0 <- NULL
-                for(k in 2:length(glist)){ ## k = 2
-                    ref.index <- if(P$comp.style == "across") 1 else k-1
-                    tmp <- apply_flist(x = x, glist = glist[c(ref.index,k)],
-                                       flist = c_fnc, useNA = use_na,
-                                       xname = g, ...)
-                    R0 <- dtable_cbind(R0, tmp,
-                                       groups = names(glist)[k])
-                }
-            }
-            R2 <- dtable_rbind(R2, R0)
-        }
-    }
-    R <- dtable_order(if(is.null(R1)  | is.null(R2)){
-        if(!is.null(R1)) R1 else R2
+    if(!P$desc & !P$comp) {
+        R <- as.data.frame(NULL)
     } else {
-        dtable_cbind(R1, R2)
-    })
+        d_fnc <- if(!is.null(desc.flist)){
+                     desc.flist
+                 } else {
+                     opts_desc$get(paste0("describe_", type))
+                 }
+        dattr_d_fnc <- attr(d_fnc, "dtable")
+        if(length(dattr_d_fnc) != length(d_fnc)){
+            warning("dattr for describers is off, reset to 'desc'")
+            attr(d_fnc, "dtable") <- rep("desc", length(d_fnc))
+        }
+        c_fnc <- if(!is.null(comp.flist)){
+                     comp.flist
+                 } else {
+                     opts_desc$get(paste0("compare_", type))
+                 }
+        dattr_c_fnc <- attr(c_fnc, "dtable")
+        if(length(dattr_c_fnc) != length(c_fnc)){
+            warning("dattr for comparers is off, reset to 'comp'")
+            attr(c_fnc, "dtable") <- rep("comp", length(c_fnc))
+        }
+        R1 <- NULL
+        R2 <- NULL
+        has_na <- any(gvar$has_missing)
+        use_na <- if(useNA != "ifany") useNA == "always" else has_na
+        if(P$desc){
+            for(g in gvar$variable){ ## g <- gvar$variable[1]
+                x <- if(type %in% c("bnry", "catg")){
+                         factor(data[[g]], levels = attr(guide, "levels")[[g]])
+                     } else {
+                         data[[g]]
+                     }
+                R0 <- NULL
+                if(is.null(glist)){
+                    R0 <- apply_flist(x = x, flist = d_fnc, w = w,
+                                      useNA = use_na, xname = g)##, ...)
+                } else {
+                    for(k in seq_along(glist)){ ## k = 1
+                        tmp <- apply_flist(x = x[glist[[k]]],
+                                           flist = d_fnc,
+                                           useNA = use_na,
+                                           w = w[glist[[k]]],
+                                           xname = g)##, ...)
+                        R0 <- dtable_cbind(x = R0, y = tmp,
+                                           groups = names(glist)[k])
+                        if(P$desc.style == "first") break
+                    }
+                }
+                R1 <- if(is.null(R1)) R0 else dtable_rbind(R1, R0)
+            }
+        }
+        if(P$comp){
+            for(g in gvar$variable){ ## g = gvar$variable[1]
+                x <- if(type %in% c("bnry", "catg")){
+                         factor(data[[g]], levels = attr(guide, "levels")[[g]])
+                     } else {
+                         data[[g]]
+                     }
+                if(P$comp.style == "overall"){
+                    R0 <- apply_flist(x = x, flist = c_fnc, useNA = use_na,
+                                      glist = glist, w = w, xname = g, ...)
+                } else {
+                    R0 <- NULL
+                    for(k in 2:length(glist)){ ## k = 2
+                        ref.index <- if(P$comp.style == "across") 1 else k-1
+                        tmp <- apply_flist(x = x, glist = glist[c(ref.index,k)],
+                                           flist = c_fnc, useNA = use_na,
+                                           xname = g, ...)
+                        R0 <- dtable_cbind(R0, tmp,
+                                           groups = names(glist)[k])
+                    }
+                }
+                R2 <- dtable_rbind(R2, R0)
+            }
+        }
+        R <- dtable_order(if(is.null(R1)  | is.null(R2)){
+                              if(!is.null(R1)) R1 else R2
+                          } else {
+                              dtable_cbind(R1, R2)
+                          })
+    }
     attr(R, "size") <- nrow(data)
+    attr(R, "cc") <- sum(stats::complete.cases(data))
     if(!is.null(w)) attr(R, "weight") <- sum(w)
     if(!is.null(row_id <- attr(guide, "row.id"))){
         ## This currently does not do much
@@ -158,15 +162,20 @@ dtable <- function(data, type, guide = NULL,
             tmp_g <- function(x) tmp_f(data[[unit_id]][x])
             attr(R, "glist_units") <- unlist(lapply(glist, tmp_g))
         }
+        tmp_fnc <- function(x, Y = data) sum(stats::complete.cases(Y[x,]))
+        attr(R, "glist_cc") <- unlist(lapply(glist, tmp_fnc))
     }
     attr(R, "dc_param") <- P
     R
 }
 
+####################################################################
+
+
 if(FALSE){ ## TESTS, some of which are also in tests
 
     n <- 100
-    set.seed(20160216)
+    set.seed(20160716)
     df <- data.frame(
         id = sample(paste0("id", 1001:(1000 + n)), n, T),
         r1 = round(rnorm(n, 20, 5)),
@@ -199,9 +208,27 @@ if(FALSE){ ## TESTS, some of which are also in tests
     )
     vikt <- rpois(n, 1.5) + 1
 
-    dtable(data = df, type = "real", guide = dtb)
+    dt <- dtable(data = df, type = "real", guide = dtb)
+    dtable_attr(dt)
+
     (dt <- dtable(data = df, type = "real", guide = dtb, glist = gl, w = vikt))
     attributes(dt)
+    dtable_attr(dt)
+    dtable_attr(dt, T)
+
+    (dt <- dtable(data = df, type = "real", guide = dtb, glist = gl, w = vikt,
+                  desc = F, comp = F))
+    attributes(dt)
+    dtable_attr(dt)
+    dtable_attr(dt, T)
+
+    (dt <- dtable(data = df, type = "real", ##glist = gl,
+                  desc = F, comp = F))
+    attributes(dt)
+    dtable_attr(dt)
+    dtable_attr(dt, T)
+
+
 
     dtable(data = df, type = "real", guide = dtb, glist = gl3, comp = F)
     dtable(data = df, type = "real", guide = dtb, glist = gl, comp = FALSE)

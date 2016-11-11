@@ -30,6 +30,14 @@ d_missing <- function(x, w = NULL, ...){
 }
 attr(d_missing, "dtable") <- "desc"
 
+##' @describeIn d_real Percent missing
+##' @export
+d_missing.perc <- function(x, w = NULL, ...){
+    if(is.null(w)) w <- rep(1, length(x))
+    100 * sum(w[is.na(x)]) / sum(w)
+}
+attr(d_missing.perc, "dtable") <- "desc"
+
 ##' @describeIn d_real sum of all elements
 ##' @export
 d_sum <- function(x, w = NULL, ...){

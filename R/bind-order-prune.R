@@ -5,7 +5,6 @@
 ##' @param x object 1
 ##' @param y object 2
 ##' @export
-
 dtable_rbind <- function(x, y){
     if(is.null(x) | is.null(y)){
         r <- if(is.null(x)) return(y) else return(x)
@@ -28,7 +27,6 @@ dtable_rbind <- function(x, y){
 ##' @param y object 2
 ##' @param groups add meta info to the groups
 ##' @export
-
 dtable_cbind <- function(x, y, groups = NULL){
     mx <- dtable_order(x)
     my <- dtable_order(y)
@@ -70,7 +68,6 @@ dtable_cbind <- function(x, y, groups = NULL){
 ##' @title order dtable
 ##' @param x object
 ##' @export
-
 dtable_order <- function(x){
     a <- attr(x, "dtable")
     i <- c(which(a == "meta"), which(a != "meta"))
@@ -118,37 +115,13 @@ dtable_prune <- function(x, rm = NULL, keep = NULL){
 ##' @param x dtable object
 ##' @param ... arguments passed
 ##' @export
-
 as.data.frame.dtable <- function(x, ...){
     class(x) <- "data.frame"
     x
 }
 
-##' print dtable object
-##'
-##' prints the data.frame part as well as the dtable attributes
-##'     if they are sane
-##' @title print dtable
-##' @param x dtable object
-##' @param ... arguments passed
-##' @export
 
-print.dtable <- function(x, ...){
-    cat("dtable object with data.frame:\n")
-    print(as.data.frame(x), ...)
-    a <- dattr(x)
-    if(!is.null(a) & length(a) == length(x)){
-        cat("\nwith dtable attributes:\n")
-        r <- as.list(NULL)
-        for(k in 1:length(a)) r[paste0("v", k)] <- a[k]
-        r <- as.data.frame(r)
-        names(r) <- names(x)
-        print(r)
-    } else {
-        cat("\nwithout proper dtable attributes.\n")
-    }
-    invisible(NULL)
-}
+####################################################################
 
 if(FALSE){
 

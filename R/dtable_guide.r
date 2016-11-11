@@ -59,17 +59,43 @@ dtable_guide <- function(data, elim.set = NULL,
     }
     s <- names(data)[surv]
     d  <- names(data)[date]
-    ret <- data.frame(
+    tmp_row <- if(!is.null(row.id)){
+                   data.frame(
+                       variable = row.id,
+                       type = "row id.",
+                       original_class = class(org_data[[row.id]]),
+                       has_missing = any(is.na(org_data[[row.id]])),
+                       check.names = FALSE,
+                       row.names = NULL,
+                       stringsAsFactors = FALSE
+                   )
+               } else NULL
+    tmp_unit <- if(!is.null(unit.id)){
+                   data.frame(
+                       variable = unit.id,
+                       type = "unit id.",
+                       original_class = class(org_data[[unit.id]]),
+                       has_missing = any(is.na(org_data[[unit.id]])),
+                       check.names = FALSE,
+                       row.names = NULL,
+                       stringsAsFactors = FALSE
+                   )
+               } else NULL
+    tmp_var <- data.frame(
         variable = c(r, c1, c2, b1, b2, b3, b4, d, s),
         type = rep(c("real", "catg", "bnry", "date", "surv"),
                    c(length(r), length(c(c1, c2)), length(c(b1,b2,b3,b4)),
                      length(d), length(s))),
         original_class = unlist(classy[c(r, c1, c2, b1, b2, b3, b4, d, s)]),
-        has_missing = unlist(lapply(data[,c(r, c1, c2, b1, b2, b3, b4, d, s)], any_na)),
+        has_missing = unlist(lapply(data[,c(r, c1, c2, b1, b2, b3, b4, d, s)],
+                                    any_na)),
         check.names = FALSE,
         row.names = NULL,
         stringsAsFactors = FALSE
     )
+    tmp <- rbind(tmp_row, tmp_unit, tmp_var)
+    labels <- get_label(org_data)
+    ret <- merge(tmp, labels, by = "variable")
     L <- NULL
     for(K in ret$variable[ret$type %in% c("catg", "bnry")]){
         L[[K]] <- levels(factor(data[[K]]))
@@ -95,12 +121,26 @@ dtable_guide <- function(data, elim.set = NULL,
             NULL
         }
     }
-    lab <- rep(NA_character_, nrow(ret))
-    for(k in 1:nrow(ret)){
-        tmp_lab <- attr(data[[ret$variable[k]]], "label")
-        if(!is.null(tmp_lab)) lab[k] <- tmp_lab
-    }
-    ret$label <- lab
+    ## lab <- rep(NA_character_, nrow(ret))
+    ## for(k in 1:nrow(ret)){
+    ##     tmp_lab <- attr(data[[ret$variable[k]]], "label")
+    ##     if(!is.null(tmp_lab)) lab[k] <- tmp_lab
+    ## }
+    ## ret$label <- lab
     ret
 }
 
+# - # get labels of variables, if any
+get_label <- function(data){
+    Names <- names(data)
+    if(is.null(Names)) return(NULL)
+    R <- rep(NA_character_, length(Names))
+    for(k in seq_along(Names)){
+        R[k] <- if(is.null(x <- attr(data[[k]], "label"))){
+                    Names[k]
+                } else {
+                    x
+                }
+    }
+    data.frame(variable = Names, label = R, stringsAsFactors = FALSE)
+}

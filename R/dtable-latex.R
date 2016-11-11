@@ -8,6 +8,8 @@
 ##' @param where (default "htb") passed to \code{Hmisc::latex}
 ##' @param rowname (default \code{NULL}) passed to \code{Hmisc::latex}
 ##' @param ... passed to \code{Hmisc::latex}
+##' @param guide a guide to provide labels, minimally a data frame with
+##'     variables 'variable' and 'label'
 ##' @param format use \code{dtable_format}?
 ##' @param format.param list of parameters to pass to
 ##'     \code{dtable_format} (only used if \code{format = TRUE}).
@@ -15,26 +17,26 @@
 dtable_latex <- function(dt, bling = TRUE,
                          file = "", where = "htb", rowname = NULL,
                          ...,
+                         guide = NULL,
                          format = FALSE,
                          format.param = as.list(NULL)){
     if(format) dt <- dtable_format(dt, param = format.param)
     x <- as.data.frame.dtable(dt)
+    if("variable" %in% names(x) & !is.null(guide)){
+        lab <- stats::setNames(guide$label, guide$variable)
+        x$variable <- lab[x$variable]
+    }
     A <- attributes(dt)
     d <- A$dtable
     d1 <- gsub("(meta)|(desc:*)", "", d)
     d2 <- gsub("comp", "Comparison", d1)
     r <- rle(d2)
-    gs <- A$glist_size
-    gw <- A$glist_weight
-    gu <- A$glist_units
-    foo <- function(s) paste(paste0(names(s), " ", s), collapse = ", ")
-    s_text <- if(!is.null(gs)) paste0("Count: ", foo(gs), ".") else NULL
-    w_text <- if(!is.null(gw)) paste0("Weight: ", foo(gw), ".") else NULL
-    u_text <- if(!is.null(gu)) paste0("Unique units: ", foo(gu), ".") else NULL
-    text <- if(!is.null(gs) | !is.null(gw) | !is.null(gu)){
-        paste0("{\\small\\emph{",s_text, " ", w_text, " ", u_text, "}}")
-    } else NULL
-    if(all(d2 == "")) bling <- FALSE
+    if(all(d2 == "")){
+        r <- NULL ## nullify the cgroup and n.cgroup args of Hmisc::latex
+    }
+    text <- paste0("{\\small\\begin{center}\\emph{",
+                   paste0(attr2text(dt), collapse = ". "),
+                   "}\\end{center}}")
     if(bling){
         Hmisc::latex(object = x, file = file, where = where,
                      rowname = rowname, cgroup = r$values,
@@ -44,6 +46,67 @@ dtable_latex <- function(dt, bling = TRUE,
                      rowname = rowname, ...)
     }
 }
+
+##' format a dtable
+##'
+##' overall, low-precision formatting of dtable objects - quick and
+##'     dirty way of getting something ok (hopefully), fast. could be
+##'     developed... its weird argument structure (all parameters
+##'     gathered in a list) is due to it being
+##'     considered most useful when called from other functions.
+##' @param dt a  dtable
+##' @param param list of parameter values ... these should be documented but
+##'     aren't yet.
+##' @export
+dtable_format <- function(dt, param = as.list(NULL)){
+    ## get default values
+    if(is.null(b    <- param$b))    b <- 1 ## boundary
+    if(is.null(bh   <- param$bh))   bh <- 1 ## digits arguments for hfnc
+    if(is.null(hfnc <- param$hfnc)) hfnc <- base::round ## format fnc
+    ## for numbers all > boundary
+    if(is.null(bl   <- param$bl))   bl <- 2 ## digits argument for lfnc
+    if(is.null(lfnc <- param$lfnc)) lfnc <- base::signif ## format fnc
+    ## for numbers all < boundary
+    if(is.null(p_b  <- param$p_b))  p_b <- 0.0001 ## threshold for p-values
+    if(is.null(peq0 <- param$peq0)) peq0 <- TRUE ## can p be zero?
+    if(is.null(tmax <- param$tmax)) tmax <- 30 ## max chars to print for text
+    ## format numeric part
+    n <- ncol(dt)
+    R <- as.data.frame(dt)
+    classy <- unlist(lapply(R, function(x) class(x)[1]))
+    datum <- which(classy %in% c("Date", "POSIXlt", "POSIXct"))
+    R[datum] <- lapply(R[datum], as.character)
+    num <- which(classy == "numeric")
+    l <- unlist(lapply(R[num], function(x) min(abs(x), na.rm = TRUE)))
+    h <- unlist(lapply(R[num], function(x) max(abs(x), na.rm = TRUE)))
+    p0 <- unlist(lapply(R[num], function(x) min(x, na.rm = TRUE) >= 0 &
+                                            max(x, na.rm = TRUE) <= 1))
+    p <- if(!is.null(p0)) which(p0) else NULL
+    il <- num[which(l>b)]
+    R[il] <- lapply(R[il], hfnc, digits = bh)
+    ih <- num[which(h<=b)]
+    R[ih] <- lapply(R[ih], lfnc, digits = bl)
+    not_zero <- function(x) ifelse(x < p_b & x > 0, paste0("<", p_b), x)
+    maybe_zero <- function(x) ifelse(x < p_b & x >= 0, paste0("<", p_b), x)
+    zero <- function(x, not) if(not) not_zero(x) else maybe_zero(x)
+    R[num[p]] <- lapply(R[num[p]], zero, not = peq0)
+    i_rest <- setdiff(num, c(il, ih))
+    R[i_rest] <- lapply(R[i_rest], round, 2)
+    ## format character
+
+    chr <- which(classy == "character")
+    foo <- function(x){
+        ifelse(nchar(x)>tmax + 2,
+               paste0(substring(x, 1, tmax), "..."),
+               x)
+    }
+    R[chr] <- lapply(R[chr], foo)
+    attributes(R) <- attributes(dt)
+    R
+}
+
+
+#####################################################################
 
 if(FALSE){
 
@@ -91,56 +154,4 @@ if(FALSE){
                  guide = g, w = vikt)
     dtable_format(dt)
 
-}
-##' format a dtable
-##'
-##' overall, low-precision formatting of dtable objects - quick and
-##'     dirty way of getting something ok (hopefully), fast. could be
-##'     developed... its weird argument structure (all parameters
-##'     gathered in a list) is due to it being
-##'     considered most useful when called from other functions.
-##' @param dt a  dtable
-##' @param param list of parameter values
-##' @export
-dtable_format <- function(dt, param = as.list(NULL)){
-    ## get default values
-    if(is.null(b    <- param$b))    b <- 1 ## boundary
-    if(is.null(bh   <- param$bh))   bh <- 1 ## digits arguments for hfnc
-    if(is.null(hfnc <- param$hfnc)) hfnc <- base::round ## format fnc
-    ## for numbers all > boundary
-    if(is.null(bl   <- param$bl))   bl <- 2 ## digits argument for lfnc
-    if(is.null(lfnc <- param$lfnc)) lfnc <- base::signif ## format fnc
-    ## for numbers all < boundary
-    if(is.null(p_b  <- param$p_b))  p_b <- 0.0001 ## threshold for p-values
-    if(is.null(tmax <- param$tmax)) tmax <- 30
-    ## format numeric part
-    n <- ncol(dt)
-    R <- as.data.frame(dt)
-    classy <- unlist(lapply(R, function(x) class(x)[1]))
-    datum <- which(classy %in% c("Date", "POSIXlt", "POSIXct"))
-    R[datum] <- lapply(R[datum], as.character)
-    num <- which(classy == "numeric")
-    l <- unlist(lapply(R[num], function(x) min(abs(x), na.rm = TRUE)))
-    h <- unlist(lapply(R[num], function(x) max(abs(x), na.rm = TRUE)))
-    p0 <- unlist(lapply(R[num], function(x) min(x, na.rm = TRUE) >= 0 &
-                                            max(x, na.rm = TRUE) <= 1))
-    p <- if(!is.null(p0)) which(p0) else NULL
-    il <- num[which(l>b)]
-    R[il] <- lapply(R[il], hfnc, digits = bh)
-    ih <- num[which(h<=b)]
-    R[ih] <- lapply(R[ih], lfnc, digits = bl)
-    R[num[p]] <- lapply(R[num[p]], function(x) ifelse(x < p_b & x > 0, paste0("<", p_b), x))
-    i_rest <- setdiff(num, c(il, ih))
-    R[i_rest] <- lapply(R[i_rest], round, 2)
-    ## format character
-
-    chr <- which(classy == "character")
-    foo <- function(x){
-        ifelse(nchar(x)>tmax + 2,
-               paste0(substring(x, 1, tmax), "..."),
-               x)
-    }
-    R[chr] <- lapply(R[chr], foo)
-    attributes(R) <- attributes(dt)
-    R
 }
