@@ -6,6 +6,7 @@
 ##'     names of wanted variables or a formula (if data is null it will look for
 ##'     the variables in the global workspace, but they need to be of the same length)
 ##' @param glist an index list or name of grouping variable
+##' @export
 ##' @return a data.frame with
 ##' \itemize{
 ##'   \item{variable} name of variable
