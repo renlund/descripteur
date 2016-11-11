@@ -12,11 +12,12 @@
 
 <<"setup", cache = FALSE, echo = FALSE, include = FALSE>>=
 library(knitr)
-library(descripteur)
-## devtools::load_all()
+## library(descripteur)
+devtools::load_all()
 opts_chunk$set(include = TRUE, echo = TRUE, cache = FALSE)
 if(FALSE){
     knitr::knit2pdf("describe-data.rnw", clean = TRUE)
+    shell.exec("describe-data.pdf")
 }
 @
 
@@ -233,11 +234,25 @@ The package comes with a wrapper for \texttt{Hmisc::latex} that will use the
 metadata to create a (hopefully) decent table. It can also invoke a format
 funtion if wanted.
 
+Table \ref{tab:1} and \ref{tab:2} shows the default tables created with and
+without groups, respectively.
+
+<<results = 'asis'>>=
+
+opts_desc$restore()
+dt <- dtable(data = df, type = "real", guide = g)
+dtable_latex(dt, caption = "Default table without groups",
+             format = T, label = "tab:1")
+
+@
+
+
 <<results = 'asis'>>=
 
 opts_desc$restore()
 dt <- dtable(data = df, type = "real", guide = g, glist = "gr")
-dtable_latex(dt, caption = "Default table", format = T)
+dtable_latex(dt, caption = "Default table with groups",
+             format = T, label = "tab:2")
 
 @
 
@@ -287,7 +302,12 @@ misser <- function(x, m = length(x)){
     x
 }
 df[2:(length(df)-2)] <- lapply(df[2:(length(df)-2)], misser)
-dtg <- dtable_guide(df)
+dtg <- dtable_guide(df, unit.id = "id")
+dtg$label <- c("binary 1", "bengt", "bio", "bam",
+               "cats are fun", "cool",
+               "datum", "doey", "IdEnTiFiEr",
+               "roYe", "RandomNessy",
+               "Slipp", "Slopp")
 gl <- descripteur:::make_glist("b1", ref = df)
 gl3 <- list(
     "abacus" = sample(c(T,F), size = n, replace =T),
@@ -312,7 +332,7 @@ dtable_latex(dtable(df, type = "real", glist = gl), format = T,
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "real", glist = gl3, w = vikt, comp = "across"),
-             format = T,
+             format = T, guide = dtg,
              caption = "Three weighted groups described and compared 'across' for type \\texttt{real}.")
 @
 
@@ -324,7 +344,7 @@ dtable_latex(dtable(df, type = "bnry", glist = gl), format = T,
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "bnry", glist = gl3, w = vikt, comp = "across"),
-             format = T,
+             format = T, guide = dtg,
              caption = "Three weighted groups described and compared 'across' for type \\texttt{bnry}.")
 @
 
@@ -336,7 +356,7 @@ dtable_latex(dtable(df, type = "catg", glist = gl), format = T,
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "catg", glist = gl3, w = vikt, comp = "across"),
-             format = T,
+             format = T, guide = dtg,
              caption = "Three weighted groups described and compared 'across' for type \\texttt{catg}.")
 @
 
@@ -365,7 +385,7 @@ dtable_latex(dtable(df, type = "date", glist = gl), format = T,
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "date", glist = gl3, w = vikt, comp = "across"),
-             format = T,
+             format = T,  guide = dtg,
              caption = "Three weighted groups described and compared 'across' for type \\texttt{date}.")
 @
 
@@ -377,58 +397,31 @@ dtable_latex(dtable(df, type = "surv", glist = gl), format = T,
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "surv", glist = gl3, w = vikt, comp = "across"),
-             format = T,
+             format = T,  guide = dtg,
              caption = "Three weighted groups described and compared 'across' for type \\texttt{surv}.")
 @
 
-\newpage
-\section{To do}
 
-\begin{itemize}
- \item Documentation and ability to browse/view the predefined functions\\
-   $\rightarrow$ They are now all exported with a short explanaition
- \item implementation of labels
- \item Ability to describe an imputed data set (i.e. a \texttt{mids} object).
-   %% perhaps by expanding a mids object to a single data frame, keeping a list
-   %% of indices for the values that are imputed
- \item More metadata; e.g. number of unique id:s if such is specified in the guide.
- \item Possibility to describe across types with type-agnostic functions?
- \item separate convience function to describe number of missing values
- \item latex option to use variable names as rgroup?
-\end{itemize}
+\section{Additional Functions}
+
+\subsection{Simple description of attributes and missing, respectively}
+\texttt{dtable\_missing} provides counts and percentages for variables in a data
+frame (regardless of type). \texttt{dtable\_attr} returns some attributes in a
+tidy format. Both these have grouping.
+
+<<>>=
+dm <- dtable_missing(df, glist = gl)
+@
+
+<<>>=
+dtable_attr(dm)
+@
+
+<<results = 'asis'>>=
+dtable_latex(dm, format = TRUE, guide = dtg,
+             caption = "Information on missing")
+@
+
 
 
 \end{document}
-
-
-<<eval = FALSE, echo = FALSE>>=
-
-## chunk for testing
-
-dtable(df, type = "catg")
-dtable(df, type = "catg", useNA = "always")
-
-dtable(df, type = "catg", glist = gl)
-dtable(data = df, type = "catg", glist = gl, useNA = "always", desc = FALSE)
-
-data = df
-type = "catg"
-glist = gl
-useNA = "always"
-desc = FALSE
-guide = NULL
-desc.flist = NULL
-comp = NULL
-comp.flist = NULL
-w = NULL
-
-
-dtable(df, type = "catg", glist = gl, useNA = "always", comp = FALSE)
-dtable(df, type = "catg", glist = gl, useNA = "always")
-
-descripteur:::c_diff.c(df$c1, glist = gl, useNA = TRUE)
-descripteur:::d_levels(df$c1, glist = gl, useNA = TRUE)
-
-descripteur:::c_diff.c(df$c1, glist = gl, useNA = FALSE)
-
-@
