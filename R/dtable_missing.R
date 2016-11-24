@@ -74,6 +74,32 @@ get_variables <- function(x = NULL, data = NULL){
     }
 }
 
+dtable_TNA <- function(data = NULL, tv = NULL, v = NULL, glist = NULL, NA.only =
+                                                                           TRUE){
+    ## is this superfluous?? can we just use dtable_missing with adequate flist
+    ## and grouping on factorized time variable??
+    t <- if(is.character(tv)) data[[tv]] else tv
+    if(!any(c("date", "POSIXct") %in% class(t))){
+        stop("need a date-isch variable as 'tv'")
+    }
+    df <- get_variables(x = v, data = data)
+    if(NA.only){
+        indx <- unlist(lapply(df, function(x) any(is.na(x))))
+        df <- df[,indx]
+    }
+    if(length(df) == 0) return(as.data.frame(NULL))
+
+    ## gör tiden numerisk, sätt origin = min(t)
+    ## låt n vara ett argument för antal hugg (typ = 10 default)
+    ## kom ihåg vilka datum klippen motsvarar (?)
+    ## skapa en matrix för procentuell andel saknade per tidshugg o variabel
+
+
+    ## continue here
+    invisible(NULL) ## ...for now
+}
+
+
 ###############################################################################
 
 if(FALSE){

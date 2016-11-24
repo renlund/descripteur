@@ -143,7 +143,8 @@ dtable <- function(data, type, guide = NULL,
                           })
     }
     attr(R, "size") <- nrow(data)
-    attr(R, "cc") <- sum(stats::complete.cases(data))
+    variables <- guide$variable[guide$type == type]
+    attr(R, "cc") <- sum(stats::complete.cases(data[,variables]))
     if(!is.null(w)) attr(R, "weight") <- sum(w)
     if(!is.null(row_id <- attr(guide, "row.id"))){
         ## This currently does not do much
