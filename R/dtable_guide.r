@@ -103,7 +103,7 @@ dtable_guide <- function(data, elim.set = NULL,
     if(!is.null(L)) attr(ret, "levels") <- L
     if(!is.null(row.id)){
         attr(ret, "row.id") <- if(row.id %in% names(org_data)){
-            if(length(data[[row.id]]) != nrow(data)){
+            if(length(unique(org_data[[row.id]])) != nrow(org_data)){
                 warning(paste0("row.id does not seem to identify the rows\n",
                                "(there are too few unique values)\n"))
             }
