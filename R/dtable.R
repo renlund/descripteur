@@ -87,17 +87,16 @@ dtable <- function(data, type, guide = NULL,
         has_na <- any(gvar$has_missing)
         use_na <- if(useNA != "ifany") useNA == "always" else has_na
         if(P$desc){
-            for(g in gvar$variable){ ## g <- gvar$variable[1]
-                x <- if(type %in% c("bnry", "catg")){
-                         factor(data[[g]], levels = attr(guide, "levels")[[g]])
-                     } else {
-                         data[[g]]
-                     }
+            for(g in gvar$variable){ ## g <- gvar$variable[2]
+                x <- data[[g]]
                 R0 <- NULL
                 if(is.null(glist)){
                     R0 <- apply_flist(x = x, flist = d_fnc, w = w,
                                       useNA = use_na, xname = g)##, ...)
                 } else {
+                    if(type %in% c("bnry", "catg")){
+                        x <- factor(data[[g]], levels = attr(guide, "levels")[[g]])
+                    }
                     for(k in seq_along(glist)){ ## k = 1
                         tmp <- apply_flist(x = x[glist[[k]]],
                                            flist = d_fnc,

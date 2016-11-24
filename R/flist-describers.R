@@ -214,7 +214,7 @@ make_catg <- function(x){
 weighted_p <- function(x, w = NULL){
     if(is.null(w)) w <- rep(1L, length(x))
     mm <- stats::model.matrix(~x)
-    mm[,1] <- ifelse(rowSums(mm[,-1]) == 0, 1, 0)
+    mm[,1] <- ifelse(rowSums(mm[,-1, drop = FALSE]) == 0, 1, 0)
     as.numeric(apply(X = mm, MARGIN = 2, FUN = stats::weighted.mean, w = w[!is.na(x)]))
 }
 
