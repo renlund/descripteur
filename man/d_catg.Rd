@@ -2,6 +2,7 @@
 % Please edit documentation in R/flist-describers.R
 \name{d_catg}
 \alias{d_catg}
+\alias{d_cn}
 \alias{d_cp}
 \alias{d_levels}
 \alias{d_percent}
@@ -11,9 +12,11 @@ d_catg(...)
 
 d_levels(x, useNA = FALSE, w = NULL, ...)
 
-d_percent(x, useNA = FALSE, w = NULL)
+d_percent(x, useNA = FALSE, w = NULL, ...)
 
-d_cp(x, useNA = FALSE, w = NULL)
+d_cn(x, useNA = FALSE, w = NULL, ...)
+
+d_cp(x, useNA = FALSE, w = NULL, ...)
 }
 \arguments{
 \item{...}{this is to be able to tolerate unnecessary arguments}
@@ -32,6 +35,8 @@ various describer functions for catg types
 \item \code{d_levels}: the levels of a catg variable
 
 \item \code{d_percent}: percentage of each level (and missing possibly)
+
+\item \code{d_cn}: count of each level (and missing possibly)
 
 \item \code{d_cp}: the estimated proportion of each level
 }}

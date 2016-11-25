@@ -258,7 +258,7 @@ attr(d_levels, "dtable") <- "meta"
 
 ##' @describeIn d_catg percentage of each level (and missing possibly)
 ##' @export
-d_percent <- function(x, useNA = FALSE, w = NULL){
+d_percent <- function(x, useNA = FALSE, w = NULL, ...){
     y <- make_catg(x)
     ta <- weighted_tab(x = y, w = w)
     r <- if(useNA) ta else ta[-length(ta)]
@@ -266,9 +266,19 @@ d_percent <- function(x, useNA = FALSE, w = NULL){
 }
 attr(d_percent, "dtable") <- "desc"
 
+##' @describeIn d_catg count of each level (and missing possibly)
+##' @export
+d_cn <- function(x, useNA = FALSE, w = NULL, ...){
+    y <- make_catg(x)
+    ta <- weighted_tab(x = y, w = w, count = TRUE)
+    r <- if(useNA) ta else ta[-length(ta)]
+    r
+}
+attr(d_cn, "dtable") <- "desc"
+
 ##' @describeIn d_catg the estimated proportion of each level
 ##' @export
-d_cp <- function(x, useNA = FALSE, w = NULL){
+d_cp <- function(x, useNA = FALSE, w = NULL, ...){
     y <- make_catg(x)
     t <- weighted_p(x = y, w = w)
     if(useNA) c(t, NA) else t
