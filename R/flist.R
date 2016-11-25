@@ -60,9 +60,9 @@ flists <- function(real = FALSE, bnry = FALSE, catg = FALSE,
         if(is.logical(tmp)){
             if(tmp){
                 if(thing == "desc"){
-                    descripteur:::desc_get(paste0("describe_", x))
+                    desc_get(paste0("describe_", x))
                 } else {
-                    descripteur:::desc_get(paste0("compare_", x))
+                    desc_get(paste0("compare_", x))
                 }
             } else NULL
         } else tmp

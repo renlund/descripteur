@@ -262,7 +262,7 @@ if(FALSE){ ## TESTS, some of which are also in tests
     df[2:length(df)] <- lapply(df[2:length(df)], misser)
     df
     (dtb <- dtable_guide(data = df, unit.id = "id"))
-    gl <- descripteur:::make_glist("b1", ref = df)
+    gl <- make_glist("b1", ref = df)
     gl3 <- list(
         "abacus" = sample(c(T,F), size = n, replace =T),
         "quuz" = sample(c(T,F), size = n, replace =T),

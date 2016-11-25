@@ -45,7 +45,6 @@ test_that("d_sum works", {
     expect_equal(d_sum(x), 20)
     expect_equal(d_sum(x = x, w = w), 22*5/7)
 })
-
 ######################################################
 
 x <- factor(c(1,1,0,NA,0,0), levels = 0:1)
@@ -74,11 +73,15 @@ w <- c(2,3,5,7)
 test_that("weighted_p works", {
     expect_equal(weighted_p(x), c(1,1,1)/3)
     expect_equal(weighted_p(x, w), c(2,3,5)/10)
+    expect_equal(weighted_p(x, count = TRUE), c(1,1,1))
+    expect_equal(weighted_p(x, w, count = TRUE), c(2,3,5))
 })
 
 test_that("weighted_tab works", {
     expect_equal(weighted_tab(x), c(1,1,1,1)*100/4)
     expect_equal(weighted_tab(x, w), c(2, 3, 5, 7)*100/17)
+    expect_equal(weighted_tab(x, count = TRUE), c(1,1,1,1))
+    expect_equal(weighted_tab(x, w, count = TRUE), c(2, 3, 5, 7))
 })
 
 test_that("d_percent works", {

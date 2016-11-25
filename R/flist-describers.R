@@ -210,29 +210,41 @@ make_catg <- function(x){
     }
 }
 
-## weighted proportion for categorical variables
-weighted_p <- function(x, w = NULL){
+## weighted proportion for categorical variables - will never show statistic for
+## missing even if there are missing
+weighted_p <- function(x, w = NULL, count = FALSE){
     if(is.null(w)) w <- rep(1L, length(x))
     mm <- stats::model.matrix(~x)
-    mm[,1] <- ifelse(rowSums(mm[,-1, drop = FALSE]) == 0, 1, 0)
-    as.numeric(apply(X = mm, MARGIN = 2, FUN = stats::weighted.mean, w = w[!is.na(x)]))
+    mm[,1] <- ifelse(rowSums(mm[, -1, drop = FALSE]) == 0, 1, 0)
+    if(count){
+        as.numeric(colSums(mm*w[!is.na(x)]))
+    } else {
+        as.numeric(apply(X = mm, MARGIN = 2, FUN = stats::weighted.mean,
+                         w = w[!is.na(x)]))
+    }
 }
 
-## weighted table (percentage) for categorical variable
-weighted_tab <- function(x, w = NULL){
+## weighted table (percentage) for categorical variable - will always show
+## statistic for missing, even if there are no missing
+weighted_tab <- function(x, w = NULL, count = FALSE){
     tryCatch(
         expr = {
-    if(is.null(w)) w <- rep(1L, length(x))
-    y <- as.character(x)
-    lev <- if(is.factor(x)) levels(x) else unique(x)
-    y[is.na(x)] <- "dOntnAmeyOurlEveltOtHis"
-    u <- factor(y, levels = c(lev, "dOntnAmeyOurlEveltOtHis"))
-    mm <- stats::model.matrix(~u)
-    mm[,1] <- ifelse(rowSums(mm[,-1]) == 0, 1, 0)
-    100*as.numeric(apply(X = mm, MARGIN = 2, FUN = stats::weighted.mean,
-                              w = w))
-    }, error = function(e)
-        stop(paste0("descripteur internal function weighted_tab fails with error:\n", e))
+            if(is.null(w)) w <- rep(1L, length(x))
+            y <- as.character(x)
+            lev <- if(is.factor(x)) levels(x) else unique(x)
+            y[is.na(x)] <- "dOntnAmeyOurlEveltOtHis"
+            u <- factor(y, levels = c(lev, "dOntnAmeyOurlEveltOtHis"))
+            mm <- stats::model.matrix(~u)
+            mm[,1] <- ifelse(rowSums(mm[, -1, drop = FALSE]) == 0, 1, 0)
+            ## colnames(mm)[1] <- paste0("u", lev[1])
+            if(count){
+                as.numeric(colSums(mm*w))
+            } else {
+                100*as.numeric(apply(X = mm, MARGIN = 2, FUN = stats::weighted.mean,
+                                     w = w))
+            }
+        }, error = function(e)
+            stop(paste0("descripteur internal function weighted_tab fails with error:\n", e))
     )
 }
 
