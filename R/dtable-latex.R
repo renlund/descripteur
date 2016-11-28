@@ -61,15 +61,16 @@ dtable_latex <- function(dt, bling = TRUE,
 dtable_format <- function(dt, param = as.list(NULL)){
     ## get default values
     if(is.null(b    <- param$b))    b <- 1 ## boundary
+    ## for numbers all > boundary
     if(is.null(bh   <- param$bh))   bh <- 1 ## digits arguments for hfnc
     if(is.null(hfnc <- param$hfnc)) hfnc <- base::round ## format fnc
-    ## for numbers all > boundary
+    ## for numbers all < boundary
     if(is.null(bl   <- param$bl))   bl <- 2 ## digits argument for lfnc
     if(is.null(lfnc <- param$lfnc)) lfnc <- base::signif ## format fnc
-    ## for numbers all < boundary
     if(is.null(p_b  <- param$p_b))  p_b <- 0.0001 ## threshold for p-values
     if(is.null(peq0 <- param$peq0)) peq0 <- TRUE ## can p be zero?
     if(is.null(tmax <- param$tmax)) tmax <- 30 ## max chars to print for text
+    if(is.null(repus <- param$repus)) repus <- TRUE ## replace _ with \\_
     ## format numeric part
     n <- ncol(dt)
     R <- as.data.frame(dt)
@@ -101,6 +102,10 @@ dtable_format <- function(dt, param = as.list(NULL)){
                x)
     }
     R[chr] <- lapply(R[chr], foo)
+    if(repus){
+        bar <- function(x) gsub("_", "\\_", x, fixed = TRUE)
+        R[chr] <- lapply(R[chr], bar)
+    }
     attributes(R) <- attributes(dt)
     R
 }
