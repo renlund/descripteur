@@ -49,7 +49,7 @@ desc_restore <- function(){
            value=list(
                "describe_real" = flist(c("mean" = "d_mean", "sd" = "d_sd")),
                "describe_bnry" = flist(c("value" = "d_ref_level", "prop" = "d_bp")),
-               "describe_catg" = flist(c("levels" = "d_levels", "p" = "d_cp")),
+               "describe_catg" = flist(c("levels" = "d_levels", "prop" = "d_cp")),
                "describe_date" = flist(c("min" = "d_min", "max" = "d_max")),
                "describe_surv" = flist(c("time" = "d_tsum",
                                  "events" = "d_esum", "rate" = "d_rate")),

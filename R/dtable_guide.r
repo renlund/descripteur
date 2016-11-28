@@ -94,10 +94,11 @@ dtable_guide <- function(data, elim.set = NULL,
         stringsAsFactors = FALSE
     )
     tmp <- rbind(tmp_row, tmp_unit, tmp_var)
-    labels <- get_label(org_data)
+    labels <- descripteur:::get_label(org_data)
     ret <- merge(tmp, labels, by = "variable")
-    L <- NULL
+    L <- as.list(NULL)
     for(K in ret$variable[ret$type %in% c("catg", "bnry")]){
+        ## K <- ret$variable[ret$type %in% c("catg", "bnry")][1]
         L[[K]] <- levels(factor(data[[K]]))
     }
     if(!is.null(L)) attr(ret, "levels") <- L

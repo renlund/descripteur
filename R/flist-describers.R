@@ -134,7 +134,7 @@ make_bnry <- function(x){
             if(rev) return(factor(x, levels = rev(levels(x))))
             if(!rev) return(x)
         } else {
-            stop("trying to give binry stats on a non-binary variable")
+            stop("trying to give binary stats on a non-binary variable")
         }
     }
     lev <- stats::na.omit(unique(x))
