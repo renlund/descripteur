@@ -70,7 +70,7 @@ dtable_format <- function(dt, param = as.list(NULL)){
     if(is.null(p_b  <- param$p_b))  p_b <- 0.0001 ## threshold for p-values
     if(is.null(peq0 <- param$peq0)) peq0 <- TRUE ## can p be zero?
     if(is.null(tmax <- param$tmax)) tmax <- 30 ## max chars to print for text
-    if(is.null(repus <- param$repus)) repus <- TRUE ## replace _ with \\_
+    if(is.null(repus <- param$repus)) repus <- TRUE ## replace '_' with '\\_'?
     ## format numeric part
     n <- ncol(dt)
     R <- as.data.frame(dt)

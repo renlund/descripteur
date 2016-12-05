@@ -92,7 +92,7 @@ dtable <- function(data, type, guide = NULL,
                 R0 <- NULL
                 if(is.null(glist)){
                     R0 <- apply_flist(x = x, flist = d_fnc, w = w,
-                                      useNA = use_na, xname = g)##, ...)
+                                      useNA = use_na, xname = g, ...)
                 } else {
                     if(type %in% c("bnry", "catg")){
                         x <- factor(data[[g]], levels = attr(guide, "levels")[[g]])
@@ -102,7 +102,7 @@ dtable <- function(data, type, guide = NULL,
                                            flist = d_fnc,
                                            useNA = use_na,
                                            w = w[glist[[k]]],
-                                           xname = g)##, ...)
+                                           xname = g, ...)
                         R0 <- dtable_cbind(x = R0, y = tmp,
                                            groups = names(glist)[k])
                         if(P$desc.style == "first") break
@@ -162,7 +162,7 @@ dtable <- function(data, type, guide = NULL,
             tmp_g <- function(x) tmp_f(data[[unit_id]][x])
             attr(R, "glist_units") <- unlist(lapply(glist, tmp_g))
         }
-        tmp_fnc <- function(x, Y = data) sum(stats::complete.cases(Y[x,]))
+        tmp_fnc <- function(x, Y = data[,variables]) sum(stats::complete.cases(Y[x,]))
         attr(R, "glist_cc") <- unlist(lapply(glist, tmp_fnc))
     }
     attr(R, "dc_param") <- P
