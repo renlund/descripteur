@@ -162,7 +162,7 @@ dtable <- function(data, type, guide = NULL,
             tmp_g <- function(x) tmp_f(data[[unit_id]][x])
             attr(R, "glist_units") <- unlist(lapply(glist, tmp_g))
         }
-        tmp_fnc <- function(x, Y = data[,variables]) sum(stats::complete.cases(Y[x,]))
+        tmp_fnc <- function(x, Y = data[,variables,drop = FALSE]) sum(stats::complete.cases(Y[x,]))
         attr(R, "glist_cc") <- unlist(lapply(glist, tmp_fnc))
     }
     attr(R, "dc_param") <- P
