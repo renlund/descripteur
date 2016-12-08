@@ -117,7 +117,8 @@ print(g)
 \subsection{Function lists}
 
 You can supply the describing and comparing functions that you wish to use, one
-list each. There are a few restrictions and/or features:
+list each. There are a few restrictions and/or features if you want to write
+your own functions:
 \begin{itemize}
 \item If a function has a 'weight'-parameter, this should be called \texttt{w}.
 \item Functions need to have the argument \texttt{...} for technical reasons
@@ -136,7 +137,12 @@ list each. There are a few restrictions and/or features:
   \texttt{attr}.
 \item Comparing functions need to take a \texttt{glist} argument and the glist
   will be a logical list (indices) for the subgroups. A pairwise comparer thus
-  needs to compare \texttt{x[glist[[1]]]} to \texttt{x[glist[[2]]]}.
+  needs to compare \texttt{x[glist[[1]]]} to \texttt{x[glist[[2]]]}. A function
+  that makes an overall comparison might need to use \texttt{factorize\_glist},
+  which tries to recreate\footnote{This seems a big awkward and there is
+    probably a better way to handle it, but it is due to that groupings need not
+    be created from a categorical variable to begin with (to allow for
+    overlaping groups).} a categorical variable from the \texttt{glist}.
 \item Functions can utilize a \texttt{useNA} that is \texttt{TRUE/FALSE} that in
   turn will be managed by \texttt{dtable} via the the possible values
   \texttt{ifany}, \texttt{always} and \texttt{no} such that, in the case
@@ -165,8 +171,7 @@ dattr(Rcomp) <- c("comp", "meta")
 
 Now we can make a simple description of the \texttt{real} variables.
 <<>>=
-dtable(data = df, type = "real", guide = g,
-       desc.flist = Rdesc, comp.flist = Rcomp)
+dtable(data = df, type = "real", guide = g, desc.flist = Rdesc)
 @
 (Note that the print method also shows the meta data.)
 
@@ -256,8 +261,6 @@ dtable_latex(dt, caption = "Default table with groups",
 
 @
 
-
-
 \subsection{Predefined comparers and describers}
 
 There are many predefined comparers and describers within the package. These can
@@ -271,6 +274,23 @@ respectively:
 opts_desc$set("describe_real" =
                   flist(c("count" = "d_n", "count_missing" = "d_missing")))
 @
+
+\subsubsection{Naming scheme for predefined functions}
+
+Describing and comparing functions have prefix \texttt{d\_} and \texttt{c\_},
+respectively, so there is e.g.\ a predfined \texttt{d\_mean} (which implicitly
+applies to numerical data, most often type \texttt{real})
+<<>>=
+d_mean
+@
+
+Some definitions are distinct for different data types and so requires different
+functions, if so they can have a ``second'' prefix begin the first letter of the
+type, so there is e.g.\ \texttt{d\_rstd} and \texttt{d\_bstd} which calculated
+the standard difference for \texttt{real} and \texttt{bnry}, respectively.
+
+Type \texttt{?d\_real} to get a list of all describers applicable to the
+\texttt{real} type.
 
 \newpage
 
@@ -328,36 +348,42 @@ dtg
 \subsection{Type \texttt{real}}
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "real", glist = gl), format = T,
-             caption = "Two groups described and compared for type \\texttt{real}.")
+             caption = paste("Two groups described and compared",
+                             "for type \\texttt{real}."))
 @
 <<results = 'asis'>>=
-dtable_latex(dtable(df, type = "real", glist = gl3, w = vikt, comp = "across"),
-             format = T, guide = dtg,
-             caption = "Three weighted groups described and compared 'across' for type \\texttt{real}.")
+dtable_latex(dtable(df, type = "real", glist = gl3, w = vikt,
+             comp = "across"), format = T, guide = dtg,
+             caption = paste("Three weighted groups described and",
+                             "compared 'across' for type \\texttt{real}."))
 @
 
 \clearpage
 \subsection{Type \texttt{bnry}}
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "bnry", glist = gl), format = T,
-             caption = "Two groups described and compared for type \\texttt{bnry}.")
+             caption = paste("Two groups described and compared",
+                             "for type \\texttt{bnry}."))
 @
 <<results = 'asis'>>=
-dtable_latex(dtable(df, type = "bnry", glist = gl3, w = vikt, comp = "across"),
-             format = T, guide = dtg,
-             caption = "Three weighted groups described and compared 'across' for type \\texttt{bnry}.")
+dtable_latex(dtable(df, type = "bnry", glist = gl3, w = vikt,
+             comp = "across"), format = T, guide = dtg,
+             caption = paste("Three weighted groups described and",
+                             "compared 'across' for type \\texttt{bnry}."))
 @
 
 \clearpage
 \subsection{Type \texttt{catg}}
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "catg", glist = gl), format = T,
-             caption = "Two groups described and compared for type \\texttt{catg}.")
+             caption = paste("Two groups described and compared",
+                             "for type \\texttt{catg}."))
 @
 <<results = 'asis'>>=
-dtable_latex(dtable(df, type = "catg", glist = gl3, w = vikt, comp = "across"),
-             format = T, guide = dtg,
-             caption = "Three weighted groups described and compared 'across' for type \\texttt{catg}.")
+dtable_latex(dtable(df, type = "catg", glist = gl3, w = vikt,
+             comp = "across"), format = T, guide = dtg,
+             caption = paste("Three weighted groups described and",
+                             "compared 'across' for type \\texttt{catg}."))
 @
 
 \newpage
@@ -373,7 +399,8 @@ opts_desc$set("describe_catg" = flist(c(
                   "percent" = "d_percent",
                   "proportion" = "d_cp")))
 dtable_latex(dtable(df, type = "catg", glist = gl, useNA = "ifany"), format = T,
-             caption = "Two groups described and compared for type \\texttt{catg}.")
+             caption = paste("Two groups described and compared",
+                             "for type \\texttt{catg}."))
 opts_desc$restore()
 @
 
@@ -386,7 +413,8 @@ dtable_latex(dtable(df, type = "date", glist = gl), format = T,
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "date", glist = gl3, w = vikt, comp = "across"),
              format = T,  guide = dtg,
-             caption = "Three weighted groups described and compared 'across' for type \\texttt{date}.")
+             caption = paste("Three weighted groups described and compared",
+                             "'across' for type \\texttt{date}."))
 @
 
 \clearpage
@@ -398,8 +426,11 @@ dtable_latex(dtable(df, type = "surv", glist = gl), format = T,
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "surv", glist = gl3, w = vikt, comp = "across"),
              format = T,  guide = dtg,
-             caption = "Three weighted groups described and compared 'across' for type \\texttt{surv}.")
+             caption = paste("Three weighted groups described and compared",
+                             "'across' for type \\texttt{surv}."))
 @
+
+
 
 
 \section{Additional Functions}
@@ -422,6 +453,13 @@ dtable_latex(dm, format = TRUE, guide = dtg,
              caption = "Information on missing")
 @
 
+\subsection{Finer control of output}
 
+\texttt{dtable\_latex} can pass arguments to \texttt{attr2text} (which works on
+top of \texttt{dtable\_attr}) to select which attributes to attach and (in a very
+limited way) how these are presented.
+
+\vspace{1cm}
+\noindent Presentation may appear here at some point\ldots
 
 \end{document}

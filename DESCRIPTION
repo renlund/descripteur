@@ -1,7 +1,7 @@
 Package: descripteur
 Type: Package
 Title: Describe Data Sets
-Version: 0.0.2.9035
+Version: 0.0.2.9036
 Author: Henrik Renlund
 Maintainer: Henrik Renlund <henrikrenlund@gmail.com>
 Description: An attempt to systematize my data description.
@@ -12,6 +12,7 @@ Suggests:
     rmarkdown,
     testthat,
     Hmisc,
-    survival
+    survival,
+    devtools
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1

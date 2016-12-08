@@ -4,11 +4,14 @@
 #' @param elim.set names of variables to exclude from description
 #' @param catg.tol only describe categorical data with no more than this
 #'   many unique values
-#' @param real.tol force numeric data with few ($<= \code{real.tol}) unique data
+#' @param real.tol force numeric data with few (\eqn{<=} \code{real.tol}) unique data
 #'   points to be described as categorical
 #' @param as.is if TRUE ignore all tolerence parameters
-#' @param row.id the row identifier
-#' @param unit.id the unit identifier
+#' @param no.bnry if TRUE, there will be no distinction between 'bnry' and
+#'     'catg', they will all be 'catg' (default \code{FALSE})
+#' @param row.id the row identifier, doesn't really do much at this point
+#' @param unit.id the unit identifier, this can later provide information on how
+#'     many unique units there are in a table or subgroups thereof
 #' @return a data frame describing each variable in the data set (excluding
 #'     \code{elim.set}, \code{id}, and \code{unit.id}). each variable has
 #'     \itemize{
@@ -22,8 +25,10 @@
 #' @export
 dtable_guide <- function(data, elim.set = NULL,
                          catg.tol = 20, real.tol = 5,
-                         as.is = FALSE, row.id = NULL, unit.id = NULL){
+                         as.is = FALSE, no.bnry = FALSE,
+                         row.id = NULL, unit.id = NULL){
     if(catg.tol < 3 | real.tol < 3) stop("be more tolerant...")
+    data_source <- as.character(substitute(data))
     org_data <- data
     data <- subset(org_data, TRUE,
                    select = setdiff(names(data), c(elim.set, row.id, unit.id)))
@@ -93,12 +98,14 @@ dtable_guide <- function(data, elim.set = NULL,
         row.names = NULL,
         stringsAsFactors = FALSE
     )
+    if(no.bnry){
+        tmp_var$type[tmp.var$type == "bnry"] <- "catg"
+    }
     tmp <- rbind(tmp_row, tmp_unit, tmp_var)
-    labels <- descripteur:::get_label(org_data)
+    labels <- get_label(org_data)
     ret <- merge(tmp, labels, by = "variable")
     L <- as.list(NULL)
     for(K in ret$variable[ret$type %in% c("catg", "bnry")]){
-        ## K <- ret$variable[ret$type %in% c("catg", "bnry")][1]
         L[[K]] <- levels(factor(data[[K]]))
     }
     if(!is.null(L)) attr(ret, "levels") <- L
@@ -122,13 +129,22 @@ dtable_guide <- function(data, elim.set = NULL,
             NULL
         }
     }
-    ## lab <- rep(NA_character_, nrow(ret))
-    ## for(k in 1:nrow(ret)){
-    ##     tmp_lab <- attr(data[[ret$variable[k]]], "label")
-    ##     if(!is.null(tmp_lab)) lab[k] <- tmp_lab
-    ## }
-    ## ret$label <- lab
+    attr(ret, "data_source") <- data_source
+    class(ret) <- c("dtable_guide", "data.frame")
     ret
+}
+
+##' print dtable_guide objects
+##'
+##' prints the data source attribute as well as the data frame
+##' @param x a \code{dtable_guide } object
+##' @param ... arguments passed to \code{\link[base]{print.data.frame}}
+##' @export
+print.dtable_guide <- function(x, ...){
+    if(!is.null(ds <- attr(x, "data_source"))){
+        cat(paste("## This guide was created from data set:", ds, "\n"))
+    }
+    print.data.frame(x, ...)
 }
 
 # - # get labels of variables, if any

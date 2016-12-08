@@ -1,13 +1,14 @@
-# - #' make a grouping list
-# - #'
-# - #' description tables with grouping requires a list of indexes to
-# - #'     group on. Often this should be equivalent to categorization
-# - #'     according to some grouping variable. If so, the 'glist' needed
-# - #'     can be created by either specifying that variable or the name
-# - #'     of that variable in data source 'ref'.
-# - #' @title make glist
-# - #' @param x object
-# - #' @param ref reference
+#' make a grouping list
+#'
+#' description tables with grouping requires a list of indexes to
+#'     group on. Often this should be equivalent to categorization
+#'     according to some grouping variable. If so, the 'glist' needed
+#'     can be created by either specifying that variable or the name
+#'     of that variable in data source 'ref'.
+#' @title make glist
+#' @param x object
+#' @param ref reference
+#' @export
 make_glist <- function(x, ref = NULL){
     if(!is.null(ref)){
         if(is.data.frame(ref)){
@@ -29,11 +30,11 @@ make_glist <- function(x, ref = NULL){
     g
 }
 
-# - #' factorize a glist
-# - #'
-# - #' reverse-engineer a categorical variable from glist, if possible
-# - #' @param glist
-# - #' @return a character vector
+#' factorize a glist
+#'
+#' reverse-engineer a categorical variable from glist, if possible
+#' @param glist a glist (duh!)
+#' @export
 factorize_glist <- function(glist){
     g <- as.data.frame(glist)
     rS <- rowSums(g)

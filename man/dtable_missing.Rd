@@ -4,7 +4,7 @@
 \alias{dtable_missing}
 \title{describe missing}
 \usage{
-dtable_missing(data = NULL, v = NULL, glist = NULL)
+dtable_missing(data = NULL, v = NULL, guide = NULL, glist = NULL)
 }
 \arguments{
 \item{data}{the data.frame or similar}
@@ -13,18 +13,17 @@ dtable_missing(data = NULL, v = NULL, glist = NULL)
 names of wanted variables or a formula (if data is null it will look for
 the variables in the global workspace, but they need to be of the same length)}
 
+\item{guide}{a guide (by \code{dtable_guide}), either to select variables OR
+to provide unit information (the type-info will not be used)}
+
 \item{glist}{an index list or name of grouping variable}
 }
 \value{
 a data.frame with
 \itemize{
   \item{variable} name of variable
-  \item{NA.n} number of \code{NA} in that variable
-  \item{NA.perc} percent \code{NA} in that variable
-  \item{n.assoc} number of variables with an OR > 1 and a p-value of <
-    threshold p-value specified (according to fisher.test)
-  \item{max.assoc} the variable name with the largest OR (>1) among those
-    with a p < threshold p given
+  \item{count} number of \code{NA} in that variable
+  \item{percent} percent \code{NA} in that variable
 }
 }
 \description{

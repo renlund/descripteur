@@ -5,7 +5,7 @@
 \title{Description guide}
 \usage{
 dtable_guide(data, elim.set = NULL, catg.tol = 20, real.tol = 5,
-  as.is = FALSE, row.id = NULL, unit.id = NULL)
+  as.is = FALSE, no.bnry = FALSE, row.id = NULL, unit.id = NULL)
 }
 \arguments{
 \item{data}{a data frame}
@@ -15,14 +15,18 @@ dtable_guide(data, elim.set = NULL, catg.tol = 20, real.tol = 5,
 \item{catg.tol}{only describe categorical data with no more than this
 many unique values}
 
-\item{real.tol}{force numeric data with few ($<= \code{real.tol}) unique data
+\item{real.tol}{force numeric data with few (\eqn{<=} \code{real.tol}) unique data
 points to be described as categorical}
 
 \item{as.is}{if TRUE ignore all tolerence parameters}
 
-\item{row.id}{the row identifier}
+\item{no.bnry}{if TRUE, there will be no distinction between 'bnry' and
+'catg', they will all be 'catg' (default \code{FALSE})}
 
-\item{unit.id}{the unit identifier}
+\item{row.id}{the row identifier, doesn't really do much at this point}
+
+\item{unit.id}{the unit identifier, this can later provide information on how
+many unique units there are in a table or subgroups thereof}
 }
 \value{
 a data frame describing each variable in the data set (excluding
