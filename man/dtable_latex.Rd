@@ -4,14 +4,18 @@
 \alias{dtable_latex}
 \title{latexify a dtable}
 \usage{
-dtable_latex(dt, bling = TRUE, file = "", where = "htb", rowname = NULL,
-  ..., guide = NULL, format = FALSE, format.param = as.list(NULL))
+dtable_latex(dt, bling = TRUE, bling.param = as.list(NULL), file = "",
+  where = "htb", rowname = NULL, ..., guide = NULL, format = FALSE,
+  format.param = as.list(NULL))
 }
 \arguments{
 \item{dt}{a dtable}
 
 \item{bling}{shall we compose suitable table bling from the
 attributes? (default \code{TRUE})}
+
+\item{bling.param}{list of parameters sent to attr2text, if non-emoty bling
+will be set to TRUE}
 
 \item{file}{(default empty string) passed to \code{Hmisc::latex}}
 
@@ -27,7 +31,7 @@ variables 'variable' and 'label'}
 \item{format}{use \code{dtable_format}?}
 
 \item{format.param}{list of parameters to pass to
-\code{dtable_format} (only used if \code{format = TRUE}).}
+\code{dtable_format} (if given will set \code{format = TRUE}).}
 }
 \description{
 process dtable into latex code via \code{Hmisc::latex}.

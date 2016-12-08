@@ -4,6 +4,8 @@
 ##' @param dt a dtable
 ##' @param bling shall we compose suitable table bling from the
 ##'     attributes? (default \code{TRUE})
+##' @param bling.param list of parameters sent to attr2text, if non-emoty bling
+##'     will be set to TRUE
 ##' @param file (default empty string) passed to \code{Hmisc::latex}
 ##' @param where (default "htb") passed to \code{Hmisc::latex}
 ##' @param rowname (default \code{NULL}) passed to \code{Hmisc::latex}
@@ -12,14 +14,16 @@
 ##'     variables 'variable' and 'label'
 ##' @param format use \code{dtable_format}?
 ##' @param format.param list of parameters to pass to
-##'     \code{dtable_format} (only used if \code{format = TRUE}).
+##'     \code{dtable_format} (if given will set \code{format = TRUE}).
 ##' @export
-dtable_latex <- function(dt, bling = TRUE,
+dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
                          file = "", where = "htb", rowname = NULL,
                          ...,
                          guide = NULL,
                          format = FALSE,
                          format.param = as.list(NULL)){
+    if(length(bling.param)>0) bling <- TRUE
+    if(length(format.param) > 0) format <- TRUE
     if(format) dt <- dtable_format(dt, param = format.param)
     x <- as.data.frame.dtable(dt)
     if("variable" %in% names(x) & !is.null(guide)){
@@ -34,8 +38,11 @@ dtable_latex <- function(dt, bling = TRUE,
     if(all(d2 == "")){
         r <- NULL ## nullify the cgroup and n.cgroup args of Hmisc::latex
     }
+    ## text <- paste0("{\\small\\begin{center}\\emph{",
+    ##                paste0(attr2text(dt), collapse = ". "),
+    ##                "}\\end{center}}")
     text <- paste0("{\\small\\begin{center}\\emph{",
-                   paste0(attr2text(dt), collapse = ". "),
+                   do.call(attr2text, c(dt = list(dt), bling_fixer(bling.param))),
                    "}\\end{center}}")
     if(bling){
         Hmisc::latex(object = x, file = file, where = where,
@@ -45,6 +52,15 @@ dtable_latex <- function(dt, bling = TRUE,
         Hmisc::latex(object = x, file = file, where = where,
                      rowname = rowname, ...)
     }
+}
+
+bling_fixer <- function(x = as.list(NULL)){
+    if(is.null(perc <- x$perc)) perc <- TRUE
+    if(is.null(perc.sign <- x$perc.sign)) perc.sign <- "\\%"
+    if(is.null(attr <- x$attr)) attr <- c("size", "cc", "weight", "units", "info")
+    if(is.null(sep <- x$sep)) sep <- ". "
+    vector <- FALSE
+    list(perc = perc, perc.sign = perc.sign, attr = attr, sep = sep, vector = FALSE)
 }
 
 ##' format a dtable
@@ -108,6 +124,34 @@ dtable_format <- function(dt, param = as.list(NULL)){
     }
     attributes(R) <- attributes(dt)
     R
+}
+
+
+# - # create data set to test things on
+dtable_data_example <- function(n = 100, seed = 20161207){
+    set.seed(seed)
+    df <- data.frame(
+        id = paste0("id", 1001:(1000 + n)),
+        r1 = round(stats::rnorm(n, 20, 5)),
+        r2 = round(stats::rexp(n, 1/20)),
+        c1 = sample(letters[1:5], size = n, replace = TRUE),
+        c2 = factor(sample(LETTERS[5:3], size = n, replace = TRUE)),
+        b1 = sample(LETTERS[6:7], size = n, replace = TRUE, prob = 2:3),
+        b2 = stats::rbinom(n, 1, 0.1),
+        b3 = sample(c("No", "Yes"), size = n, replace = TRUE, prob = 1:2),
+        b4 = sample(c(TRUE, FALSE), size = n, replace = TRUE),
+        d1 = as.Date("2000-01-01") + stats::rpois(n, 365),
+        d2 = as.Date(floor(rexp(n, 1/3650)), origin = "1975-01-01"),
+        stringsAsFactors = FALSE
+    )
+    misser <- function(x, m = length(x)){
+        p <- floor(stats::runif(1, min = 1, max = m/2))
+        x[sample(1:n, size = p, replace = FALSE)] <- NA
+        x
+    }
+    df[2:length(df)] <- lapply(df[2:length(df)], misser)
+    df$vikt <- 0.5 + stats::rbinom(n, 2, 0.4)
+    df
 }
 
 

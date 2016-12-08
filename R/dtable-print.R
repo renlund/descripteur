@@ -53,7 +53,8 @@ dtable_attr <- function(dt, perc = FALSE, perc.sign = "%"){
             if(!is.null(w))   "weight" else NULL,
             if(!is.null(u))   "units"  else NULL
         ),
-        total = c(n, ccn, w, u)
+        total = c(n, if(perc) paste0(roundisch(100*ccn/n), perc.sign) else ccn, w, u),
+        stringsAsFactors = FALSE
     )
     fnc <- function(a, b, p){
         r <- if(is.null(a)){
@@ -64,12 +65,12 @@ dtable_attr <- function(dt, perc = FALSE, perc.sign = "%"){
         stats::setNames(r, names(a))
     }
     if(!is.null(a$glist_size)){
-             size =   fnc(a$glist_size, n, perc)
+             size =   fnc(a$glist_size, n, FALSE)
              cc =     fnc(a$glist_cc, a$glist_size, perc)
              weight = fnc(a$glist_weight, w, perc)
-             units =  fnc(a$glist_units, u, perc)
-             tmp <- rbind(size, cc, weight, units)
-             Q <- as.data.frame(tmp)
+             units =  fnc(a$glist_units, u, FALSE)
+             tmp <- rbind(size, cc, weight, units, stringsAsFactors = FALSE)
+             Q <- as.data.frame(tmp, stringsAsFactors = FALSE)
              Q$measure <- rownames(tmp)
              rownames(Q) <- NULL
              merge(R, Q, sort = FALSE)
@@ -79,11 +80,14 @@ dtable_attr <- function(dt, perc = FALSE, perc.sign = "%"){
 }
 
 # - # turn dtable_attr into text
-attr2text <- function(dt, perc = FALSE, perc.sign = "%"){
-    da <- dtable_attr(dt, perc, perc.sign)
+attr2text <- function(dt, perc = FALSE, perc.sign = "%",
+                      attr = c("size", "cc", "weight", "units", "info"),
+                      sep = ". ", vector = FALSE){
+    da <- dtable_attr(dt, perc = perc, perc.sign = perc.sign)
     gr <- setdiff(names(da), c("measure", "total"))
     n <- length(gr)
     foo <- function(m, g, text){
+        if(!m %in% attr) return(NULL)
         x <- subset(da, da$measure == m)
         if(nrow(x)==0) return(NULL)
         a <- x$total
@@ -93,10 +97,43 @@ attr2text <- function(dt, perc = FALSE, perc.sign = "%"){
              } else NULL
         paste0(text, " ", a, c)
     }
-    c(
-        foo("size", n>0, "Rows:"),
+    r <- c(
+        foo(m = "size", g = n>0, text = "Rows:"),
         foo("cc", n>0, "Complete Cases:"),
         foo("weight", n>0, "Weight:"),
-        foo("units", n>0, "Units:")
+        foo("units", n>0, "Units:"),
+        if("info" %in% attr) attr(dt, "info") else NULL
     )
+    if(vector) return(r)
+    s <- c(rep(sep, length.out = max(length(r)-1, 0)), "")
+    R <- paste(r, s, sep = "", collapse = "")
+    if(R == "") NULL else R
+}
+
+if(FALSE){
+
+    devtools::load_all()
+    df <- dtable_data_example(n = 111)
+    g <- dtable_guide(df, unit.id = "id")
+    dt <- dtable(df, "real", glist = "b1", guide = g, w = "vikt")
+    attr(dt, "info") <- "Some interesting detail."
+    dtable_attr(dt)
+    dtable_attr(dt, perc = T)
+    str(dtable_attr(dt, perc = T))
+    attr2text(dt)
+    attr2text(dt, perc = T)
+    attr2text(dt, sep = ". ")
+    cat(attr2text(dt, sep = "\n"))
+    attr2text(dt, sep = c(". ", "... "))
+    attr2text(dt, vector = TRUE)
+    attr2text(dt, attr = c("size", "info"), sep = ". ")
+    attr2text(dt, attr = NULL)
+
+    attr2text(dt)
+    attr2text(dt, perc = T, perc.sign = "%")
+    dtable_attr(dt, perc = FALSE)
+    dtable_attr(dt, perc = TRUE)
+
+    dtable_latex(dt)
+
 }
