@@ -82,20 +82,27 @@ dtable_attr <- function(dt, perc = FALSE, perc.sign = "%"){
 # - # turn dtable_attr into text
 attr2text <- function(dt, perc = FALSE, perc.sign = "%",
                       attr = c("size", "cc", "weight", "units", "info"),
-                      sep = ". ", vector = FALSE){
+                      sep = ". ", vector = FALSE, rm.if.all = FALSE){
     da <- dtable_attr(dt, perc = perc, perc.sign = perc.sign)
     gr <- setdiff(names(da), c("measure", "total"))
     n <- length(gr)
     foo <- function(m, g, text){
         if(!m %in% attr) return(NULL)
+        N <- subset(da, da$measure == "size")$total
         x <- subset(da, da$measure == m)
         if(nrow(x)==0) return(NULL)
         a <- x$total
-        b <- if(g) as.character(x[1, 3:(2+n)]) else NULL
-        c <- if(g){
-                 paste0(" (", paste0(paste0(gr, ":", b), collapse = ", "), ")")
-             } else NULL
-        paste0(text, " ", a, c)
+        if(m == "cc" & a == paste0("100", perc.sign)){
+            if(rm.if.all) NULL else paste(text, a)
+        } else if(m == "units" & a == N){
+            if(rm.if.all) NULL else paste("All units unique")
+        } else {
+            b <- if(g) as.character(x[1, 3:(2+n)]) else NULL
+            c <- if(g){
+                     paste0(" (", paste0(paste0(gr, ":", b), collapse = ", "), ")")
+                 } else NULL
+            paste0(text, " ", a, c)
+        }
     }
     r <- c(
         foo(m = "size", g = n>0, text = "Rows:"),
@@ -116,12 +123,19 @@ if(FALSE){
     df <- dtable_data_example(n = 111)
     g <- dtable_guide(df, unit.id = "id")
     dt <- dtable(df, "real", glist = "b1", guide = g, w = "vikt")
+    tmp <- as.character(df$b1)
+    tmp[is.na(tmp)] <- "NA"
+    dt2 <- dtable(df, "real", glist = make_glist(tmp), guide = g, w = "vikt")
     attr(dt, "info") <- "Some interesting detail."
     dtable_attr(dt)
+    dtable_attr(dt2)
     dtable_attr(dt, perc = T)
+    dtable_attr(dt2, perc = T)
     str(dtable_attr(dt, perc = T))
     attr2text(dt)
+    attr2text(dt2)
     attr2text(dt, perc = T)
+    attr2text(dt2, perc = T)
     attr2text(dt, sep = ". ")
     cat(attr2text(dt, sep = "\n"))
     attr2text(dt, sep = c(". ", "... "))
@@ -129,11 +143,13 @@ if(FALSE){
     attr2text(dt, attr = c("size", "info"), sep = ". ")
     attr2text(dt, attr = NULL)
 
-    attr2text(dt)
-    attr2text(dt, perc = T, perc.sign = "%")
-    dtable_attr(dt, perc = FALSE)
-    dtable_attr(dt, perc = TRUE)
-
     dtable_latex(dt)
+
+    perc = FALSE
+    perc.sign = "%"
+    attr = c("size", "cc", "weight", "units", "info")
+    sep = ". "
+    vector = FALSE
+    rm.if.all = FALSE
 
 }

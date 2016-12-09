@@ -12,8 +12,8 @@
 
 <<"setup", cache = FALSE, echo = FALSE, include = FALSE>>=
 library(knitr)
-## library(descripteur)
-devtools::load_all()
+library(descripteur)
+## devtools::load_all()
 opts_chunk$set(include = TRUE, echo = TRUE, cache = FALSE)
 if(FALSE){
     knitr::knit2pdf("describe-data.rnw", clean = TRUE)
@@ -26,8 +26,6 @@ if(FALSE){
 \maketitle
 
 \tableofcontents
-
-
 
 \newpage
 

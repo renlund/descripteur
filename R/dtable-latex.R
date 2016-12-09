@@ -4,7 +4,7 @@
 ##' @param dt a dtable
 ##' @param bling shall we compose suitable table bling from the
 ##'     attributes? (default \code{TRUE})
-##' @param bling.param list of parameters sent to attr2text, if non-emoty bling
+##' @param bling.param list of parameters sent to attr2text, if non-empty bling
 ##'     will be set to TRUE
 ##' @param file (default empty string) passed to \code{Hmisc::latex}
 ##' @param where (default "htb") passed to \code{Hmisc::latex}
@@ -22,9 +22,13 @@ dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
                          guide = NULL,
                          format = FALSE,
                          format.param = as.list(NULL)){
-    if(length(bling.param)>0) bling <- TRUE
+    if(length(bling.param) > 0) bling <- TRUE
     if(length(format.param) > 0) format <- TRUE
-    if(format) dt <- dtable_format(dt, param = format.param)
+    ## if(format) dt <- dtable_format(dt, param = format.param)
+    if(format){
+        dt <- do.call(dtable_format,
+                      c(dt = list(dt), format_fixer(format.param)))
+    }
     x <- as.data.frame.dtable(dt)
     if("variable" %in% names(x) & !is.null(guide)){
         lab <- stats::setNames(guide$label, guide$variable)
@@ -38,9 +42,6 @@ dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
     if(all(d2 == "")){
         r <- NULL ## nullify the cgroup and n.cgroup args of Hmisc::latex
     }
-    ## text <- paste0("{\\small\\begin{center}\\emph{",
-    ##                paste0(attr2text(dt), collapse = ". "),
-    ##                "}\\end{center}}")
     text <- paste0("{\\small\\begin{center}\\emph{",
                    do.call(attr2text, c(dt = list(dt), bling_fixer(bling.param))),
                    "}\\end{center}}")
@@ -54,13 +55,34 @@ dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
     }
 }
 
+## - # this sets up the bling defaults for dtable_latex
 bling_fixer <- function(x = as.list(NULL)){
     if(is.null(perc <- x$perc)) perc <- TRUE
     if(is.null(perc.sign <- x$perc.sign)) perc.sign <- "\\%"
     if(is.null(attr <- x$attr)) attr <- c("size", "cc", "weight", "units", "info")
     if(is.null(sep <- x$sep)) sep <- ". "
+    if(is.null(rm.if.all <- x$rm.if.all)) rm.if.all <- FALSE
     vector <- FALSE
     list(perc = perc, perc.sign = perc.sign, attr = attr, sep = sep, vector = FALSE)
+}
+
+## - # this sets up the format defaults for dtable_latex
+format_fixer <- function(x = as.list(NULL)){
+    if(is.null(b    <- x$b))    b <- 1 ## boundary
+    ## for numbers all > boundary
+    if(is.null(bh   <- x$bh))   bh <- 1 ## digits arguments for hfnc
+    if(is.null(hfnc <- x$hfnc)) hfnc <- base::round ## format fnc
+    ## for numbers all < boundary
+    if(is.null(bl   <- x$bl))   bl <- 2 ## digits argument for lfnc
+    if(is.null(lfnc <- x$lfnc)) lfnc <- base::signif ## format fnc
+    if(is.null(br   <- x$br))   br <- 2 ## digits argument for rfnc
+    if(is.null(rfnc <- x$rfnc)) rfnc <- base::round ## format fnc
+    if(is.null(p_b  <- x$p_b))  p_b <- 0.0001 ## threshold for p-values
+    if(is.null(peq0 <- x$peq0)) peq0 <- TRUE ## can p be zero?
+    if(is.null(tmax <- x$tmax)) tmax <- 30 ## max chars to print for text
+    if(is.null(repus <- x$repus)) repus <- TRUE ## replace '_' with '\\_'?
+    list(b = b, bh = bh, hfnc = hfnc, bl = bl, lfnc = lfnc, p_b,
+         peq0 = peq0, tmax = tmax, repus = repus)
 }
 
 ##' format a dtable
@@ -70,23 +92,46 @@ bling_fixer <- function(x = as.list(NULL)){
 ##'     developed... its weird argument structure (all parameters
 ##'     gathered in a list) is due to it being
 ##'     considered most useful when called from other functions.
-##' @param dt a  dtable
-##' @param param list of parameter values ... these should be documented but
-##'     aren't yet.
+##' @param dt a dtable
+##' @param b boundary, if numbers are consistenly higher they are handled by
+##'     'bh' and 'hfnc', if consistently lower by 'bl' and 'lfnc', and otherwise
+##'     by 'br' and 'rfnc'
+##' @param bh digits argument for \code{hfnc}
+##' @param hfnc format function for above boundary numbers
+##' @param bl digits argument for \code{lfnc}
+##' @param lfnc format function for below boundary numbers
+##' @param br digits argument for \code{rfnc}
+##' @param rfnc format function for other numbers
+##' @param p_b threshold for how small p values to show. Any variable which is
+##'     between 0 and 1 is considered a 'p-value' here, which need not be the
+##'     case.
+##' @param peq0 even if we abbreviate small 'p-values' should we explicitly put
+##'     = "0" if it is equal to zero?
+##' @param tmax how many characters to print for a character vector
+##' @param repus should we replace "_" with "\\_" in charcter variables? (If not
+##'     LaTeX might fail.)
 ##' @export
-dtable_format <- function(dt, param = as.list(NULL)){
-    ## get default values
-    if(is.null(b    <- param$b))    b <- 1 ## boundary
-    ## for numbers all > boundary
-    if(is.null(bh   <- param$bh))   bh <- 1 ## digits arguments for hfnc
-    if(is.null(hfnc <- param$hfnc)) hfnc <- base::round ## format fnc
-    ## for numbers all < boundary
-    if(is.null(bl   <- param$bl))   bl <- 2 ## digits argument for lfnc
-    if(is.null(lfnc <- param$lfnc)) lfnc <- base::signif ## format fnc
-    if(is.null(p_b  <- param$p_b))  p_b <- 0.0001 ## threshold for p-values
-    if(is.null(peq0 <- param$peq0)) peq0 <- TRUE ## can p be zero?
-    if(is.null(tmax <- param$tmax)) tmax <- 30 ## max chars to print for text
-    if(is.null(repus <- param$repus)) repus <- TRUE ## replace '_' with '\\_'?
+dtable_format <- function(dt, b = 1,
+                          bh = 1, hfnc = base::round,
+                          bl = 2, lfnc = base::signif,
+                          br = 2, rfnc = base::round,
+                          p_b = 0.0001, peq0 = TRUE,
+                          tmax = 30, repus = TRUE){
+    ## --------------------------------------------------------------OLD
+    ## ------ param = as.list(NULL) ---------
+    ## ## get default values
+    ## if(is.null(b    <- param$b))    b <- 1 ## boundary
+    ## ## for numbers all > boundary
+    ## if(is.null(bh   <- param$bh))   bh <- 1 ## digits arguments for hfnc
+    ## if(is.null(hfnc <- param$hfnc)) hfnc <- base::round ## format fnc
+    ## ## for numbers all < boundary
+    ## if(is.null(bl   <- param$bl))   bl <- 2 ## digits argument for lfnc
+    ## if(is.null(lfnc <- param$lfnc)) lfnc <- base::signif ## format fnc
+    ## if(is.null(p_b  <- param$p_b))  p_b <- 0.0001 ## threshold for p-values
+    ## if(is.null(peq0 <- param$peq0)) peq0 <- TRUE ## can p be zero?
+    ## if(is.null(tmax <- param$tmax)) tmax <- 30 ## max chars to print for text
+    ## if(is.null(repus <- param$repus)) repus <- TRUE ## replace '_' with '\\_'?
+    ## --------------------------------------------------------------OLD
     ## format numeric part
     n <- ncol(dt)
     R <- as.data.frame(dt)
@@ -108,7 +153,7 @@ dtable_format <- function(dt, param = as.list(NULL)){
     zero <- function(x, not) if(not) not_zero(x) else maybe_zero(x)
     R[num[p]] <- lapply(R[num[p]], zero, not = peq0)
     i_rest <- setdiff(num, c(il, ih))
-    R[i_rest] <- lapply(R[i_rest], round, 2)
+    R[i_rest] <- lapply(R[i_rest], rfnc, br)
     ## format character
 
     chr <- which(classy == "character")
@@ -141,7 +186,7 @@ dtable_data_example <- function(n = 100, seed = 20161207){
         b3 = sample(c("No", "Yes"), size = n, replace = TRUE, prob = 1:2),
         b4 = sample(c(TRUE, FALSE), size = n, replace = TRUE),
         d1 = as.Date("2000-01-01") + stats::rpois(n, 365),
-        d2 = as.Date(floor(rexp(n, 1/3650)), origin = "1975-01-01"),
+        d2 = as.Date(floor(stats::rexp(n, 1/3650)), origin = "1975-01-01"),
         stringsAsFactors = FALSE
     )
     misser <- function(x, m = length(x)){

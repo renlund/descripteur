@@ -181,7 +181,7 @@ dtable <- function(data, type, guide = NULL,
 ##' @export
 dtables <- function(data, types = NULL, desc.flists = NULL,
                     comp.flists = NULL, guide = NULL, ...){
-    message("dtables function is still experimental")
+    message("dtables function is still experimental\nHigly likely to change!\n")
     ok_types <- c("real", "bnry", "catg", "date", "surv")
     d.f <- names(desc.flists)
     c.f <- names(comp.flists)

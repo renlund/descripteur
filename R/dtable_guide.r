@@ -99,7 +99,7 @@ dtable_guide <- function(data, elim.set = NULL,
         stringsAsFactors = FALSE
     )
     if(no.bnry){
-        tmp_var$type[tmp.var$type == "bnry"] <- "catg"
+        tmp_var$type[tmp_var$type == "bnry"] <- "catg"
     }
     tmp <- rbind(tmp_row, tmp_unit, tmp_var)
     labels <- get_label(org_data)

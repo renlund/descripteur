@@ -14,7 +14,7 @@ dtable_latex(dt, bling = TRUE, bling.param = as.list(NULL), file = "",
 \item{bling}{shall we compose suitable table bling from the
 attributes? (default \code{TRUE})}
 
-\item{bling.param}{list of parameters sent to attr2text, if non-emoty bling
+\item{bling.param}{list of parameters sent to attr2text, if non-empty bling
 will be set to TRUE}
 
 \item{file}{(default empty string) passed to \code{Hmisc::latex}}
