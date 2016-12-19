@@ -91,6 +91,7 @@ dtable_prune <- function(x, rm = NULL, keep = NULL){
         keep <- NULL
     }
     d <- dattr(x)
+    old_attr <- attributes(x)
     if(!is.null(rm)){
         if(is.character(rm)){
             rm <- which(names(x) %in% rm)
@@ -105,6 +106,7 @@ dtable_prune <- function(x, rm = NULL, keep = NULL){
     r <- x[,-rm, drop = FALSE]
     names(r) <- names(x)[-rm]
     dattr(r) <- dattr(x)[-rm]
+    attributes(r) <- add_attributes(r, old_attr)
     r
 }
 
@@ -120,6 +122,13 @@ as.data.frame.dtable <- function(x, ...){
     x
 }
 
+
+get_attributes <- function(x) attributes(x)
+add_attributes <- function(x, a){
+    haz <- get_attributes(x)
+    add <- setdiff(names(a), names(haz))
+    c(haz, a[add])
+}
 
 ####################################################################
 

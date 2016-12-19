@@ -3,7 +3,7 @@
 \name{c_date}
 \alias{c_date}
 \alias{c_overlap}
-\title{various comparer functions for surv types}
+\title{various comparer functions for date types}
 \usage{
 c_date(...)
 
@@ -17,7 +17,7 @@ c_overlap(x, glist, ...)
 \item{glist}{a grouping list}
 }
 \description{
-various comparer functions for surv types
+various comparer functions for date types
 }
 \section{Functions}{
 \itemize{

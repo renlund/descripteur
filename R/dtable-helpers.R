@@ -50,16 +50,6 @@ dc_param <- function(desc = NULL, comp = NULL, glist = NULL){
          "comp.style" = comp.style)
 }
 
-if(FALSE){
-    dc_param()
-    dc_param(desc = T, glist = 1)
-    dc_param(glist=1)
-    dc_param(comp = "across", glist = 1)
-    dc_param(comp = "adjacent", glist = 1)
-    dc_param(comp = "adjacent", glist = NULL)
-}
-
-
 ## this might be useful later if there is ever a function to convert
 ## a variable to a 'footnote'
 latex_symbols <- function(){
@@ -74,3 +64,4 @@ latex_symbols <- function(){
                 "Upsilon","Phi","Psi","Omega")
     invisible(NULL)
 }
+

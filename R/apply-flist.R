@@ -15,12 +15,17 @@ apply_flist <- function(x, flist, ..., xname = NULL){
     } else {
         paste0(as.character(substitute(x)), collapse = "")
     }
+    dots <- list(...)
+    dots$x <- x
+    dots$xname <- r$variable
     for(k in names(flist)){ ## k = names(flist)[1]
         r[[k]] <- if(is.function(fnc <- flist[[k]])){
-            fnc(x, ...)
-        } else {
-            tryCatch(as.character(flist[[k]]), error = function(e) "*anomalie*")
-        }
+                      ## fnc(x, ...)
+                      do.call(what = fnc, args = dots)
+                  } else {
+                      tryCatch(as.character(flist[[k]]),
+                               error = function(e) "*anomalie*")
+                  }
     }
     r <- as.data.frame(r, stringsAsFactors = FALSE)
     class(r) <- c("dtable", "data.frame")
@@ -30,6 +35,14 @@ apply_flist <- function(x, flist, ..., xname = NULL){
 
 
 if(FALSE){
+
+    foo <- function(x, ..., y){
+        bla <- list(...)
+        bla[['x']] <- x
+        return(bla)
+    }
+    foo(x=1, z = 1:4, tryck = "A", y = -1)
+    do.call(foo, list(x=1, y=2, z=3))
 
     xr <- rnorm(10)
     xr[1] <- NA

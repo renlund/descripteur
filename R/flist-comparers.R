@@ -106,11 +106,33 @@ c_bstd <- function(x, glist, w = NULL, ...){
 }
 attr(c_bstd, "dtable") <- "comp"
 
+##' @describeIn c_bnry fisher test p-value
+##' @export
+c_fisher.p <- function(x, glist, ...){
+    x1 <- x[glist[[1]]]
+    x2 <- x[glist[[2]]]
+    x <- c(x1, x2)
+    g <- rep(0:1, c(length(x1), length(x2)))
+    stats::fisher.test(x = x, y = g)$p.value
+}
+attr(c_fisher.p, "dtable") <- "comp"
+
+##' @describeIn c_bnry chisquare test p-value
+##' @export
+c_chisq.p <- function(x, glist, ...){
+    x1 <- x[glist[[1]]]
+    x2 <- x[glist[[2]]]
+    x <- c(x1, x2)
+    g <- rep(0:1, c(length(x1), length(x2)))
+    stats::chisq.test(x = x, y = g)$p.value
+}
+attr(c_chisq.p, "dtable") <- "comp"
+
      ## +----------------------------------------+ ##
      ## | comparing functions for date variables | ##
      ## +----------------------------------------+ ##
 
-##' various comparer functions for surv types
+##' various comparer functions for date types
 ##'
 ##' @param x vector
 ##' @param glist a grouping list
@@ -140,6 +162,8 @@ attr(c_overlap, "dtable") <- "comp"
 ##' @param useNA display info for missing?
 ##' @param w weight
 ##' @param ... this is to be able to tolerate unnecessary arguments
+##' @seealso \code{\link{c_fisher.p}} and \code{\link{c_chisq.p}} which work for
+##'     catg variables as well
 c_catg <- function(...) invisible(NULL)
 
 ##' @describeIn c_catg difference in proportions, 2 groups only
@@ -163,6 +187,21 @@ c_cOR <- function(x, glist, useNA = FALSE, w = NULL, ...){
     (p1 / (1-p1)) / (p2 / (1-p2))
 }
 attr(c_cOR, "dtable") <- "comp"
+
+##' @describeIn c_catg standardized differences, 2 groups only
+##' @export
+c_cstd <- function(x, glist, useNA = FALSE, w = NULL, ...){
+    useNA <- FALSE ## could this couse problems?
+    if(is.null(w)) w <- rep(1, length(x))
+    w1 <- w[glist[[1]]]
+    w2 <- w[glist[[2]]]
+    x1 <- x[glist[[1]]]
+    x2 <- x[glist[[2]]]
+    p1 <- d_cp(x1, w = w1)
+    p2 <- d_cp(x2, w = w2)
+    (p1 - p2) / sqrt((p1*(1-p1) + p2*(1-p2)) / 2)
+}
+attr(c_cstd, "dtable") <- "comp"
 
 ## d_levels exists in two locations ... problem?
 ## d_levels <- function(x, useNA = FALSE, w = NULL, ...){
@@ -201,3 +240,4 @@ c_rr <- function(x, glist, w = NULL, type = "right", ...){
     }
 }
 attr(c_rr, "dtable") <- "comp"
+

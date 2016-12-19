@@ -79,7 +79,30 @@ dtable_attr <- function(dt, perc = FALSE, perc.sign = "%"){
     }
 }
 
-# - # turn dtable_attr into text
+## round numbers, for numbers >1 round to 1 decimal, else
+## use 1 significant digit when >t, else "<t"
+round_helper <- function(x, t = 0.1, scientific = FALSE,
+                         digit1 = 1, digit2 = 1){
+    if(length(x) != 1) stop("want length 1 vector")
+    if(x==0) return(0)
+    if(abs(x)>=1) return(round(x, digit1))
+    if(abs(x)>=t) return(signif(x, digit2))
+    if(scientific){
+        format(x, digits = digit2, scientific = TRUE)
+    } else {
+        paste0("<", gsub("^0", "", t))
+    }
+}
+
+## - # round_helper for vectors
+roundisch <- function(x, ...){
+    n <- length(x)
+    R <- rep(NA_character_, n)
+    for(i in 1:n) R[i] <- round_helper(x[i], ...)
+    R
+}
+
+## - # turn dtable_attr into text
 attr2text <- function(dt, perc = FALSE, perc.sign = "%",
                       attr = c("size", "cc", "weight", "units", "info"),
                       sep = ". ", vector = FALSE, rm.if.all = FALSE){

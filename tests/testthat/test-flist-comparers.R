@@ -57,3 +57,17 @@ test_that("c_cOR works", {
     expect_equal(c_cOR(x, glist = gl, w = w1, useNA=F),
                  c((2/3)/2, (2/3)/(1/8), (1/4)/(2/7)))
 })
+
+test_that("c_cstd works", {
+    x <- letters[c(1,2,2,3, 1,1,1,2,3,3)]
+    x3 <- x; x3[x3 == "c"] <- "b"
+    x2 <- x; x2[x2 == "c"] <- "a"
+    x1 <- x; x1[x1 == "b"] <- "a"
+    gl <- list("a"=rep(c(T,F), c(4,6)),
+               "b"=rep(c(F,T), c(4,6)))
+    expect_equal(c_cstd(x, glist = gl), c(
+                                            -c_bstd(x3, glist = gl),
+                                            c_bstd(x2, glist = gl),
+                                            c_bstd(x1, glist = gl)
+                                            ))
+})

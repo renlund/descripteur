@@ -4,7 +4,8 @@
 \alias{dtable_missing}
 \title{describe missing}
 \usage{
-dtable_missing(data = NULL, v = NULL, guide = NULL, glist = NULL)
+dtable_missing(data = NULL, v = NULL, guide = NULL, glist = NULL,
+  only.with = TRUE, info = "latex")
 }
 \arguments{
 \item{data}{the data.frame or similar}

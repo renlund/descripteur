@@ -1,7 +1,7 @@
 ##' create descriptive table
 ##'
 ##' create a description of variables of a given type in your
-##'     data. this functions should have a vignette...
+##'     data. see the vignette for examples
 ##' @title create descriptive table
 ##' @param data a \code{data.frame} or such object
 ##' @param type what kind of variables to you want to describe?
@@ -16,16 +16,34 @@
 ##'     flist has this argument)
 ##' @param ... arguments passed
 ##' @export
-dtable <- function(data, type, guide = NULL,
+dtable <- function(data, type = NULL, guide = NULL,
                    desc = NULL, desc.flist = NULL,
                    comp = NULL, comp.flist = NULL,
                    glist = NULL, w = NULL, useNA = "no", ...){
-    if(!type %in% c("real","bnry", "date", "catg", "surv")){
-        stop("type not supported")
-    }
     if(!useNA %in% c("ifany", "always", "no")){
         message("wrong useNA specification (set to 'no')")
         useNA <- "no"
+    }
+    if(is.null(guide)) guide <- dtable_guide(data = data)
+    if(is.logical(guide)){
+        guide_val <- guide
+        guide <- dtable_guide(data = data)
+        if(!guide_val){
+            filter <- !guide$type %in% c("row.id", "unit.id")
+            guide$type[filter] <- "real" ## this particular value should not matter
+        }
+    }
+    ## you can skip 'type' but if the guide contains several different types
+    ## this will raise a warning
+    if(is.null(type)){
+            tmp <- setdiff(guide$type, c("id.row", "id.unit"))
+            type <- tmp[1]
+            if(length(unique(tmp)) != 1){
+                warning(paste0("no type given, has been set to ", type, "."))
+            }
+    }
+    if(!type %in% c("real","bnry", "date", "catg", "surv")){
+        stop("type not supported")
     }
     P <- dc_param(desc = desc, comp = comp, glist = glist)
     glist.variable <- NULL
@@ -57,7 +75,6 @@ dtable <- function(data, type, guide = NULL,
             warning("weight has negative elements")
         }
     }
-    if(is.null(guide)) guide <- dtable_guide(data = data)
     gvar <- guide[guide$type == type,]
     if(!P$desc & !P$comp) {
         R <- as.data.frame(NULL)
@@ -125,8 +142,10 @@ dtable <- function(data, type, guide = NULL,
                     R0 <- NULL
                     for(k in 2:length(glist)){ ## k = 2
                         ref.index <- if(P$comp.style == "across") 1 else k-1
-                        tmp <- apply_flist(x = x, glist = glist[c(ref.index,k)],
-                                           flist = c_fnc, useNA = use_na,
+                        tmp <- apply_flist(x = x,
+                                           glist = glist[c(ref.index,k)],
+                                           flist = c_fnc,
+                                           useNA = use_na,
                                            xname = g, ...)
                         R0 <- dtable_cbind(R0, tmp,
                                            groups = names(glist)[k])
@@ -183,6 +202,9 @@ dtables <- function(data, types = NULL, desc.flists = NULL,
                     comp.flists = NULL, guide = NULL, ...){
     message("dtables function is still experimental\nHigly likely to change!\n")
     ok_types <- c("real", "bnry", "catg", "date", "surv")
+    if(is.null(types)) types <- ok_types
+    if(is.null(desc.flists)) desc.flists <- desc_get("desc_compact")
+    if(is.null(comp.flists)) comp.flists <- desc_get("comp_compact")
     d.f <- names(desc.flists)
     c.f <- names(comp.flists)
     dc.f <- union(d.f, c.f)
@@ -205,17 +227,19 @@ dtables <- function(data, types = NULL, desc.flists = NULL,
     if(TRUE){ ## checks
         d.n <- unlist(lapply(defl, length))
         c.n <- unlist(lapply(cofl, length))
-        test <- all(names(defl) %in% ok_types) &&
-            all(names(cofl) %in% ok_types) &&
-            all(c(d.n, c.n) == max(d.n, c.n))
+        test <- all(names(defl) %in% ok_types) &
+            all(names(cofl) %in% ok_types) &
+            all(d.n == max(d.n)) &
+            all(c.n == max(c.n))
         if(!test) stop("...somethings wrong")
     }
     ## n <- length(all_types)
     if(is.null(guide)) guide <- dtable_guide(data)
     R <- NULL
-    for(TYP in all_types){
+    for(TYP in all_types){ ## TYP = all_types[1]
         tmp <- dtable(data, type = TYP, guide = guide,
-                      desc.flist = defl[[TYP]], comp.flist = cofl[[TYP]], ...)
+                      desc.flist = flist(unlist(defl[[TYP]])),
+                      comp.flist = flist(unlist(cofl[[TYP]])), ...)
         suppressWarnings(R <- if(is.null(R)) {
                  tmp
              } else {

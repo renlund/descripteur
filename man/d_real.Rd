@@ -2,6 +2,8 @@
 % Please edit documentation in R/flist-describers.R
 \name{d_real}
 \alias{d_IQR}
+\alias{d_Q1}
+\alias{d_Q3}
 \alias{d_length}
 \alias{d_max}
 \alias{d_mean}
@@ -38,6 +40,10 @@ d_min(x, ...)
 d_max(x, ...)
 
 d_IQR(x, ...)
+
+d_Q1(x, ...)
+
+d_Q3(x, ...)
 }
 \arguments{
 \item{...}{this is to be able to tolerate unnecessary arguments}
@@ -72,5 +78,9 @@ various describer functions for real types
 \item \code{d_max}: maximum
 
 \item \code{d_IQR}: inter quartile range
+
+\item \code{d_Q1}: first quartile
+
+\item \code{d_Q3}: third quartile
 }}
 

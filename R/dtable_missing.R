@@ -15,36 +15,39 @@
 #'   \item{count} number of \code{NA} in that variable
 #'   \item{percent} percent \code{NA} in that variable
 #' }
-dtable_missing <- function(data = NULL, v = NULL, guide = NULL, glist = NULL){
+dtable_missing <- function(data = NULL, v = NULL, guide = NULL, glist = NULL,
+                           only.with = TRUE, info = "latex" ){
     df <- get_variables(x = v, data = data)
     N <- nrow(df)
     m <- ncol(df)
     if(N == 0) stop("empty data set")
-    if(is.null(guide)){
-        guide <- data.frame(variable = names(df), type = "real")
-    } else {
-        guide$type <- "real"
+    if(is.null(guide)) guide <- dtable_guide(df)
+    guide$type <- "real"
+    if(only.with){
+        no_miss <- guide$variable[!guide$has_missing]
+        guide <- subset(guide, guide$has_missing)
+        if(nrow(guide) == 0) {
+            message("there are no missing")
+            invisible(NULL)
+        }
     }
     a_flist <- flist(c("count" = "d_missing", "percent" = "d_missing.perc"))
-    dtable(data = data, type = "real", desc = TRUE, guide = guide,
-           desc.flist = a_flist, comp = FALSE, glist = glist)
-}
-
-# - # round numbers > 1, use 1 significant digit when >t, else "<t"
-round_helper <- function(x, t = 0.1){
-    if(length(x) != 1) stop("want length 1 vector")
-    if(x==0) return(0)
-    if(abs(x)>=1) return(round(x))
-    if(abs(x)>=t) return(signif(x, 1))
-    paste0("<", gsub("^0", "", t))
-}
-
-# - # round_helper for vectors
-roundisch <- function(x, t = 0.1){
-    n <- length(x)
-    R <- rep(NA_character_, n)
-    for(i in 1:n) R[i] <- round_helper(x[i], t=t)
-    R
+    dt <- dtable(data = data, type = "real", desc = TRUE, guide = guide,
+                 desc.flist = a_flist, comp = FALSE, glist = glist)
+    if(only.with & length(no_miss)>0){
+        a <- if(info == "latex"){
+                 paste0(
+                     paste0("\\texttt{",
+                            gsub("_", "\\_", no_miss, fixed = TRUE),
+                            "}"),
+                 collapse = ", ")
+             } else {
+                 paste0(no_miss, collapse = ", ")
+             }
+        attr(dt, "info") <- c(attr(dt, "info"),
+            paste0("Variables examined but found to be complete: ", a, "."))
+    }
+    dt
 }
 
 # - # create data frame from formula or names of variables

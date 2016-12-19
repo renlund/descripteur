@@ -115,6 +115,18 @@ attr(d_max, "dtable") <- "desc"
 d_IQR <- function(x, ...) stats::IQR(x, na.rm = TRUE)
 attr(d_IQR, "dtable") <- "desc"
 
+##' @describeIn d_real first quartile
+##' @export
+d_Q1 <- function(x, ...) stats::quantile(x, na.rm = TRUE, probs = 0.25,
+                                         names = FALSE)
+attr(d_Q1, "dtable") <- "desc"
+
+##' @describeIn d_real third quartile
+##' @export
+d_Q3 <- function(x, ...) stats::quantile(x, na.rm = TRUE, probs = 0.75,
+                                         names = FALSE)
+attr(d_Q3, "dtable") <- "desc"
+
     ## +-----------------------------------------+ ##
     ## | describing functions for bnry variables | ##
     ## +-----------------------------------------+ ##
@@ -137,7 +149,7 @@ make_bnry <- function(x){
             stop("trying to give binary stats on a non-binary variable")
         }
     }
-    lev <- stats::na.omit(unique(x))
+    lev <- sort(stats::na.omit(unique(x)))
     if(rev) lev <- rev(lev)
     if(length(lev) != 2){
         stop("trying to give binry stats on a non-binary variable")
@@ -186,6 +198,21 @@ attr(d_odds, "dtable") <- "desc"
     ## | describing functions for date variables | ##
     ## +-----------------------------------------+ ##
 
+##' various describing functions for surv variables
+##' @param x vector of dates
+##' @param ... this is to be able to tolerate unnecessary arguments
+d_surv <- function(...) return(invisible(NULL))
+
+##' @describeIn d_surv minimum
+##' @export
+d_dmin = function(x, ...) as.character(min(x, na.rm = TRUE))
+attr(d_dmin, "dtable") <- "desc"
+
+##' @describeIn d_surv maximum
+##' @export
+d_dmax = function(x, ...) as.character(max(x, na.rm = TRUE))
+attr(d_dmax, "dtable") <- "desc"
+
 
     ## +-----------------------------------------+ ##
     ## | describing functions for catg variables | ##
@@ -196,6 +223,7 @@ attr(d_odds, "dtable") <- "desc"
 ##' @param x vector
 ##' @param w weight
 ##' @param useNA show information for missing?
+##' @param count count instead default (percentage/proportion)
 ##' @param ... this is to be able to tolerate unnecessary arguments
 d_catg <- function(...) invisible(NULL)
 
@@ -293,7 +321,7 @@ attr(d_cp, "dtable") <- "desc"
 ##'
 ##' @param x vector
 ##' @param w weight
-##' @param type what kind of censoring?
+##' @param cens.type what kind of censoring?
 ##' @param ... this is to be able to tolerate unnecessary arguments
 d_surv <- function(...) invisible(NULL)
 
@@ -302,12 +330,12 @@ survcheck <- function(x){
     invisible(NULL)
 }
 check_right <- function(x){
-    if(attr(x, "type") != "right") warning("object type not 'right'")
+    if(attr(x, "type") != "right") warning("object cens.type not 'right'")
     invisible(NULL)
 }
-consurv <- function(x, type = "right"){
+consurv <- function(x, cens.type = "right"){
     survcheck(x)
-    if(type == "right"){
+    if(cens.type == "right"){
         check_right(x)
         n <- length(x)
         data.frame(
@@ -315,49 +343,420 @@ consurv <- function(x, type = "right"){
             event = as.numeric(x)[(n/2+1):n]
         )
     } else {
-        stop("no type but 'right' has been implemented")
+        stop("no cens.type but 'right' has been implemented")
     }
 }
 
 ##' @describeIn d_surv sum of follow up time
 ##' @export
-d_tsum <- function(x, w = NULL, type = "right", ...){
+d_tsum <- function(x, w = NULL, cens.type = "right", ...){
     survcheck(x)
     if(is.null(w)) w <- rep(1L, length(x)/2)
-    if(type == "right"){
+    if(cens.type == "right"){
         check_right(x)
-        d <- consurv(x, type)
+        d <- consurv(x, cens.type)
         d_sum(d$time, w)
     } else {
-        stop("no type but 'right' has been implemented")
+        stop("no cens.type but 'right' has been implemented")
     }
 }
 attr(d_tsum, "dtable") <- "desc"
 
 ##' @describeIn d_surv sum of events
 ##' @export
-d_esum <- function(x, w = NULL, type = "right", ...){
+d_esum <- function(x, w = NULL, cens.type = "right", ...){
     survcheck(x)
     if(is.null(w)) w <- rep(1L, length(x)/2)
-    if(type == "right"){
+    if(cens.type == "right"){
         check_right(x)
-        d <- consurv(x, type)
+        d <- consurv(x, cens.type)
         d_sum(d$event, w)
     } else {
-        stop("no type but 'right' has been implemented")
+        stop("no cens.type but 'right' has been implemented")
     }
 }
 attr(d_esum, "dtable") <- "desc"
 
 ##' @describeIn d_surv rate (d_esum / d_tsum)
 ##' @export
-d_rate <- function(x, w = NULL, type = "right", ...){
+d_rate <- function(x, w = NULL, cens.type = "right", ...){
     survcheck(x)
-    if(type == "right"){
+    if(cens.type == "right"){
         check_right(x)
-        d_esum(x, w = w, type = type) / d_tsum(x, w = w, type = type)
+        d_esum(x, w = w, cens.type = cens.type) / d_tsum(x, w = w, cens.type = cens.type)
     } else {
-        stop("no type but 'right' has been implemented")
+        stop("no cens.type but 'right' has been implemented")
     }
 }
 attr(d_rate, "dtable") <- "desc"
+
+
+##    ## +-----------------------------------+ ##
+##    ## | compact-type describing functions | ##
+##    ## +-----------------------------------+ ##
+##
+## ##' various describer functions for any type
+## ##'
+## ##' @param x variable
+## ##' @param xname typically you need not supply this (automatic or internal)
+## ##' @param type.guide a guide to determine type
+## ##' @param median median style info for numerics? else mean style
+## ##' @param show.NA display missing info?
+## ##' @param ...
+## d_any <- function(...) invisible(NULL)
+
+## ##' @describeIn d_any a function to get a compact table of selected statistics
+## ##' @export
+## d_compact <- function(x, xname, type.guide, median = TRUE,
+##                       show.NA = TRUE, ...){
+##     if(is.null(type.guide)){
+##         ## function to guess type ?
+##         ## -->  type <- "real" ## or whatever
+##         stop("'type.guide' needed")
+##     }
+##     if(missing(xname)) xname <- as.character(substitute(x))
+##     dots <- list(...)
+##     info <- if(!is.null(tmp <- dots[["only.give.information"]])){
+##                 tmp
+##             } else FALSE
+##     type <- type.guide$type[type.guide$variable == xname]
+##     NAn <- sum(is.na(x))
+##     NAtxt <- if(NAn>0 & show.NA) paste0("[", NAn,"]") else NULL
+##     if(type == "real"){
+##         z <- as.numeric(x)
+##         if(median){
+##             if(!info){
+##                 Q2 <- d_median(x = z)
+##                 Q1 <- d_Q1(x = z)
+##                 Q3 <- d_Q3(x = z)
+##                 paste0(roundisch(Q2), " (", roundisch(Q1),"-",
+##                        roundisch(Q3),")", NAtxt)
+##             } else "Numeric variables: median(Q1-Q3)"
+##         } else {
+##             if(!info){
+##                 m <- d_mean(x = z)
+##                 sd <- d_sd(x = z)
+##                 paste0(roundisch(m), " (", roundisch(sd), ")", NAtxt)
+##             } else "Numeric variables: mean(sd)"
+##         }
+##     } else if(type == "bnry"){
+##         if(!info){
+##             z <- make_bnry(x)
+##             n <- d_bn(x = z)
+##             p <- d_bp(x = z)
+##             paste0(n, " (",
+##                    roundisch(100*p, t = 0.001, scientific = TRUE, digit2 = 2),
+##                    "\\%)", NAtxt)
+##             } else "Binary variables: count(percentage) for non-reference level only"
+##     } else if(type == "catg"){
+##         if(!info){
+##             z <- make_catg(x)
+##             n <- d_cn(x = z)
+##             p <- d_cp(x = z)
+##             paste0(n, " (",
+##                    roundisch(100*p, t = 0.001, scientific = TRUE, digit2 = 2),
+##                    "\\%)", NAtxt)
+##             } else "Category variables: count(percentage)"
+##     } else if(type == "date"){
+##         if(!info){
+##             z <- if(any(c("Date", "POSIXct") %in% class(x))){
+##                      as.Date(x, origin = "1970-01-01")
+##                  } else{
+##                      x
+##                  }
+##             a <- as.character(d_min(z))
+##             b <- as.character(d_max(z))
+##             paste0(a, "/", b)
+##         } else "Date variables: min/max"
+##     } else if(type == "surv"){
+##         NULL
+##     }
+## }
+## attr(d_compact, "dtable") <- "desc"
+
+## ##' @describeIn d_any is to give information on \code{d_compact}
+## ##' @export
+## d_compact_info <- function(x, xname, type.guide = NULL, median = TRUE,
+##                            show.NA = TRUE, ...){
+##     d_compact(x, xname, type.guide = NULL, median = TRUE,
+##               show.NA = TRUE, ..., only.give.information = TRUE)
+## }
+## attr(d_compact_info, "dtable") <- "meta"
+
+
+    ## +-----------------------------------+ ##
+    ## | compact-type describing functions | ##
+    ## +-----------------------------------+ ##
+
+##' various functions for compact summary of variables
+##'
+##' @param x the data
+##' @param useNA display information on missing
+##' @param ... arguments passed
+dt_fnc <- function(...) invisible(NULL)
+
+NA_txt <- function(x) paste0("[", sum(is.na(x)),"]")
+
+##' @describeIn dt_fnc returns an empty string
+##' @export
+dt_empty_desc <- function(x, ...) NA
+attr(dt_empty_desc, "dtable") <- "desc"
+
+##' @describeIn dt_fnc returns an empty string
+##' @export
+dt_empty_comp <- function(x, ...) NA
+attr(dt_empty_comp, "dtable") <- "comp"
+
+abbrev <- function(s, n = 31){
+    if(n<3) stop("don't")
+    foo <- function(x, n) paste0(substring(x, 1, n-3))
+    s_copy <- s
+    for(k in seq_along(s)){
+        s_copy[k] <- if(nchar(s[k])>n){
+                         paste0(substring(s[k], 1, n-3),"...")
+                     } else {
+                         s[k]
+                     }
+    }
+    s_copy
+}
+
+abbrev2 <- function(a, b, n = 31, sep = ":"){
+    n2 <- floor(n/2)
+    an <- nchar(a)
+    bn <- nchar(b)
+    paste0(abbrev(a, max(n2, n-bn)),
+           sep,
+           abbrev(b, max(n2, n-an)))
+}
+
+if(FALSE){
+    abbrev2(paste0(letters[1:20], collapse = ""),
+            paste0(LETTERS[1:20], collapse = ""))
+    abbrev2(paste0(letters[1:10], collapse = ""),
+            paste0(LETTERS[1:25], collapse = ""))
+    abbrev2(paste0(letters[1:25], collapse = ""),
+            paste0(LETTERS[1:10], collapse = ""))
+    abbrev2(paste0(letters[1:15], collapse = ""),
+            paste0(LETTERS[1:15], collapse = ""))
+    abbrev2(paste0(letters[1:20], collapse = ""),
+            paste0(LETTERS[1:10], collapse = ""))
+}
+
+##' @describeIn dt_fnc returns name
+##' @export
+dt_name <- function(x, xname = NULL, ...){
+    if(is.null(xname)) xname <- as.character(substitute(x))
+    abbrev(xname)
+}
+attr(dt_name, "dtable") <- "meta"
+
+##' @describeIn dt_fnc returns name:ref for bnry
+##' @export
+dt_bname <- function(x, xname = NULL, ...){
+    rl <- d_ref_level(x)
+    if(is.null(xname)) xname <- as.character(substitute(x))
+    abbrev2(xname, rl)
+}
+attr(dt_bname, "dtable") <- "meta"
+
+##' @describeIn dt_fnc returns name:ref for bnry
+##' @export
+dt_cname <- function(x, xname = NULL, ...){
+    rl <- levels(make_catg(x))
+    n <- length(rl)
+    if(is.null(xname)) xname <- as.character(substitute(x))
+    a <- abbrev2(xname, rl[1])
+    b <- paste0("     :", abbrev(rl[-1], 25))
+    c(a, b)
+}
+attr(dt_cname, "dtable") <- "meta"
+
+## ------------------------------------------------------------------------- ##
+dt_Q_helper <- function(x, useNA, info){
+    if(info){
+        "Numeric variables: median(Q1-Q3)"
+    } else {
+        NAtxt <- if(useNA) NA_txt(x) else NULL
+        Q2 <- d_median(x = x)
+        Q1 <- d_Q1(x = x)
+        Q3 <- d_Q3(x = x)
+        paste0(roundisch(Q2), " (", roundisch(Q1),"-",
+               roundisch(Q3),")", NAtxt)
+    }
+}
+
+##' @describeIn dt_fnc quantiles
+##' @export
+dt_Q <- function(x, useNA = FALSE, ...){
+    dt_Q_helper(x, useNA = useNA, info = FALSE)
+}
+attr(dt_Q, "dtable") <- "desc"
+
+##' @describeIn dt_fnc info for \code{dt_Q}
+##' @export
+dt_Q.info <- function(x, ...){
+    dt_Q_helper(x, info = TRUE)
+}
+attr(dt_Q.info, "dtable") <- "meta" ## "footnote" ?
+
+## ------------------------------------------------------------------------- ##
+dt_msd_helper <- function(x, useNA, info){
+    if(info){
+        "Numeric variables: mean(sd)"
+    } else {
+        NAtxt <- if(useNA) NA_txt(x) else NULL
+        m <- d_mean(x = x)
+        sd <- d_sd(x = x)
+        paste0(roundisch(m), " (", roundisch(sd), ")", NAtxt)
+    }
+}
+
+##' @describeIn dt_fnc mean and standard deviation
+##' @export
+dt_msd <- function(x, useNA = FALSE, ...){
+    dt_msd_helper(x, useNA = useNA, info = FALSE)
+}
+attr(dt_msd, "dtable") <- "desc"
+
+##' @describeIn dt_fnc info for \code{dt_msd}
+##' @export
+dt_msd.info <- function(x, ...){
+    dt_msd_helper(x, info = TRUE)
+}
+attr(dt_msd.info, "dtable") <- "meta" ## "footnote" ?
+
+## ------------------------------------------------------------------------- ##
+dt_bcp_helper <- function(x, useNA, info, perc.sign = NULL){
+    if(is.null(perc.sign)) perc.sign <- "\\%"
+    if(info){
+        "Category variables: count(percentage)"
+    } else {
+        NAtxt <- if(useNA) NA_txt(x) else NULL
+        z <- make_bnry(x)
+        n <- d_bn(x = z)
+        p <- d_bp(x = z)
+        paste0(n, " (",
+               roundisch(100*p, t = 0.001, scientific = TRUE, digit2 = 2),
+               perc.sign, ")", NAtxt)
+    }
+}
+
+##' @describeIn dt_fnc count and percentages (for bnry)
+##' @export
+dt_bcp <- function(x, useNA = FALSE, ...){
+    dt_bcp_helper(x, useNA = useNA, info = FALSE)
+}
+attr(dt_bcp, "dtable") <- "desc"
+
+##' @describeIn dt_fnc info for \code{dt_bcp}
+##' @export
+dt_bcp.info <- function(x, ...){
+    dt_bcp_helper(x, info = TRUE)
+}
+attr(dt_bcp.info, "dtable") <- "meta" ## "footnote" ?
+
+## ------------------------------------------------------------------------- ##
+dt_ccp_helper <- function(x, useNA, info, perc.sign = NULL){
+    if(is.null(perc.sign)) perc.sign <- "\\%"
+    if(info){
+        "Category variables: count(percentage)"
+    } else {
+        NAtxt <- if(useNA) NA_txt(x) else NULL
+        z <- make_catg(x)
+        n <- d_cn(x = z)
+        p <- d_cp(x = z)
+        paste0(n, " (",
+               roundisch(100*p, t = 0.001, scientific = TRUE, digit2 = 2),
+               perc.sign, ")", c(NAtxt, rep("", length(n)-1)))
+    }
+}
+
+##' @describeIn dt_fnc count and percentages (for catg)
+##' @export
+dt_ccp <- function(x, useNA = FALSE, ...){
+    dt_ccp_helper(x, useNA = useNA, info = FALSE)
+}
+attr(dt_ccp, "dtable") <- "desc"
+
+##' @describeIn dt_fnc info for \code{dt_ccp}
+##' @export
+dt_ccp.info <- function(x, ...){
+    dt_ccp_helper(x, info = TRUE)
+}
+attr(dt_ccp.info, "dtable") <- "meta" ## "footnote" ?
+
+## ------------------------------------------------------------------------- ##
+dt_date_helper <- function(x, useNA, info){
+    if(info){
+        "Date variables: min/max"
+    } else {
+        NAtxt <- if(useNA) NA_txt(x) else NULL
+        a <- as.character(d_min(x))
+        b <- as.character(d_max(x))
+        paste0(a, "/", b, NAtxt)
+    }
+}
+
+##' @describeIn dt_fnc first and last date
+##' @export
+dt_date <- function(x, useNA = FALSE, ...){
+    dt_date_helper(x, useNA = useNA, info = FALSE)
+}
+attr(dt_date, "dtable") <- "desc"
+
+##' @describeIn dt_fnc info for \code{dt_date}
+##' @export
+dt_date.info <- function(x, ...){
+    dt_date_helper(x, info = TRUE)
+}
+attr(dt_date.info, "dtable") <- "meta" ## "footnote" ?
+
+## ------------------------------------------------------------------------- ##
+dt_rate_helper <- function(x, useNA, info, ...){
+    if(info){
+        "Event data: rate of events"
+    } else {
+        NAtxt <- if(useNA) paste0(" ", NA_txt(x)) else NULL
+        r <- d_rate(x, ...)
+        paste0(roundisch(r, t = 0.001, scientific = TRUE), NAtxt)
+    }
+}
+
+##' @describeIn dt_fnc rate of events
+##' @export
+dt_rate <- function(x, useNA = FALSE, ...){
+    dt_rate_helper(x, useNA = useNA, info = FALSE)
+}
+attr(dt_rate, "dtable") <- "desc"
+
+##' @describeIn dt_fnc info for \code{dt_rate}
+##' @export
+dt_rate.info <- function(x, ...){
+    dt_rate_helper(x, info = TRUE)
+}
+attr(dt_rate.info, "dtable") <- "meta" ## "footnote" ?
+
+## ------------------------------------------------------------------------- ##
+dt_event_helper <- function(x, useNA, info, ...){
+    if(info){
+        "Event data: number of events"
+    } else {
+        NAtxt <- if(useNA) paste0(" ", NA_txt(x)) else NULL
+        paste(d_esum(x, ...), NAtxt)
+    }
+}
+
+##' @describeIn dt_fnc rate of events
+##' @export
+dt_event <- function(x, useNA = FALSE, ...){
+    dt_event_helper(x, useNA = useNA, info = FALSE)
+}
+attr(dt_event, "dtable") <- "desc"
+
+##' @describeIn dt_fnc info for \code{dt_rate}
+##' @export
+dt_event.info <- function(x, ...){
+    dt_event_helper(x, info = TRUE)
+}
+attr(dt_event.info, "dtable") <- "meta" ## "footnote" ?

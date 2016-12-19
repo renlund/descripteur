@@ -50,14 +50,26 @@ desc_restore <- function(){
                "describe_real" = flist(c("mean" = "d_mean", "sd" = "d_sd")),
                "describe_bnry" = flist(c("value" = "d_ref_level", "prop" = "d_bp")),
                "describe_catg" = flist(c("levels" = "d_levels", "prop" = "d_cp")),
-               "describe_date" = flist(c("min" = "d_min", "max" = "d_max")),
+               "describe_date" = flist(c("min" = "d_dmin", "max" = "d_dmax")),
                "describe_surv" = flist(c("time" = "d_tsum",
                                  "events" = "d_esum", "rate" = "d_rate")),
                "compare_real"  = flist(c("std" = "c_rstd")),
-               "compare_bnry"  = flist(c("std" = "c_bstd", "OR" = "c_OR")),
+               "compare_bnry"  = flist(c("std" = "c_bstd")),
                "compare_catg"  = flist(c("levels" = "d_levels", "diff" = "c_pdiff")),
                "compare_date"  = flist(c("overlap" = "c_overlap")),
-               "compare_surv"  = flist(c("RR" = "c_rr"))
+               "compare_surv"  = flist(c("RR" = "c_rr")),
+               "desc_compact" = flists(real = list("dt_name",  "dt_Q.info",     "dt_Q"),
+                                       bnry = list("dt_bname", "dt_bcp.info",   "dt_bcp"),
+                                       catg = list("dt_cname", "dt_ccp.info",   "dt_ccp"),
+                                       date = list("dt_name",  "dt_date.info",  "dt_date"),
+                                       surv = list("dt_name",  "dt_event.info", "dt_event"),
+                                       names = c("Variables",  "info",  "Summary")),
+               "comp_compact" = flists(real = list("dt_name",  "c_rstd"),
+                                       bnry = list("dt_bname", "c_bstd"),
+                                       catg = list("dt_cname", "c_cstd"),
+                                       date = list("dt_name",  "dt_empty_comp"),
+                                       surv = list("dt_name",  "dt_empty_comp"),
+                                       names = c("Variables",  "Std"))
    ), envir=le_milieu)
    assign(x="value", value = names(get(x="defaults", envir=le_milieu)), envir=le_milieu)
    desc_check()

@@ -12,8 +12,8 @@
 
 <<"setup", cache = FALSE, echo = FALSE, include = FALSE>>=
 library(knitr)
-library(descripteur)
-## devtools::load_all()
+## library(descripteur)
+devtools::load_all()
 opts_chunk$set(include = TRUE, echo = TRUE, cache = FALSE)
 if(FALSE){
     knitr::knit2pdf("describe-data.rnw", clean = TRUE)
@@ -141,6 +141,9 @@ your own functions:
     probably a better way to handle it, but it is due to that groupings need not
     be created from a categorical variable to begin with (to allow for
     overlaping groups).} a categorical variable from the \texttt{glist}.
+\item A function that needs the variable name can use \texttt{xname} as this is
+  passed internally to the function (and hence do not use that argument name for
+  something else)
 \item Functions can utilize a \texttt{useNA} that is \texttt{TRUE/FALSE} that in
   turn will be managed by \texttt{dtable} via the the possible values
   \texttt{ifany}, \texttt{always} and \texttt{no} such that, in the case
@@ -384,7 +387,18 @@ dtable_latex(dtable(df, type = "catg", glist = gl3, w = vikt,
                              "compared 'across' for type \\texttt{catg}."))
 @
 
-\newpage
+\subsubsection{Is the distinction between \texttt{catg} and \texttt{bnry} annoying?}
+If you think the \texttt{bnry} type is superfluous, you can edit the 'guide' by
+hand, or more quickly supply the \texttt|no.bnry = TRUE| argument.
+
+<<results = 'asis'>>=
+nobnry <- dtable_guide(df, no.bnry = TRUE)
+dtable_latex(dtable(df, type = "catg", glist = gl, guide = nobnry), format = T,
+             caption = paste("Two groups described and compared",
+                             "for type \\texttt{catg} (including",
+                             " binary variables)."))
+@
+
 \subsubsection{What is the deal with \texttt{useNA}?}
 There are not (currently) many uses for the \texttt{useNA} option. One of the
 few is for controlling wether to explicitly describe this as a value for
@@ -428,9 +442,48 @@ dtable_latex(dtable(df, type = "surv", glist = gl3, w = vikt, comp = "across"),
                              "'across' for type \\texttt{surv}."))
 @
 
+\clearpage
+\section{Describing more than 1 type faster}
+
+\subsection{\texttt{dtable\_list}}
+If one thinks it is a good idea to describe data by type, but annoying to
+explicitly type each table, the function \texttt{dtable\_list} and
+\texttt{dtable\_list\_latex} tries to alleviate this. The latter function tries to
+make intelligent use of \texttt{sprintf} to create good labels and captions (but
+you could also give your own vector of labels and captions).
+
+The following creates tables for types \texttt{surv} and \texttt{bnry} with
+labels \texttt{tab:foo-surv} and \texttt{tab:foo-bnry}, respectively. The
+captions can be shown in Tables \ref{tab:foo-surv} and \ref{tab:foo-surv}.
+<<results = 'asis'>>=
+dtl <- dtable_list(df, type = c("surv", "bnry"))
+dtable_list_latex(dtl, label = "tab:foo-%s",
+                  caption = "%s variables in the data base")
+@
+
+Two more examples are generated in \ref{tab:bar-date} and \ref{tab:bar-real}.
+<<results = 'asis'>>=
+dtl <- dtable_list(df, type = c("date", "real"))
+dtable_list_latex(dtl, label = "tab:bar-%s",
+                  caption = "Description of variables of %s type.")
+@
 
 
+\clearpage
 
+\subsection{\texttt{dtables}}
+Still experimental, and possibly too cumbersome\ldots
+
+<<eval = FALSE>>=
+dt <- dtables(data = df, useNA = "ifany")
+attributes(dt)
+dt2 <- footnote(dt, text = "info")
+attributes(dt2)
+dtable_format(dtables(data = df, useNA = "ifany", glist = "b1"))
+@
+
+
+\clearpage
 \section{Additional Functions}
 
 \subsection{Simple description of attributes and missing, respectively}
@@ -448,7 +501,8 @@ dtable_attr(dm)
 
 <<results = 'asis'>>=
 dtable_latex(dm, format = TRUE, guide = dtg,
-             caption = "Information on missing")
+             caption = "Information on missing",
+             bling.param = list(sep = c(". ", "\\newline ")))
 @
 
 \subsection{Finer control of output}

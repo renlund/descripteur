@@ -3,6 +3,7 @@
 \name{c_catg}
 \alias{c_cOR}
 \alias{c_catg}
+\alias{c_cstd}
 \alias{c_pdiff}
 \title{various comparer functions for catg types}
 \usage{
@@ -11,6 +12,8 @@ c_catg(...)
 c_pdiff(x, glist, useNA = FALSE, w = NULL, ...)
 
 c_cOR(x, glist, useNA = FALSE, w = NULL, ...)
+
+c_cstd(x, glist, useNA = FALSE, w = NULL, ...)
 }
 \arguments{
 \item{...}{this is to be able to tolerate unnecessary arguments}
@@ -31,5 +34,11 @@ various comparer functions for catg types
 \item \code{c_pdiff}: difference in proportions, 2 groups only
 
 \item \code{c_cOR}: odds ratios, 2 groups only
+
+\item \code{c_cstd}: standardized differences, 2 groups only
 }}
+\seealso{
+\code{\link{c_fisher.p}} and \code{\link{c_chisq.p}} which work for
+    catg variables as well
+}
 
