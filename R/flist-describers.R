@@ -199,16 +199,17 @@ attr(d_odds, "dtable") <- "desc"
     ## +-----------------------------------------+ ##
 
 ##' various describing functions for surv variables
+##'
 ##' @param x vector of dates
 ##' @param ... this is to be able to tolerate unnecessary arguments
-d_surv <- function(...) return(invisible(NULL))
+d_date <- function(...) invisible(NULL)
 
-##' @describeIn d_surv minimum
+##' @describeIn d_date minimum
 ##' @export
 d_dmin = function(x, ...) as.character(min(x, na.rm = TRUE))
 attr(d_dmin, "dtable") <- "desc"
 
-##' @describeIn d_surv maximum
+##' @describeIn d_date maximum
 ##' @export
 d_dmax = function(x, ...) as.character(max(x, na.rm = TRUE))
 attr(d_dmax, "dtable") <- "desc"
@@ -223,7 +224,6 @@ attr(d_dmax, "dtable") <- "desc"
 ##' @param x vector
 ##' @param w weight
 ##' @param useNA show information for missing?
-##' @param count count instead default (percentage/proportion)
 ##' @param ... this is to be able to tolerate unnecessary arguments
 d_catg <- function(...) invisible(NULL)
 
@@ -491,6 +491,7 @@ attr(d_rate, "dtable") <- "desc"
 ##' various functions for compact summary of variables
 ##'
 ##' @param x the data
+##' @param xname name of variable
 ##' @param useNA display information on missing
 ##' @param ... arguments passed
 dt_fnc <- function(...) invisible(NULL)

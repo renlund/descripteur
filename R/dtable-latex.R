@@ -1,6 +1,6 @@
 ##' latexify a dtable
 ##'
-##' process dtable into latex code via \code{Hmisc::latex}.
+##' process dtable into latex code via \code{Hmisc::latex}
 ##' @param dt a dtable
 ##' @param bling shall we compose suitable table bling from the
 ##'     attributes? (default \code{TRUE})
@@ -117,21 +117,6 @@ dtable_format <- function(dt, b = 1,
                           br = 2, rfnc = base::round,
                           p_b = 0.0001, peq0 = TRUE,
                           tmax = 30, repus = TRUE){
-    ## --------------------------------------------------------------OLD
-    ## ------ param = as.list(NULL) ---------
-    ## ## get default values
-    ## if(is.null(b    <- param$b))    b <- 1 ## boundary
-    ## ## for numbers all > boundary
-    ## if(is.null(bh   <- param$bh))   bh <- 1 ## digits arguments for hfnc
-    ## if(is.null(hfnc <- param$hfnc)) hfnc <- base::round ## format fnc
-    ## ## for numbers all < boundary
-    ## if(is.null(bl   <- param$bl))   bl <- 2 ## digits argument for lfnc
-    ## if(is.null(lfnc <- param$lfnc)) lfnc <- base::signif ## format fnc
-    ## if(is.null(p_b  <- param$p_b))  p_b <- 0.0001 ## threshold for p-values
-    ## if(is.null(peq0 <- param$peq0)) peq0 <- TRUE ## can p be zero?
-    ## if(is.null(tmax <- param$tmax)) tmax <- 30 ## max chars to print for text
-    ## if(is.null(repus <- param$repus)) repus <- TRUE ## replace '_' with '\\_'?
-    ## --------------------------------------------------------------OLD
     ## format numeric part
     n <- ncol(dt)
     R <- as.data.frame(dt)
@@ -155,7 +140,6 @@ dtable_format <- function(dt, b = 1,
     i_rest <- setdiff(num, c(il, ih))
     R[i_rest] <- lapply(R[i_rest], rfnc, br)
     ## format character
-
     chr <- which(classy == "character")
     foo <- function(x){
         ifelse(nchar(x)>tmax + 2,
@@ -171,81 +155,3 @@ dtable_format <- function(dt, b = 1,
     R
 }
 
-
-# - # create data set to test things on
-dtable_data_example <- function(n = 100, seed = 20161207){
-    set.seed(seed)
-    df <- data.frame(
-        id = paste0("id", 1001:(1000 + n)),
-        r1 = round(stats::rnorm(n, 20, 5)),
-        r2 = round(stats::rexp(n, 1/20)),
-        c1 = sample(letters[1:5], size = n, replace = TRUE),
-        c2 = factor(sample(LETTERS[5:3], size = n, replace = TRUE)),
-        b1 = sample(LETTERS[6:7], size = n, replace = TRUE, prob = 2:3),
-        b2 = stats::rbinom(n, 1, 0.1),
-        b3 = sample(c("No", "Yes"), size = n, replace = TRUE, prob = 1:2),
-        b4 = sample(c(TRUE, FALSE), size = n, replace = TRUE),
-        d1 = as.Date("2000-01-01") + stats::rpois(n, 365),
-        d2 = as.Date(floor(stats::rexp(n, 1/3650)), origin = "1975-01-01"),
-        stringsAsFactors = FALSE
-    )
-    misser <- function(x, m = length(x)){
-        p <- floor(stats::runif(1, min = 1, max = m/2))
-        x[sample(1:n, size = p, replace = FALSE)] <- NA
-        x
-    }
-    df[2:length(df)] <- lapply(df[2:length(df)], misser)
-    df$vikt <- 0.5 + stats::rbinom(n, 2, 0.4)
-    df
-}
-
-
-#####################################################################
-
-if(FALSE){
-
-    n <- 100
-    set.seed(20160216)
-    df <- data.frame(
-        id = paste0("id", 1001:(1000 + n)),
-        r1 = round(rnorm(n, 20, 5)),
-        r2 = round(rexp(n, 1/20)),
-        c1 = sample(letters[1:5], size = n, replace = TRUE),
-        c2 = factor(sample(LETTERS[5:3], size = n, replace = TRUE)),
-        b1 = sample(LETTERS[6:7], size = n, replace = TRUE, prob = 2:3),
-        b2 = rbinom(n, 1, 0.1),
-        b3 = sample(c("No", "Yes"), size = n, replace = TRUE, prob = 1:2),
-        b4 = sample(c(TRUE, FALSE), size = n, replace = TRUE),
-        d1 = as.Date("2000-01-01") + rpois(n, 365),
-        d2 = as.Date(floor(rexp(n, 1/3650)), origin = "1975-01-01"),
-        stringsAsFactors = FALSE
-    )
-    misser <- function(x, m = length(x)){
-        p <- floor(runif(1, min = 1, max = m/2))
-        x[sample(1:n, size = p, replace = FALSE)] <- NA
-        x
-    }
-    df[2:length(df)] <- lapply(df[2:length(df)], misser)
-    df
-    vikt <- 0.5 + rbinom(n, 2, 0.4)
-
-    g <- dtable_guide(df)
-    dt <- dtable(data = df, type = "real", guide = g)
-    dt <- dtable(data = df, type = "real", glist = "b1", guide = g, w
-    = vikt)
-
-    r <- rle(c("", "A", "A", "B", "B", "FOo"))
-
-    dtable_latex(dt = dt)
-    attributes(dt)
-
-    foo <- function(x, glist, ...){
-        t.test(x = x[glist[[1]]], y = x[glist[[2]]])$p.value
-    }
-    dattr(foo) <- "comp"
-    opts_desc$set("compare_real" = flist(c("c_std.r", "foo" = "foo")))
-    dt <- dtable(data = df, type = "real", glist = "b1",
-                 guide = g, w = vikt)
-    dtable_format(dt)
-
-}

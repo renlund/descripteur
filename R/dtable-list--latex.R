@@ -1,6 +1,6 @@
 ##' @describeIn dtable create a list of dtable, one for each type wanted
 ##' @param types a vector of the types wanted
-##' @param ... arguments passed to \code{dtable}
+##' @export
 dtable_list <- function(data, types, ...){
     x <- list(...)
     if(!is.null(x$desc.flist) | !is.null(x$comp.flist)){
@@ -17,11 +17,11 @@ dtable_list <- function(data, types, ...){
 
 ##' @describeIn dtable_latex create multiple latex tables from a dtable list
 ##' @param dtl a list of dtables
-##' @param ... arguments passed to \code{dtable_latex}
 ##' @param label labels for the tables
 ##' @param caption captions for the tables
 ##' @param use.sprintf if TRUE then labels and captions should be uniform in
-##'     text apart from the specification of type, where a '%s' should be.
+##'     text apart from the specification of type, where a '\%s' should be.
+##' @export
 dtable_list_latex <- function(dtl, ..., label, caption, use.sprintf = TRUE){
     if(!is.list(dtl)) stop("'dtl' needs to be a list (of dtables)")
     types <- names(dtl)
@@ -29,7 +29,7 @@ dtable_list_latex <- function(dtl, ..., label, caption, use.sprintf = TRUE){
     types_code <- c("bnry", "real", "catg", "surv", "date")
     if(!all(types %in% types_code)) stop("there are unknown types in 'dtl'")
     if(use.sprintf){
-        key1 <- setNames(c("binary", "continuous", "categorical", "event",
+        key1 <- stats::setNames(c("binary", "continuous", "categorical", "event",
                            "date"), types_code)
         foo <- function(s){ ## Capitalize key1
             paste0(toupper(substring(s,1,1)), substring(s,2,nchar(s)))

@@ -26,8 +26,6 @@ d_cp(x, useNA = FALSE, w = NULL, ...)
 \item{useNA}{show information for missing?}
 
 \item{w}{weight}
-
-\item{count}{count instead default (percentage/proportion)}
 }
 \description{
 various describer functions for catg types

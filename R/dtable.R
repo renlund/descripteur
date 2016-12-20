@@ -188,231 +188,62 @@ dtable <- function(data, type = NULL, guide = NULL,
     R
 }
 
-##' dtable for multiple types
-##'
-##' concatenate dtables for mutiple types into a single dtable
-##' @param data the data set
-##' @param types types wanted
-##' @param desc.flists flists for description
-##' @param comp.flists flists for comparison
-##' @param guide a dtable guide
-##' @param ... arguments passed to dtable
-##' @export
-dtables <- function(data, types = NULL, desc.flists = NULL,
-                    comp.flists = NULL, guide = NULL, ...){
-    message("dtables function is still experimental\nHigly likely to change!\n")
-    ok_types <- c("real", "bnry", "catg", "date", "surv")
-    if(is.null(types)) types <- ok_types
-    if(is.null(desc.flists)) desc.flists <- desc_get("desc_compact")
-    if(is.null(comp.flists)) comp.flists <- desc_get("comp_compact")
-    d.f <- names(desc.flists)
-    c.f <- names(comp.flists)
-    dc.f <- union(d.f, c.f)
-    all_types <- union(types, dc.f)
-    if(!all(all_types %in% ok_types)){
-        wot <- paste0(setdiff(all_types, ok_types), collapse = ", ")
-        stop(paste0("some types specified are unknow: ", wot, "."))
+## function for setting up sane 'comp' and 'desc' defaults
+dc_param <- function(desc = NULL, comp = NULL, glist = NULL){
+    if(is.null(desc)) desc <- TRUE
+    if(is.null(comp)) comp <- if(is.null(glist)) FALSE else TRUE
+    if(is.character(desc)){
+        if(!desc %in% c("each", "first")){
+            stop("if character, desc should be 'each' or 'first'")
+        }
+        desc.style <- desc
+        desc <- TRUE
+    } else {
+        desc.style <- NA_character_
     }
-    if(is.null(all_types)) return(as.data.frame(NULL))
-    defl <- if(!setequal(d.f, all_types)){
-                NAMES <- names(desc.flists[[1]])
-                tmp <- flists_default(types = setdiff(all_types, d.f))
-                c(desc.flists, tmp)
-            } else desc.flists
-    cofl <- if(!setequal(c.f, all_types)){
-                NAMES <- names(comp.flists[[1]])
-                tmp <- flists_default(types = setdiff(all_types, c.f))
-                c(comp.flists, tmp)
-            } else comp.flists
-    if(TRUE){ ## checks
-        d.n <- unlist(lapply(defl, length))
-        c.n <- unlist(lapply(cofl, length))
-        test <- all(names(defl) %in% ok_types) &
-            all(names(cofl) %in% ok_types) &
-            all(d.n == max(d.n)) &
-            all(c.n == max(c.n))
-        if(!test) stop("...somethings wrong")
+    if(is.character(comp)){
+        if(!comp %in% c("overall", "across", "adjacent")){
+            stop("if character, comp should be 'overall', 'across' or 'adjacent'")
+        }
+        comp.style <- comp
+        comp <- TRUE
+    } else {
+        comp.style <- NA_character_
     }
-    ## n <- length(all_types)
-    if(is.null(guide)) guide <- dtable_guide(data)
-    R <- NULL
-    for(TYP in all_types){ ## TYP = all_types[1]
-        tmp <- dtable(data, type = TYP, guide = guide,
-                      desc.flist = flist(unlist(defl[[TYP]])),
-                      comp.flist = flist(unlist(cofl[[TYP]])), ...)
-        suppressWarnings(R <- if(is.null(R)) {
-                 tmp
-             } else {
-                 dtable_rbind(R, tmp)
-             })
+    if(comp){
+        if(is.null(glist)){
+            warning("comp set, but no glist?")
+            comp <- FALSE
+            comp.style <- NA_character_
+        } else if(is.na(comp.style)){
+            comp.style <- "overall"
+        }
     }
-    mod_guide <- subset(guide, guide$type %in% all_types)
-    mod_guide$type <- "real" ## this choice should not matter
-    META <- dtable(data, type = "real", desc = FALSE, comp = FALSE, ...)
-    aM <- attributes(META)
-    transf <- setdiff(names(aM), c("names", "row.names", "class"))
-    for(K in transf) attr(R, K) <- attr(META, K)
-    R
+    if(desc){
+        if(is.null(glist)){
+            if(is.na(desc.style)) desc.style <- "first"
+        } else {
+            if(comp){
+                desc.style <- if(comp.style == "overall"){
+                                  "each"
+                              } else {
+                                  "first"
+                              }
+            } else {
+                desc.style <- "each"
+            }
+        }
+    }
+    list("desc" = desc,
+         "desc.style" = desc.style,
+         "comp" = comp,
+         "comp.style" = comp.style)
 }
 
-####################################################################
 
+###############################################################################
 
 if(FALSE){ ## TESTS, some of which are also in tests
 
-    n <- 100
-    set.seed(20160716)
-    df <- data.frame(
-        id = sample(paste0("id", 1001:(1000 + n)), n, T),
-        r1 = round(rnorm(n, 20, 5)),
-        r2 = round(rexp(n, 1/20)),
-        c1 = sample(letters[1:5], size = n, replace = TRUE),
-        c2 = factor(sample(LETTERS[5:3], size = n, replace = TRUE)),
-        b1 = sample(LETTERS[6:7], size = n, replace = TRUE, prob = 2:3),
-        b2 = rbinom(n, 1, 0.1),
-        b3 = sample(c("No", "Yes"), size = n, replace = TRUE, prob = 1:2),
-        b4 = sample(c(TRUE, FALSE), size = n, replace = TRUE),
-        d1 = as.Date("2000-01-01") + rpois(n, 365),
-        d2 = as.Date(floor(rexp(n, 1/3650)), origin = "1975-01-01"),
-        s1 = survival::Surv(time = rnorm(n, 50, 7), event = rbinom(n, 1, 0.1)),
-        s2 = survival::Surv(time = rexp(n, 1/40), event = rbinom(n, 1, 0.2)),
-        stringsAsFactors = FALSE
-    )
-    misser <- function(x, m = length(x)){
-        p <- floor(runif(1, min = 1, max = m/10))
-        x[sample(1:n, size = p, replace = FALSE)] <- NA
-        x
-    }
-    df[2:length(df)] <- lapply(df[2:length(df)], misser)
-    df
-    (dtb <- dtable_guide(data = df, unit.id = "id"))
-    gl <- make_glist("b1", ref = df)
-    gl3 <- list(
-        "abacus" = sample(c(T,F), size = n, replace =T),
-        "quuz" = sample(c(T,F), size = n, replace =T),
-        "k__7" = sample(c(T,F), size = n, replace =T)
-    )
-    vikt <- rpois(n, 1.5) + 1
-
-    dt <- dtable(data = df, type = "real", guide = dtb)
-    dtable_attr(dt)
-
-    (dt <- dtable(data = df, type = "real", guide = dtb, glist = gl, w = vikt))
-    attributes(dt)
-    dtable_attr(dt)
-    dtable_attr(dt, T)
-
-    (dt <- dtable(data = df, type = "real", guide = dtb, glist = gl, w = vikt,
-                  desc = F, comp = F))
-    attributes(dt)
-    dtable_attr(dt)
-    dtable_attr(dt, T)
-
-    (dt <- dtable(data = df, type = "real", ##glist = gl,
-                  desc = F, comp = F))
-    attributes(dt)
-    dtable_attr(dt)
-    dtable_attr(dt, T)
-
-
-
-    dtable(data = df, type = "real", guide = dtb, glist = gl3, comp = F)
-    dtable(data = df, type = "real", guide = dtb, glist = gl, comp = FALSE)
-    dtable(data = df, type = "real", guide = dtb, glist = gl, desc = F)
-    dtable(data = df, type = "real", guide = dtb, glist = gl3, desc = F,
-           comp = "across")
-    dtable(data = df, type = "real", guide = dtb, glist = gl3, desc = F,
-           comp = "adjacent")
-
-    ## dtable(data = df, type = "real", guide = dtb)
-    ## dtable(data = df, type = "real", guide = dtb, glist = gl)
-    ## dtable(data = df, type = "real", guide = dtb, glist = gl3, comp = F)
-    ## dtable(data = df, type = "real", guide = dtb, glist = gl, comp = FALSE)
-    ## dtable(data = df, type = "real", guide = dtb, glist = gl, desc = F)
-
-    dtable(data = df, type = "real", guide = dtb, glist = gl, w = vikt)
-    dtable(data = df, type = "real", guide = dtb, glist = gl3, w = vikt)
-
-    dtable(data = df, type = "bnry", guide = dtb)
-    dtable(data = df, type = "bnry", guide = dtb, glist = gl)
-    dtable(data = df, type = "bnry", guide = dtb, glist = gl3, comp = F)
-    dtable(data = df, type = "bnry", guide = dtb, glist = gl, desc =F)
-
-    dtable(data = df, type = "bnry", guide = dtb, glist = gl, w = vikt)
-    dtable(data = df, type = "bnry", guide = dtb, glist = gl3, w = vikt)
-
-    dtable(data = df, type = "catg", guide = dtb)
-    dtable(data = df, type = "catg", guide = dtb, useNA = "no")
-
-    dtable(data = df, type = "catg", guide = dtb, glist = gl)
-    dtable(data = df, type = "catg", guide = dtb, glist = gl3, comp = F)
-    dtable(data = df, type = "catg", guide = dtb, glist = gl, desc = F)
-
-    dtable(data = df, type = "catg", guide = dtb, glist = gl, w = vikt)
-
-    dtable(data = df, type = "date", guide = dtb)
-    dtable(data = df, type = "date", guide = dtb, glist = gl)
-    dtable(data = df, type = "date", guide = dtb, glist = gl3, comp = F)
-
-    dtable(data = df, type = "surv", guide = dtb)
-    dtable(data = df, type = "surv", guide = dtb, glist = gl)
-    dtable(data = df, type = "surv", guide = dtb, glist = gl3,
-           comp = "across")
-
-
-    fix <- function(s){
-        x <- eval(parse(text=s))
-        text <- capture.output(dput(x))
-        cat(paste0("expect_equal(\n    ",
-               s,
-               ",\n    ",
-               gsub("),", "),\n             ", paste0(text, collapse=""), fixed = TRUE),
-               "\n)\n"))
-    }
-
-
-{  ## run and copy-paste this segment into tests
-    fix("dtable(data = df, type = 'real', guide = dtb)")
-    fix("dtable(data = df, type = 'real', guide = dtb, glist = gl)")
-    fix("dtable(data = df, type = 'real', guide = dtb, glist = gl3, comp = F)")
-    fix("dtable(data = df, type = 'real', guide = dtb, glist = gl, comp = FALSE)")
-    fix("dtable(data = df, type = 'real', guide = dtb, glist = gl, desc = F)")
-    fix("dtable(data = df, type = 'bnry', guide = dtb)")
-    fix("dtable(data = df, type = 'bnry', guide = dtb, glist = gl)")
-    fix("dtable(data = df, type = 'bnry', guide = dtb, glist = gl3, comp = F)")
-    fix("dtable(data = df, type = 'bnry', guide = dtb, glist = gl, desc =F)")
-    fix("dtable(data = df, type = 'catg', guide = dtb)")
-    fix("dtable(data = df, type = 'catg', guide = dtb, useNA = 'no')")
-    fix("dtable(data = df, type = 'catg', guide = dtb, glist = gl)")
-    fix("dtable(data = df, type = 'catg', guide = dtb, glist = gl3, comp = F)")
-    fix("dtable(data = df, type = 'catg', guide = dtb, glist = gl, desc = F)")
-    fix("dtable(data = df, type = 'date', guide = dtb)")
-    fix("dtable(data = df, type = 'date', guide = dtb, glist = gl)")
-    fix("dtable(data = df, type = 'date', guide = dtb, glist = gl3, comp = F)")
-}
-
-    set.seed(20080608)
-    n <- 100
-    tr = rep(LETTERS[1:2], each = n)
-    ev = rbinom(2*n, 1, ifelse(tr == "A", 0.2, 0.1))
-    meas = rnorm(2*n, ifelse(tr=="A", 10, 8), ifelse(tr=="A", 3, 2))
-    vikt = rpois(2*n, lambda = ifelse(tr=="A", 2, 1))
-    df <- data.frame(tr=tr,ev=ev,vikt=vikt,meas=meas)
-    dtg <- dtable_guide(df, elim.set = c("vikt", "tr"))
-    rm(tr,ev,meas,vikt)
-
-    (dtb <- dtable(df, "bnry", dtg, glist = "tr"))
-    attributes(dtb)
-    p1 <- dtb[1,4]; p2 <- dtb[1,7]
-    (o1 <- p1/(1-p1))
-    (o2 <- p2/(1-p2))
-    o1/o2
-
-    (dtbw <- dtable(data = df, type = "bnry", guide = dtg, glist = "tr", w = "vikt"))
-    attributes(dtbw)
-    p1 <- dtbw[1,4]; p2 <- dtbw[1,7]
-    (o1 <- p1/(1-p1))
-    (o2 <- p2/(1-p2))
-    o1/o2
 
 }

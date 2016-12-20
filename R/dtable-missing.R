@@ -8,6 +8,8 @@
 #' @param guide a guide (by \code{dtable_guide}), either to select variables OR
 #'     to provide unit information (the type-info will not be used)
 #' @param glist an index list or name of grouping variable
+#' @param only.with only show those variables with some missing
+#' @param info type of display
 #' @export
 #' @return a data.frame with
 #' \itemize{
@@ -79,46 +81,3 @@ get_variables <- function(x = NULL, data = NULL){
     }
 }
 
-###############################################################################
-
-if(FALSE){
-    f <- x ~ y + u
-    all.vars(f)
-    foo <- data.frame(bar=1, baz="A")
-    get("bar", foo)
-    bar <- as.data.frame(NULL)
-    within(bar, x <- 1)
-
-    n <- 10*3*2*51
-    data <- data.frame(
-        a  = rpois(n, 5),
-        gr = rbinom(n, 1, 0.2),
-        frt = sample(letters[1:5], n, T),
-        lyy = rep(c("FOO", "BAR"), n/2),
-        boo = round(rnorm(n, 10, 1), 1)
-    )
-    i <- sample(1:n, ceiling(runif(1, 1, n/3)))
-    ic <- setdiff(1:n, i)
-    data$a[i] <- NA
-    data$gr[c(sample(i, length(i)*0.8),sample(ic, length(i)*0.1))] <- NA
-    data$frt[c(sample(ic, length(i)*0.8),sample(i, length(i)*0.1))] <- NA
-    data$lyy[sample(1:n, ceiling(runif(1, 1, n/3)))] <- NA
-    data$boo[n/2] <- NA
-    x <- NULL
-    glist = "lyy"
-
-    (R <- dtable_missing(data, x))
-    print(R, sep = " ")
-    class(R)
-
-    dtable_missing(data)
-
-    dtable_latex(R)
-
-
-    get_variables(x = ~a+gr+frt+boo, data)
-    get_variables(x = c("a", "gr"), data)
-    get_variables(data = data)
-    get_variables(c("n"))
-
-}

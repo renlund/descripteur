@@ -29,13 +29,3 @@ dattr <- function(x){
     "attr<-"(x, "dtable", value)
 }
 
-if(FALSE){
-    library(testthat)
-    test_that("attributes work", {
-    x <- list(a = 1, b = 2)
-    expect_warning(dattr(x) <- letters[1:3])
-    dattr(x) <- letters[1:2]
-    expect_equal(dattr(x), letters[1:2])
-    })
-}
-

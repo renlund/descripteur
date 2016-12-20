@@ -68,6 +68,8 @@ dt_event.info(x, ...)
 
 \item{x}{the data}
 
+\item{xname}{name of variable}
+
 \item{useNA}{display information on missing}
 }
 \description{
