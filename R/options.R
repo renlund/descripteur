@@ -4,13 +4,11 @@
 
 ## @title le_milieu
 ## @description an environment
-
 le_milieu <- new.env(parent = getNamespace("descripteur"))
 
 # @title desc_get
 # @description this function retrieves the descripteur settings
 # @param name name of desc setting variable
-
 desc_get <- function(name){
    if(length(ls(envir=le_milieu))==0) desc_restore()
    defaults <- get("defaults", envir=le_milieu)
@@ -28,7 +26,6 @@ desc_get <- function(name){
 # @title desc_set
 # @description this function sets the descripteur settings
 # @param ... the names and values you want set
-
 desc_set <- function(...){
    if(length(ls(envir=le_milieu))==0) desc_restore()
    dots <- list(...)
@@ -43,10 +40,10 @@ desc_set <- function(...){
 
 # @title desc_restore
 # @description this function restores the default descripteur settings
-
 desc_restore <- function(){
     assign(x="defaults",
            value=list(
+               ## "describe_real" = flist(c("median" = "d_median", "IQR" = "d_IQR")),
                "describe_real" = flist(c("mean" = "d_mean", "sd" = "d_sd")),
                "describe_bnry" = flist(c("value" = "d_ref_level", "prop" = "d_bp")),
                "describe_catg" = flist(c("levels" = "d_levels", "prop" = "d_cp")),
@@ -58,18 +55,53 @@ desc_restore <- function(){
                "compare_catg"  = flist(c("levels" = "d_levels", "diff" = "c_pdiff")),
                "compare_date"  = flist(c("overlap" = "c_overlap")),
                "compare_surv"  = flist(c("RR" = "c_rr")),
-               "desc_compact" = flists(real = list("dt_name",  "dt_Q.info",     "dt_Q"),
-                                       bnry = list("dt_bname", "dt_bcp.info",   "dt_bcp"),
-                                       catg = list("dt_cname", "dt_ccp.info",   "dt_ccp"),
-                                       date = list("dt_name",  "dt_date.info",  "dt_date"),
-                                       surv = list("dt_name",  "dt_event.info", "dt_event"),
-                                       names = c("Variables",  "info",  "Summary")),
-               "comp_compact" = flists(real = list("dt_name",  "c_rstd"),
-                                       bnry = list("dt_bname", "c_bstd"),
-                                       catg = list("dt_cname", "c_cstd"),
-                                       date = list("dt_name",  "dt_empty_comp"),
-                                       surv = list("dt_name",  "dt_empty_comp"),
-                                       names = c("Variables",  "Std"))
+               "describe_real_compact" = flist(c("Variables" = "dt_name",
+                                             "info" = "dt_Q.info",
+                                             "Summary" = "dt_Q")),
+               "describe_bnry_compact" = flist(c("Variables" = "dt_bname",
+                                             "info" = "dt_bcp.info",
+                                             "Summary" = "dt_bcp")),
+               "describe_catg_compact" = flist(c("Variables" = "dt_cname",
+                                             "info" = "dt_ccp.info",
+                                             "Summary" = "dt_ccp")),
+               "describe_date_compact" = flist(c("Variables" = "dt_name",
+                                             "info" = "dt_date.info",
+                                             "Summary" = "dt_date")),
+               "describe_surv_compact" = flist(c("Variables" = "dt_name",
+                                             "info" = "dt_event.info",
+                                             "Summary" = "dt_event")),
+               ## "desc_compact" = flists(real = list("dt_name",  "dt_Q.info",     "dt_Q"),
+               ##                         bnry = list("dt_bname", "dt_bcp.info",   "dt_bcp"),
+               ##                         catg = list("dt_cname", "dt_ccp.info",   "dt_ccp"),
+               ##                         date = list("dt_name",  "dt_date.info",  "dt_date"),
+               ##                         surv = list("dt_name",  "dt_event.info", "dt_event"),
+               ##                         names = c("Variables",  "info",  "Summary")),
+               ## "comp_compact" = flists(real = list("dt_name",  "c_rstd"),
+               ##                         bnry = list("dt_bname", "c_bstd"),
+               ##                         catg = list("dt_cname", "c_cstd"),
+               ##                         date = list("dt_name",  "dt_empty_comp"),
+               ##                         surv = list("dt_name",  "dt_empty_comp"),
+               ##                         names = c("Variables",  "Std")),
+               "compare_real_compact" = flist(c("Variables" = "dt_name",
+                                                "Std" = "c_rstd",
+                                                "pinfo" = "dt_wilcox.p.info",
+                                                "p" = "dt_wilcox.p")),
+               "compare_bnry_compact" = flist(c("Variables" = "dt_bname",
+                                                "Std" = "c_bstd",
+                                                "pinfo" = "dt_fisher.p.info",
+                                                "p" = "dt_fisher.p")),
+               "compare_catg_compact" = flist(c("Variables" = "dt_cname",
+                                                "Std" = "c_cstd",
+                                                "pinfo" = "dt_fisher.p.info",
+                                                "p" = "dt_fisher.p")),
+               "compare_date_compact" = flist(c("Variables" = "dt_name",
+                                                "Std" = "dt_empty_comp",
+                                                "pinfo" = "dt_empty_comp",
+                                                "p" = "dt_empty_comp")),
+               "compare_surv_compact" = flist(c("Variables" = "dt_name",
+                                                "Std" = "dt_empty_comp",
+                                                "pinfo" = "dt_empty_comp",
+                                                "p" = "dt_empty_comp"))
    ), envir=le_milieu)
    assign(x="value", value = names(get(x="defaults", envir=le_milieu)), envir=le_milieu)
    desc_check()
@@ -78,7 +110,6 @@ desc_restore <- function(){
 
 # @title desc_check
 # @description some checks of the descripteur options
-
 desc_check <- function(){
    NULL
 }
@@ -90,9 +121,7 @@ desc_check <- function(){
 #' \itemize{
 #' \item value - default: foo
 #' }
-
 #' @export
-
 opts_desc <- list(
    "get" = desc_get,
    "set" = desc_set,

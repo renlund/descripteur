@@ -65,7 +65,7 @@ test_that("c_cstd works", {
     x1 <- x; x1[x1 == "b"] <- "a"
     gl <- list("a"=rep(c(T,F), c(4,6)),
                "b"=rep(c(F,T), c(4,6)))
-    expect_equal(c_cstd(x, glist = gl), c(
+    expect_equal(c_cstd.each(x, glist = gl), c(
                                             -c_bstd(x3, glist = gl),
                                             c_bstd(x2, glist = gl),
                                             c_bstd(x1, glist = gl)

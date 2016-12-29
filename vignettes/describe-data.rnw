@@ -142,8 +142,8 @@ your own functions:
     be created from a categorical variable to begin with (to allow for
     overlaping groups).} a categorical variable from the \texttt{glist}.
 \item A function that needs the variable name can use \texttt{xname} as this is
-  passed internally to the function (and hence do not use that argument name for
-  something else)
+  passed internally to the function (and hence you should not use that argument
+  name for something else)
 \item Functions can utilize a \texttt{useNA} that is \texttt{TRUE/FALSE} that in
   turn will be managed by \texttt{dtable} via the the possible values
   \texttt{ifany}, \texttt{always} and \texttt{no} such that, in the case
@@ -174,13 +174,14 @@ Now we can make a simple description of the \texttt{real} variables.
 <<>>=
 dtable(data = df, type = "real", guide = g, desc.flist = Rdesc)
 @
-(Note that the print method also shows the meta data.)
+(Note that the print method also shows the meta data, here 'size' is sample size
+and 'cc' is complete cases.)
 
 
 
 However, we anticipate that the describers and comparers are typically wanted
 for repeat use in which case one can change the default values. The default
-values are viewed with \texttt{opts\_desc\$get()}, changes with
+values are viewed with \texttt{opts\_desc\$get()}, changed with
 \texttt{opts\_desc\$set} and restored with \texttt{opts\_desc\$restore()} (in line
 with global parameter settings in \textbf{knitr}).
 
@@ -238,7 +239,7 @@ attributes(dt)
 
 The package comes with a wrapper for \texttt{Hmisc::latex} that will use the
 metadata to create a (hopefully) decent table. It can also invoke a format
-funtion if wanted.
+funtion (\texttt{dtable\_format}) if wanted.
 
 Table \ref{tab:1} and \ref{tab:2} shows the default tables created with and
 without groups, respectively.
@@ -248,10 +249,14 @@ without groups, respectively.
 opts_desc$restore()
 dt <- dtable(data = df, type = "real", guide = g)
 dtable_latex(dt, caption = "Default table without groups",
-             format = T, label = "tab:1")
+             format = TRUE, label = "tab:1")
 
 @
 
+The option \texttt{bling = TRUE} (default) will utilize the metadata via the
+parameters that can be set as a list by the argument \texttt{bling.param}, which
+is passed to \texttt{attr2text}. This controls what additional attributes are
+printed below the table.
 
 <<results = 'asis'>>=
 
@@ -271,7 +276,7 @@ counting the number of records and number of missing, \texttt{d\_n} and
 \texttt{real} variables, with names ``count'' and ``count\_missing'',
 respectively:
 
-<<eval = FALSE>>=
+<<eval = FALSE, include = FALSE>>=
 opts_desc$set("describe_real" =
                   flist(c("count" = "d_n", "count_missing" = "d_missing")))
 @
@@ -286,12 +291,14 @@ d_mean
 @
 
 Some definitions are distinct for different data types and so requires different
-functions, if so they can have a ``second'' prefix begin the first letter of the
-type, so there is e.g.\ \texttt{d\_rstd} and \texttt{d\_bstd} which calculated
-the standard difference for \texttt{real} and \texttt{bnry}, respectively.
+functions, if so they can have a ``second'' prefix beginning with the first
+letter of the type, so there is e.g.\ \texttt{d\_rstd} and \texttt{d\_bstd}
+which calculated the standard difference (\texttt{std}) for \texttt{real} and
+\texttt{bnry}, respectively. This may not be 100\% consistently implemented.
 
-Type \texttt{?d\_real} to get a list of all describers applicable to the
-\texttt{real} type.
+The functions available should have some kind of (at least minimal)
+documentation, e.g.\ type \texttt{?d\_real} to get a list of all describers
+applicable to the \texttt{real} type.
 
 \newpage
 
@@ -345,6 +352,8 @@ Look at the guide
 dtg
 @
 
+The labels will be used in \LaTeX\, tables (provided the guide is specified).
+
 \clearpage
 \subsection{Type \texttt{real}}
 <<results = 'asis'>>=
@@ -389,21 +398,24 @@ dtable_latex(dtable(df, type = "catg", glist = gl3, w = vikt,
 
 \subsubsection{Is the distinction between \texttt{catg} and \texttt{bnry} annoying?}
 If you think the \texttt{bnry} type is superfluous, you can edit the 'guide' by
-hand, or more quickly supply the \texttt|no.bnry = TRUE| argument.
+hand, or more quickly supply the \texttt{no.bnry = TRUE} argument.
 
 <<results = 'asis'>>=
 nobnry <- dtable_guide(df, no.bnry = TRUE)
-dtable_latex(dtable(df, type = "catg", glist = gl, guide = nobnry), format = T,
+dtable_latex(dtable(df, type = "catg", glist = gl, guide = nobnry),
+             format = T,
              caption = paste("Two groups described and compared",
                              "for type \\texttt{catg} (including",
                              " binary variables)."))
 @
 
+\clearpage
 \subsubsection{What is the deal with \texttt{useNA}?}
 There are not (currently) many uses for the \texttt{useNA} option. One of the
 few is for controlling wether to explicitly describe this as a value for
 categorical variables. However, this sort of forces all functions relating to
-categorical variables to have this option\ldots \textbf{Should this be removed?}
+categorical variables to have this option\ldots \\ \textbf{Should this be
+  removed?}
 
 <<results = 'asis'>>=
 opts_desc$set("describe_catg" = flist(c(
@@ -413,6 +425,10 @@ opts_desc$set("describe_catg" = flist(c(
 dtable_latex(dtable(df, type = "catg", glist = gl, useNA = "ifany"), format = T,
              caption = paste("Two groups described and compared",
                              "for type \\texttt{catg}."))
+@
+
+Now, lets restore the default values.
+<<>>=
 opts_desc$restore()
 @
 
@@ -420,7 +436,8 @@ opts_desc$restore()
 \subsection{Type \texttt{date}}
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "date", glist = gl), format = T,
-             caption = "Two groups described and compared for type \\texttt{date}.")
+             caption = paste0("Two groups described and compared for",
+                              " type \\texttt{date}."))
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "date", glist = gl3, w = vikt, comp = "across"),
@@ -457,14 +474,14 @@ labels \texttt{tab:foo-surv} and \texttt{tab:foo-bnry}, respectively. The
 captions can be shown in Tables \ref{tab:foo-surv} and \ref{tab:foo-surv}.
 <<results = 'asis'>>=
 dtl <- dtable_list(df, type = c("surv", "bnry"))
-dtable_list_latex(dtl, label = "tab:foo-%s",
+dtable_list_latex(dtl, label = "tab:foo-%s", format = TRUE,
                   caption = "%s variables in the data base")
 @
 
 Two more examples are generated in \ref{tab:bar-date} and \ref{tab:bar-real}.
 <<results = 'asis'>>=
 dtl <- dtable_list(df, type = c("date", "real"))
-dtable_list_latex(dtl, label = "tab:bar-%s",
+dtable_list_latex(dtl, label = "tab:bar-%s", format = TRUE,
                   caption = "Description of variables of %s type.")
 @
 
@@ -472,46 +489,105 @@ dtable_list_latex(dtl, label = "tab:bar-%s",
 \clearpage
 
 \subsection{\texttt{dtables}}
-Still experimental, and possibly too cumbersome\ldots
+This function creates a column (or columns) for all, or selected, types in a
+single table. This compactification is often usefull, but it is at odds with the
+general philosophy of this package and it is therefore slightly more cumbersome
+to do (unless you use the default values). The function \texttt{dtables}
+(distinct from \texttt{dtable}) relies on \texttt{flists} (a list several
+\texttt{flist}-lists, one for each type) which specifies how each column is
+computed for that type, hence these lists are equal in length. The default
+specifies a 'Variables' column which is the name of the variable \emph{and} the
+level (for categorical data), a 'Summary' column which is a string of
+concatenated information specific for the type, a 'info' column which explains
+what info is in the 'Summary' column.
 
-<<eval = FALSE>>=
+<<results = 'asis'>>=
 dt <- dtables(data = df, useNA = "ifany")
-attributes(dt)
-dt2 <- footnote(dt, text = "info")
-attributes(dt2)
-dtable_format(dtables(data = df, useNA = "ifany", glist = "b1"))
+dtable_latex(dt, label = "tab:info-raw",
+             caption = "Compact table with all types")
 @
 
+One might want to move the info column to the 'info' attribute to get it to
+print nicely below the table in a \LaTeX-table. This is done by 'pruning' the
+table with option \texttt{info = TRUE} which saves the (unique) pruned
+information.  Also, there is still some info unexplained so we add something to
+the 'info' attribute.
+<<results = 'asis'>>=
+attr(dt, "info") <- c(attr(dt, "info"), "[n] is missing count")
+tmp1 <- dtable_prune(dt, rm = "variable", info = FALSE)
+tmp2 <- dtable_prune(tmp1, rm = "info", info = TRUE)
+dtable_latex(tmp2, label = "tab:info",
+             caption = "Compact table with all types")
+@
+
+With \texttt{flists} you can create a list of flist-lists, these need to be of
+the same length and have the same names (the names will be overwritten if
+not). You can put e.g.\ \texttt{real = TRUE} to accept the default
+functions. The defaults for \texttt{dtables} are \emph{different} than for
+\texttt{dtable}. See help on \texttt{dt\_desc} and \texttt{dt\_comp} for some
+predefined compact-style functions suitable for \texttt{dtables}.
+
+For the defaults to print nicely we will also translate the \texttt{pinfo}
+column to a footnote on the \texttt{p} column and supply the guide to get the
+labels of the variable names.
+<<results = 'asis', eval = T>>=
+dlist <- flists(real = TRUE, bnry = TRUE, catg = TRUE) ## get defaults
+dt <- dtables(data = df, useNA = "ifany", desc.flists = dlist,
+              guide = dtg, glist = "b1")
+attr(dt, "info") <- c(attr(dt, "info"), "[n] is missing count")
+tmp1 <- dtable_prune(dt, rm = "variable", info = FALSE)
+tmp2 <- dtable_prune(tmp1, rm = "info", info = TRUE)
+tmp3 <- dtable_fnote(tmp2, info = "pinfo", fn.var = "p", format = TRUE)
+dtable_latex(tmp3, label = "tab:info",
+             caption = paste("Compact table with continuous and",
+                             "categorical types."))
+@
 
 \clearpage
 \section{Additional Functions}
 
-\subsection{Simple description of attributes and missing, respectively}
-\texttt{dtable\_missing} provides counts and percentages for variables in a data
-frame (regardless of type). \texttt{dtable\_attr} returns some attributes in a
-tidy format. Both these have grouping.
+\subsection{Wrapper/convenience functions}
 
-<<>>=
-dm <- dtable_missing(df, glist = gl)
-@
-
-<<>>=
-dtable_attr(dm)
-@
+\subsubsection{\texttt{dtable\_std}}
+This function simply calculated the standardized difference for all applicable variables.
 
 <<results = 'asis'>>=
-dtable_latex(dm, format = TRUE, guide = dtg,
+ds <- dtable_std(data = df, glist = "b1", guide = dtg)
+tmp <- dtable_subset(x = ds, subset = ds$variable != "binary 1",
+                     all.attr = TRUE)
+dtable_latex(tmp, label = "tab:std", format = TRUE,
+             caption = paste0("Standardized differences"),
+             bling.param = list(attr = NA))
+@
+
+\clearpage
+\subsubsection{\texttt{dtable\_missing}}
+This simple description of missing provides counts and percentages for variables in a data
+frame (regardless of type).
+
+<<results = 'asis'>>=
+dm <- dtable_missing(data = df, glist = gl, guide = dtg)
+dtable_latex(dm, format = TRUE,
              caption = "Information on missing",
              bling.param = list(sep = c(". ", "\\newline ")))
 @
 
-\subsection{Finer control of output}
+\clearpage
+\subsection{Perhaps worthy of more documentation}
 
-\texttt{dtable\_latex} can pass arguments to \texttt{attr2text} (which works on
-top of \texttt{dtable\_attr}) to select which attributes to attach and (in a very
-limited way) how these are presented.
-
-\vspace{1cm}
-\noindent Presentation may appear here at some point\ldots
+\begin{itemize}
+\item \texttt{dtable\_prune} remove columns by name of index with the possibility
+  of saving the (unique) information in an attribute instead.
+\item \texttt{dtable\_rbind} and \texttt{dtable\_cbind} which are analogous to
+  \texttt{rbind} and \texttt{cbind} but for \texttt{dtables}. These try to keep
+  the attributes intact, although these need to be used with care as some
+  attributes are not mergeable and the results will generally inherit these
+  from the first argument (and thus may not be correct for the combined object).
+\item \texttt{dtable\_fnote} a function to turn one column into a footnote of another.
+\item \texttt{attr2text} control how some attributes of a \texttt{dtable} is
+  translated to a text string.
+\item \texttt{dtable\_format} the quick and dirty formating function for
+  \texttt{dtable}:s.
+\end{itemize}
 
 \end{document}

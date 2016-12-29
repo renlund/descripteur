@@ -4,12 +4,14 @@
 \alias{flist}
 \title{flist}
 \usage{
-flist(x, dattr = NULL)
+flist(x, dattr = NULL, local = FALSE)
 }
 \arguments{
 \item{x}{vector of function names}
 
 \item{dattr}{the dtable attribute}
+
+\item{local}{look for function first in locally or 'descripteur'}
 }
 \description{
 create function list

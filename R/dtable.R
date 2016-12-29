@@ -106,10 +106,11 @@ dtable <- function(data, type = NULL, guide = NULL,
         if(P$desc){
             for(g in gvar$variable){ ## g <- gvar$variable[2]
                 x <- data[[g]]
+                lab <- gvar$label[gvar$variable == g][1]
                 R0 <- NULL
                 if(is.null(glist)){
                     R0 <- apply_flist(x = x, flist = d_fnc, w = w,
-                                      useNA = use_na, xname = g, ...)
+                                      useNA = use_na, xname = lab, ...)
                 } else {
                     if(type %in% c("bnry", "catg")){
                         x <- factor(data[[g]], levels = attr(guide, "levels")[[g]])
@@ -119,7 +120,7 @@ dtable <- function(data, type = NULL, guide = NULL,
                                            flist = d_fnc,
                                            useNA = use_na,
                                            w = w[glist[[k]]],
-                                           xname = g, ...)
+                                           xname = lab, ...)
                         R0 <- dtable_cbind(x = R0, y = tmp,
                                            groups = names(glist)[k])
                         if(P$desc.style == "first") break
@@ -130,6 +131,7 @@ dtable <- function(data, type = NULL, guide = NULL,
         }
         if(P$comp){
             for(g in gvar$variable){ ## g = gvar$variable[1]
+                lab <- gvar$label[gvar$variable == g][1]
                 x <- if(type %in% c("bnry", "catg")){
                          factor(data[[g]], levels = attr(guide, "levels")[[g]])
                      } else {
@@ -137,7 +139,7 @@ dtable <- function(data, type = NULL, guide = NULL,
                      }
                 if(P$comp.style == "overall"){
                     R0 <- apply_flist(x = x, flist = c_fnc, useNA = use_na,
-                                      glist = glist, w = w, xname = g, ...)
+                                      glist = glist, w = w, xname = lab, ...)
                 } else {
                     R0 <- NULL
                     for(k in 2:length(glist)){ ## k = 2
@@ -146,7 +148,7 @@ dtable <- function(data, type = NULL, guide = NULL,
                                            glist = glist[c(ref.index,k)],
                                            flist = c_fnc,
                                            useNA = use_na,
-                                           xname = g, ...)
+                                           xname = lab, ...)
                         R0 <- dtable_cbind(R0, tmp,
                                            groups = names(glist)[k])
                     }

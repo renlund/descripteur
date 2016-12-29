@@ -8,8 +8,8 @@
 #' @param guide a guide (by \code{dtable_guide}), either to select variables OR
 #'     to provide unit information (the type-info will not be used)
 #' @param glist an index list or name of grouping variable
-#' @param only.with only show those variables with some missing
 #' @param info type of display
+#' @param only.with only show those variables with some missing
 #' @export
 #' @return a data.frame with
 #' \itemize{
@@ -18,22 +18,22 @@
 #'   \item{percent} percent \code{NA} in that variable
 #' }
 dtable_missing <- function(data = NULL, v = NULL, guide = NULL, glist = NULL,
-                           only.with = TRUE, info = "latex" ){
+                           info = "latex", only.with = TRUE){
     df <- get_variables(x = v, data = data)
     N <- nrow(df)
     m <- ncol(df)
     if(N == 0) stop("empty data set")
     if(is.null(guide)) guide <- dtable_guide(df)
-    guide$type <- "real"
+    guide$type[!guide$type %in% c("unit id.", "row id.")] <- "real"
     if(only.with){
-        no_miss <- guide$variable[!guide$has_missing]
+        no_miss <- guide$label[!guide$has_missing]
         guide <- subset(guide, guide$has_missing)
         if(nrow(guide) == 0) {
             message("there are no missing")
             invisible(NULL)
         }
     }
-    a_flist <- flist(c("count" = "d_missing", "percent" = "d_missing.perc"))
+    a_flist <- flist(c("Count" = "d_missing", "Percent" = "d_missing.perc"))
     dt <- dtable(data = data, type = "real", desc = TRUE, guide = guide,
                  desc.flist = a_flist, comp = FALSE, glist = glist)
     if(only.with & length(no_miss)>0){
@@ -81,3 +81,20 @@ get_variables <- function(x = NULL, data = NULL){
     }
 }
 
+
+dtable_std <- function(data = NULL, v = NULL, guide = NULL, glist, comp = "across"){
+    df <- get_variables(x = v, data = data)
+    N <- nrow(df)
+    m <- ncol(df)
+    if(N == 0) stop("empty data set")
+    if(is.null(guide)) guide <- dtable_guide(df)
+    foo <- function(x, glist, ...) c_cstd(x = x, glist = glist, expand = FALSE)
+    attr(foo, "dtable") <- "comp"
+    a_flists <- flists(real = flist(c("Std" = "c_rstd")),
+                       bnry = flist(c("Std" = "c_bstd")),
+                       catg = flist(c("Std" = "foo"), local = TRUE))
+    dt <- dtables(data = data, guide = guide,
+                  comp.flists = a_flists, desc.flists = NULL,
+                  comp = comp, desc = FALSE, glist = glist)
+    dt
+}

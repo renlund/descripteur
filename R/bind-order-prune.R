@@ -84,9 +84,13 @@ dtable_order <- function(x){
 ##' @title prune dtable
 ##' @param x object
 ##' @param rm index or variable name to remove
-##' @param keep index or variable name to keep
+##' @param keep index or variable name to keep (specify this or 'rm' and not both)
+##' @param info the discarded information may be keep in attributes
+##' @param info.attr name of attribute to store discarded info (if \code{info = TRUE})
+##' @param info.unique store only unique info (if \code{info = TRUE})
 ##' @export
-dtable_prune <- function(x, rm = NULL, keep = NULL){
+dtable_prune <- function(x, rm = NULL, keep = NULL, info = FALSE,
+                         info.attr = "info", info.unique = TRUE){
     if(is.null(rm) & is.null(keep)) return(x)
     if(!is.null(rm) & !is.null(keep)){
         warning("It does not like to remove AND keep.\nIt will only remove.")
@@ -105,12 +109,46 @@ dtable_prune <- function(x, rm = NULL, keep = NULL){
             rm <- setdiff(1:ncol(x), keep)
         }
     }
+    if(info){
+        infot <- unlist(lapply(x[,rm], identity))
+        if(info.unique) infot <- unique(infot)
+    }
     r <- x[,-rm, drop = FALSE]
     names(r) <- names(x)[-rm]
     dattr(r) <- dattr(x)[-rm]
     attributes(r) <- concatenate_attributes(r, old_attr)
+    if(info) attr(r, info.attr) <- c(attr(r, info.attr), infot)
     r
 }
+
+##' subset a dtable
+##'
+##' select rows in a dtable
+##' @param x a dtable
+##' @param ... arguments passed to \code{subset}
+##' @param all.attr keep more than just the essential attributes?
+##' @export
+dtable_subset <- function(x, ..., all.attr = FALSE){
+    xA <- attributes(x)
+    if(!all.attr) xA <- clear_most_attr(xA)
+    dots <- list(...)
+    if(!is.null(dots$select)){
+        warning("no selection!")
+        dots$select <- NULL
+    }
+    dots$x <- as.data.frame(x)
+    dots$drop <- FALSE
+    r <- do.call(base::subset, dots)
+    xA$row.names <- rownames(r)
+    attributes(r) <- xA
+    r
+}
+
+clear_most_attr <- function(attr){
+    keep <- c("names", "row.names", "dtable", "class")
+    attr[keep]
+}
+
 
 ##' turn dtable into data.frame
 ##'

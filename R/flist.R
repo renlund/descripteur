@@ -6,16 +6,21 @@
 ##' @title flist
 ##' @param x vector of function names
 ##' @param dattr the dtable attribute
+##' @param local look for function first in locally or 'descripteur'
 ##' @export
-flist <- function(x, dattr= NULL){
+flist <- function(x, dattr= NULL, local = FALSE){
     l <- as.list(NULL)
     da <- rep(NA, length(x))
     atr <- if(is.null(dattr)) "desc" else dattr
     for(k in seq_along(x)){
         xk <- NULL
         l[[k]] <- tryCatch(xk <- get(x[k],
-                               envir = getNamespace("descripteur"),
-                               inherits = TRUE),
+                                     envir = if(local){
+                                                 as.environment(-1)
+                                             } else {
+                                                 getNamespace("descripteur")
+                                             },
+                                     inherits = TRUE),
                            error = function(e) function(...)
                                "unknown fnc")
         da[k] <- if(is.null(tmp <- attr(xk, "dtable"))) atr else tmp
@@ -60,9 +65,9 @@ flists <- function(real = FALSE, bnry = FALSE, catg = FALSE,
         if(is.logical(tmp)){
             if(tmp){
                 if(thing == "desc"){
-                    desc_get(paste0("describe_", x))
+                    desc_get(paste0("describe_", x, "_compact"))
                 } else {
-                    desc_get(paste0("compare_", x))
+                    desc_get(paste0("compare_",  x, "_compact"))
                 }
             } else NULL
         } else tmp

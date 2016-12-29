@@ -45,4 +45,7 @@ various comparer functions for bnry types
 
 \item \code{c_chisq.p}: chisquare test p-value
 }}
+\references{
+\url{https://www.lerner.ccf.org/qhs/software/lib/stddiff.pdf}
+}
 

@@ -494,19 +494,14 @@ attr(d_rate, "dtable") <- "desc"
 ##' @param xname name of variable
 ##' @param useNA display information on missing
 ##' @param ... arguments passed
-dt_fnc <- function(...) invisible(NULL)
+dt_desc <- function(...) invisible(NULL)
 
 NA_txt <- function(x) paste0("[", sum(is.na(x)),"]")
 
-##' @describeIn dt_fnc returns an empty string
+##' @describeIn dt_desc returns an empty string
 ##' @export
 dt_empty_desc <- function(x, ...) NA
 attr(dt_empty_desc, "dtable") <- "desc"
-
-##' @describeIn dt_fnc returns an empty string
-##' @export
-dt_empty_comp <- function(x, ...) NA
-attr(dt_empty_comp, "dtable") <- "comp"
 
 abbrev <- function(s, n = 31){
     if(n<3) stop("don't")
@@ -531,6 +526,10 @@ abbrev2 <- function(a, b, n = 31, sep = ":"){
            abbrev(b, max(n2, n-an)))
 }
 
+latex_fix <- function(s){
+    gsub("_", "\\_", s, fixed = TRUE)
+}
+
 if(FALSE){
     abbrev2(paste0(letters[1:20], collapse = ""),
             paste0(LETTERS[1:20], collapse = ""))
@@ -544,31 +543,34 @@ if(FALSE){
             paste0(LETTERS[1:10], collapse = ""))
 }
 
-##' @describeIn dt_fnc returns name
+##' @describeIn dt_desc returns name
 ##' @export
 dt_name <- function(x, xname = NULL, ...){
     if(is.null(xname)) xname <- as.character(substitute(x))
+    xname <- latex_fix(xname)
     abbrev(xname)
 }
 attr(dt_name, "dtable") <- "meta"
 
-##' @describeIn dt_fnc returns name:ref for bnry
+##' @describeIn dt_desc returns name:ref for bnry
 ##' @export
 dt_bname <- function(x, xname = NULL, ...){
     rl <- d_ref_level(x)
     if(is.null(xname)) xname <- as.character(substitute(x))
+    xname <- latex_fix(xname)
     abbrev2(xname, rl)
 }
 attr(dt_bname, "dtable") <- "meta"
 
-##' @describeIn dt_fnc returns name:ref for bnry
+##' @describeIn dt_desc returns name:ref for bnry
 ##' @export
 dt_cname <- function(x, xname = NULL, ...){
-    rl <- levels(make_catg(x))
+    rl <- latex_fix(levels(make_catg(x)))
     n <- length(rl)
     if(is.null(xname)) xname <- as.character(substitute(x))
-    a <- abbrev2(xname, rl[1])
-    b <- paste0("     :", abbrev(rl[-1], 25))
+    xname <- latex_fix(xname)
+    a <- abbrev2(xname, rl[1], sep = ": ")
+    b <- paste0("\\quad: ", abbrev(rl[-1], 25))
     c(a, b)
 }
 attr(dt_cname, "dtable") <- "meta"
@@ -587,14 +589,14 @@ dt_Q_helper <- function(x, useNA, info){
     }
 }
 
-##' @describeIn dt_fnc quantiles
+##' @describeIn dt_desc quantiles
 ##' @export
 dt_Q <- function(x, useNA = FALSE, ...){
     dt_Q_helper(x, useNA = useNA, info = FALSE)
 }
 attr(dt_Q, "dtable") <- "desc"
 
-##' @describeIn dt_fnc info for \code{dt_Q}
+##' @describeIn dt_desc info for \code{dt_Q}
 ##' @export
 dt_Q.info <- function(x, ...){
     dt_Q_helper(x, info = TRUE)
@@ -613,14 +615,14 @@ dt_msd_helper <- function(x, useNA, info){
     }
 }
 
-##' @describeIn dt_fnc mean and standard deviation
+##' @describeIn dt_desc mean and standard deviation
 ##' @export
 dt_msd <- function(x, useNA = FALSE, ...){
     dt_msd_helper(x, useNA = useNA, info = FALSE)
 }
 attr(dt_msd, "dtable") <- "desc"
 
-##' @describeIn dt_fnc info for \code{dt_msd}
+##' @describeIn dt_desc info for \code{dt_msd}
 ##' @export
 dt_msd.info <- function(x, ...){
     dt_msd_helper(x, info = TRUE)
@@ -643,14 +645,14 @@ dt_bcp_helper <- function(x, useNA, info, perc.sign = NULL){
     }
 }
 
-##' @describeIn dt_fnc count and percentages (for bnry)
+##' @describeIn dt_desc count and percentages (for bnry)
 ##' @export
 dt_bcp <- function(x, useNA = FALSE, ...){
     dt_bcp_helper(x, useNA = useNA, info = FALSE)
 }
 attr(dt_bcp, "dtable") <- "desc"
 
-##' @describeIn dt_fnc info for \code{dt_bcp}
+##' @describeIn dt_desc info for \code{dt_bcp}
 ##' @export
 dt_bcp.info <- function(x, ...){
     dt_bcp_helper(x, info = TRUE)
@@ -673,14 +675,14 @@ dt_ccp_helper <- function(x, useNA, info, perc.sign = NULL){
     }
 }
 
-##' @describeIn dt_fnc count and percentages (for catg)
+##' @describeIn dt_desc count and percentages (for catg)
 ##' @export
 dt_ccp <- function(x, useNA = FALSE, ...){
     dt_ccp_helper(x, useNA = useNA, info = FALSE)
 }
 attr(dt_ccp, "dtable") <- "desc"
 
-##' @describeIn dt_fnc info for \code{dt_ccp}
+##' @describeIn dt_desc info for \code{dt_ccp}
 ##' @export
 dt_ccp.info <- function(x, ...){
     dt_ccp_helper(x, info = TRUE)
@@ -699,14 +701,14 @@ dt_date_helper <- function(x, useNA, info){
     }
 }
 
-##' @describeIn dt_fnc first and last date
+##' @describeIn dt_desc first and last date
 ##' @export
 dt_date <- function(x, useNA = FALSE, ...){
     dt_date_helper(x, useNA = useNA, info = FALSE)
 }
 attr(dt_date, "dtable") <- "desc"
 
-##' @describeIn dt_fnc info for \code{dt_date}
+##' @describeIn dt_desc info for \code{dt_date}
 ##' @export
 dt_date.info <- function(x, ...){
     dt_date_helper(x, info = TRUE)
@@ -724,14 +726,14 @@ dt_rate_helper <- function(x, useNA, info, ...){
     }
 }
 
-##' @describeIn dt_fnc rate of events
+##' @describeIn dt_desc rate of events
 ##' @export
 dt_rate <- function(x, useNA = FALSE, ...){
     dt_rate_helper(x, useNA = useNA, info = FALSE)
 }
 attr(dt_rate, "dtable") <- "desc"
 
-##' @describeIn dt_fnc info for \code{dt_rate}
+##' @describeIn dt_desc info for \code{dt_rate}
 ##' @export
 dt_rate.info <- function(x, ...){
     dt_rate_helper(x, info = TRUE)
@@ -748,14 +750,14 @@ dt_event_helper <- function(x, useNA, info, ...){
     }
 }
 
-##' @describeIn dt_fnc rate of events
+##' @describeIn dt_desc rate of events
 ##' @export
 dt_event <- function(x, useNA = FALSE, ...){
     dt_event_helper(x, useNA = useNA, info = FALSE)
 }
 attr(dt_event, "dtable") <- "desc"
 
-##' @describeIn dt_fnc info for \code{dt_rate}
+##' @describeIn dt_desc info for \code{dt_rate}
 ##' @export
 dt_event.info <- function(x, ...){
     dt_event_helper(x, info = TRUE)

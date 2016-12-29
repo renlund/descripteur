@@ -159,5 +159,5 @@ test_that("dt_Q works", {
     expect_equal(dt_rate(x, useNA = TRUE), "0.2 [2]")
 })
 
-rm(x, w, y, v, G)
+rm(x, w, y, v)
 

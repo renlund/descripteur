@@ -83,7 +83,10 @@ dtable_attr <- function(dt, perc = FALSE, perc.sign = "%"){
 ## use 1 significant digit when >t, else "<t"
 round_helper <- function(x, t = 0.1, scientific = FALSE,
                          digit1 = 1, digit2 = 1){
+    if(is.null(x)) return(NULL)
+    if(length(x)==0) return(NULL)
     if(length(x) != 1) stop("want length 1 vector")
+    if(is.na(x)) return("")
     if(x==0) return(0)
     if(abs(x)>=1) return(round(x, digit1))
     if(abs(x)>=t) return(signif(x, digit2))

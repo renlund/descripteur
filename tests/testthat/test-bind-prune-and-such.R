@@ -50,15 +50,12 @@ test_that("dtable_cbind", {
                   row.names = 1L,
                   dtable = c("meta", "meta", "HY:a", "HY:a", "HY:b"))
     )
-
     df1 <- data.frame(variable = c("x", "x"), level = 1:2, Foo = 3:4)
     class(df1) <- c("dtable", "data.frame")
     dattr(df1) <- c("meta", "meta", "HY")
-
     df2 <- data.frame(variable = c("x"), level = 1, Foo = 5)
     class(df2) <- c("dtable", "data.frame")
     dattr(df2) <- c("meta", "meta", "HY")
-
     expect_equal(
         dtable_cbind(x = df1, y = df2, groups = letters[1:2]),
         structure(list(variable = structure(c(1L, 1L), .Label = "x",
@@ -116,5 +113,14 @@ test_that("dtable_prune works",{
                   class = "data.frame",
                   row.names = c(NA, -1L),
                   dtable = "foo")
-        )
+    )
+    expect_equal(
+        dtable_prune(df, rm = "x", info = TRUE),
+        structure(list(y = 1),
+                  .Names = "y",
+                  class = "data.frame",
+                  row.names = 1L,
+                  dtable = "foo",
+                  info = c(1, 2))
+    )
 })

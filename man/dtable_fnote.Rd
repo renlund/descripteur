@@ -2,20 +2,26 @@
 % Please edit documentation in R/dtable-fnote.R
 \name{dtable_fnote}
 \alias{dtable_fnote}
-\title{create footnotes from table variables}
+\title{create (latex) footnotes from table variables}
 \usage{
-dtable_fnote(dt, text = NULL, footnote = NULL)
+dtable_fnote(dt, info, fn.var, info.attr = "info", format = FALSE,
+  format.param = as.list(NULL))
 }
 \arguments{
 \item{dt}{a dtable}
 
-\item{text}{the variables to add to 'info'}
+\item{info}{variable with the footnote info}
 
-\item{footnote}{the variables to add to 'info' and the variables to map upon,
-or so it is thought to behave if ever implemented}
+\item{fn.var}{variable to get footnotes}
+
+\item{info.attr}{name of attribute to store info in}
+
+\item{format}{format the dtable?}
+
+\item{format.param}{parameters for formatting}
 }
 \description{
-make \code{unique(variable)} a part of attribute 'info' and, if wanted,
+make \code{unique(variable)} a part of attribute 'info' and
     place a footnote on another variable
 }
 

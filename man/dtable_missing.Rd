@@ -5,7 +5,7 @@
 \title{describe missing}
 \usage{
 dtable_missing(data = NULL, v = NULL, guide = NULL, glist = NULL,
-  only.with = TRUE, info = "latex")
+  info = "latex", only.with = TRUE)
 }
 \arguments{
 \item{data}{the data.frame or similar}
@@ -19,9 +19,9 @@ to provide unit information (the type-info will not be used)}
 
 \item{glist}{an index list or name of grouping variable}
 
-\item{only.with}{only show those variables with some missing}
-
 \item{info}{type of display}
+
+\item{only.with}{only show those variables with some missing}
 }
 \value{
 a data.frame with

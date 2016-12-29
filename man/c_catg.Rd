@@ -4,6 +4,7 @@
 \alias{c_cOR}
 \alias{c_catg}
 \alias{c_cstd}
+\alias{c_cstd.each}
 \alias{c_pdiff}
 \title{various comparer functions for catg types}
 \usage{
@@ -13,7 +14,9 @@ c_pdiff(x, glist, useNA = FALSE, w = NULL, ...)
 
 c_cOR(x, glist, useNA = FALSE, w = NULL, ...)
 
-c_cstd(x, glist, useNA = FALSE, w = NULL, ...)
+c_cstd.each(x, glist, useNA = FALSE, w = NULL, ...)
+
+c_cstd(x, glist, useNA = FALSE, w = NULL, expand = TRUE, ...)
 }
 \arguments{
 \item{...}{this is to be able to tolerate unnecessary arguments}
@@ -25,6 +28,10 @@ c_cstd(x, glist, useNA = FALSE, w = NULL, ...)
 \item{useNA}{display info for missing?}
 
 \item{w}{weight}
+
+\item{expand}{if only one value is returned for a multilevel categorical
+variable, should the results be expanded with \code{NA}:s to match the
+typical output length for a function of such a variable?}
 }
 \description{
 various comparer functions for catg types
@@ -35,8 +42,13 @@ various comparer functions for catg types
 
 \item \code{c_cOR}: odds ratios, 2 groups only
 
-\item \code{c_cstd}: standardized differences, 2 groups only
+\item \code{c_cstd.each}: standardized differences (2 groups only) for each level
+
+\item \code{c_cstd}: standardized differences (2 groups only) for the variable
 }}
+\references{
+\url{https://www.lerner.ccf.org/qhs/software/lib/stddiff.pdf}
+}
 \seealso{
 \code{\link{c_fisher.p}} and \code{\link{c_chisq.p}} which work for
     catg variables as well

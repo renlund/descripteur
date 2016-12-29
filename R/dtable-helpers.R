@@ -1,18 +1,3 @@
-## this might be useful later if there is ever a function to convert
-## a variable to a 'footnote'
-latex_symbols <- function(){
-    symb <- c("bot", "forall", "flat", "sharp", "top", "S", "bigstar", "Join",
-               "clubsuit", "diamondsuit", "spadesuit",  "heartsuit",
-               "dagger", "ast", "star", "circ", "ddagger", "bullet")
-    greekl <- c("alpha", "beta", "gamma", "delta", "epsilon", "varepsilon",
-                "zeta", "eta", "theta", "vartheta", "iota", "kappa", "lambda",
-                "mu", "nu", "xi", "pi", "varpi", "rho", "varrho", "sigma", "varsigma",
-                "tau", "upsilon", "phi", "varphi", "chi", "psi", "omega")
-    greeku <- c("Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma",
-                "Upsilon","Phi","Psi","Omega")
-    invisible(NULL)
-}
-
 # - # create data set to test things on
 dtable_data_example <- function(n = 100, seed = 20161207){
     set.seed(seed)
