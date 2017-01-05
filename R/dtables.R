@@ -12,9 +12,11 @@ dtables <- function(data, types = NULL, desc.flists = NULL,
                     comp.flists = NULL, guide = NULL, ...){
     ## message("dtables function is still experimental\nHigly likely to change!\n")
     ok_types <- c("real", "bnry", "catg", "date", "surv")
+    if(is.null(guide)) guide <- dtable_guide(data)
     if(is.null(types)) types <- intersect_if_notnull(names(desc.flists),
                                                      names(comp.flists))
     if(is.null(types)) types <- ok_types
+    types <- intersect(types, unique(guide$type))
     if(is.null(desc.flists)) desc.flists <- flists_default(types = types,
                                                           thing = "desc")
     if(is.null(comp.flists)) comp.flists <- flists_default(types = types,
@@ -23,7 +25,6 @@ dtables <- function(data, types = NULL, desc.flists = NULL,
         wot <- paste0(setdiff(types, ok_types), collapse = ", ")
         stop(paste0("some types specified are unknow: ", wot, "."))
     }
-    if(is.null(guide)) guide <- dtable_guide(data)
     R <- NULL
     dots <- list(...)
     for(TYP in types){ ## TYP = types[3]

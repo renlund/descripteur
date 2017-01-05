@@ -7,7 +7,7 @@
 % \addtolength{\voffset}{-1.5cm}
 % \addtolength{\textheight}{3cm}
 
-\title{describe-data}
+\title{Describe data}
 \author{Henrik Renlund}
 
 <<"setup", cache = FALSE, echo = FALSE, include = FALSE>>=
@@ -414,8 +414,8 @@ dtable_latex(dtable(df, type = "catg", glist = gl, guide = nobnry),
 There are not (currently) many uses for the \texttt{useNA} option. One of the
 few is for controlling wether to explicitly describe this as a value for
 categorical variables. However, this sort of forces all functions relating to
-categorical variables to have this option\ldots \\ \textbf{Should this be
-  removed?}
+categorical variables to have this option\footnote{Should this be
+  removed?}.
 
 <<results = 'asis'>>=
 opts_desc$set("describe_catg" = flist(c(
@@ -532,7 +532,7 @@ column to a footnote on the \texttt{p} column and supply the guide to get the
 labels of the variable names.
 <<results = 'asis', eval = T>>=
 dlist <- flists(real = TRUE, bnry = TRUE, catg = TRUE) ## get defaults
-dt <- dtables(data = df, useNA = "ifany", desc.flists = dlist,
+dt <- dtables(data = df, useNA = "ifany", ##desc.flists = dlist,
               guide = dtg, glist = "b1")
 attr(dt, "info") <- c(attr(dt, "info"), "[n] is missing count")
 tmp1 <- dtable_prune(dt, rm = "variable", info = FALSE)
@@ -549,7 +549,7 @@ dtable_latex(tmp3, label = "tab:info",
 \subsection{Wrapper/convenience functions}
 
 \subsubsection{\texttt{dtable\_std}}
-This function simply calculated the standardized difference for all applicable variables.
+This function calculates the standardized difference for all applicable variables.
 
 <<results = 'asis'>>=
 ds <- dtable_std(data = df, glist = "b1", guide = dtg)
@@ -576,14 +576,15 @@ dtable_latex(dm, format = TRUE,
 \subsection{Perhaps worthy of more documentation}
 
 \begin{itemize}
-\item \texttt{dtable\_prune} remove columns by name of index with the possibility
-  of saving the (unique) information in an attribute instead.
+\item \texttt{dtable\_prune} remove columns by name or index with the possibility
+  of saving the (unique) information in an attribute.
 \item \texttt{dtable\_rbind} and \texttt{dtable\_cbind} which are analogous to
   \texttt{rbind} and \texttt{cbind} but for \texttt{dtables}. These try to keep
   the attributes intact, although these need to be used with care as some
   attributes are not mergeable and the results will generally inherit these
   from the first argument (and thus may not be correct for the combined object).
-\item \texttt{dtable\_fnote} a function to turn one column into a footnote of another.
+\item \texttt{dtable\_fnote} a function to turn one column into a footnote of
+  another (applicable to latex table outputs).
 \item \texttt{attr2text} control how some attributes of a \texttt{dtable} is
   translated to a text string.
 \item \texttt{dtable\_format} the quick and dirty formating function for

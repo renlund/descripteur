@@ -146,7 +146,17 @@ make_bnry <- function(x){
             if(rev) return(factor(x, levels = rev(levels(x))))
             if(!rev) return(x)
         } else {
-            stop("trying to give binary stats on a non-binary variable")
+            if(length(unique(stats::na.omit(x))) == 2){
+                a <- "trying to give binary stats on a non-binary variable"
+                b <- paste0(a, ".\n which will work since it only has",
+                            " two unique values, but is a bit dodgy.")
+                lev <- levels(factor(x))
+                if(rev) return(factor(x, levels = rev(lev)))
+                if(!rev) return(factor(x, levels = lev))
+                warning(b)
+            } else {
+                stop(a)
+            }
         }
     }
     lev <- sort(stats::na.omit(unique(x)))
@@ -198,7 +208,7 @@ attr(d_odds, "dtable") <- "desc"
     ## | describing functions for date variables | ##
     ## +-----------------------------------------+ ##
 
-##' various describing functions for surv variables
+##' various describing functions for date variables
 ##'
 ##' @param x vector of dates
 ##' @param ... this is to be able to tolerate unnecessary arguments
@@ -558,7 +568,7 @@ dt_bname <- function(x, xname = NULL, ...){
     rl <- d_ref_level(x)
     if(is.null(xname)) xname <- as.character(substitute(x))
     xname <- latex_fix(xname)
-    abbrev2(xname, rl)
+    abbrev2(xname, rl, sep = ": ")
 }
 attr(dt_bname, "dtable") <- "meta"
 

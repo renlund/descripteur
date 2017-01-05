@@ -95,11 +95,11 @@ desc_restore <- function(){
                                                 "pinfo" = "dt_fisher.p.info",
                                                 "p" = "dt_fisher.p")),
                "compare_date_compact" = flist(c("Variables" = "dt_name",
-                                                "Std" = "dt_empty_comp",
+                                                "Std" = "c_dstd",
                                                 "pinfo" = "dt_empty_comp",
                                                 "p" = "dt_empty_comp")),
                "compare_surv_compact" = flist(c("Variables" = "dt_name",
-                                                "Std" = "dt_empty_comp",
+                                                "Std" = "c_sstd",
                                                 "pinfo" = "dt_empty_comp",
                                                 "p" = "dt_empty_comp"))
    ), envir=le_milieu)

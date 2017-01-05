@@ -88,13 +88,14 @@ dtable_std <- function(data = NULL, v = NULL, guide = NULL, glist, comp = "acros
     m <- ncol(df)
     if(N == 0) stop("empty data set")
     if(is.null(guide)) guide <- dtable_guide(df)
-    foo <- function(x, glist, ...) c_cstd(x = x, glist = glist, expand = FALSE)
-    attr(foo, "dtable") <- "comp"
     a_flists <- flists(real = flist(c("Std" = "c_rstd")),
                        bnry = flist(c("Std" = "c_bstd")),
-                       catg = flist(c("Std" = "foo"), local = TRUE))
+                       catg = flist(c("Std" = "c_cstd")),
+                       date = flist(c("Std" = "c_dstd")),
+                       surv = flist(c("Std" = "c_sstd")))
     dt <- dtables(data = data, guide = guide,
                   comp.flists = a_flists, desc.flists = NULL,
-                  comp = comp, desc = FALSE, glist = glist)
+                  comp = comp, desc = FALSE, glist = glist,
+                  expand.levels = FALSE)
     dt
 }

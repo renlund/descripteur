@@ -30,8 +30,11 @@ dtable_guide <- function(data, elim.set = NULL,
     if(catg.tol < 3 | real.tol < 3) stop("be more tolerant...")
     data_source <- as.character(substitute(data))
     org_data <- data
+    n_unique <- function(x) length(unique(stats::na.omit(x)))
+    n_is_1 <- function(x) n_unique(x) == 1
+    const <- names(data)[unlist(lapply(data, n_is_1))]
     data <- subset(org_data, TRUE,
-                   select = setdiff(names(data), c(elim.set, row.id, unit.id)))
+                   select = setdiff(names(data), c(elim.set, row.id, unit.id, const)))
     class2 <- function(x) class(x)[1]
     classy <- lapply(data, class2)
     any_na <- function(x) any(is.na(x))
@@ -49,7 +52,6 @@ dtable_guide <- function(data, elim.set = NULL,
         b3 <- NULL
         b4 <- names(data)[bnry]
     } else {
-        n_unique <- function(x) length(unique(stats::na.omit(x)))
         real_n <- lapply(subset(data,TRUE,names(data)[real]), n_unique)
         catg_n <- lapply(subset(data,TRUE,names(data)[catg]), n_unique)
         date_n <- lapply(subset(data,TRUE,names(data)[date]), n_unique)
@@ -86,6 +88,18 @@ dtable_guide <- function(data, elim.set = NULL,
                        stringsAsFactors = FALSE
                    )
                } else NULL
+    tmp_const <- if(length(const) > 0){
+                     any_na <- function(x) any(is.na(x))
+                     data.frame(
+                         variable = const,
+                         type = "constant",
+                         original_class = unlist(lapply(org_data[const], class)),
+                         has_missing = unlist(lapply(org_data[const], any_na)),
+                         check.names = FALSE,
+                         row.names = NULL,
+                         stringsAsFactors = FALSE
+                     )
+                 } else NULL
     tmp_var <- data.frame(
         variable = c(r, c1, c2, b1, b2, b3, b4, d, s),
         type = rep(c("real", "catg", "bnry", "date", "surv"),
@@ -101,7 +115,7 @@ dtable_guide <- function(data, elim.set = NULL,
     if(no.bnry){
         tmp_var$type[tmp_var$type == "bnry"] <- "catg"
     }
-    tmp <- rbind(tmp_row, tmp_unit, tmp_var)
+    tmp <- rbind(tmp_row, tmp_unit, tmp_const, tmp_var)
     labels <- get_label(org_data)
     ret <- merge(tmp, labels, by = "variable")
     L <- as.list(NULL)
@@ -160,4 +174,13 @@ get_label <- function(data){
                 }
     }
     data.frame(variable = Names, label = R, stringsAsFactors = FALSE)
+}
+
+if(FALSE){
+    data <- data.frame(x = rep(1, 10), y = 1:10, z = rep("A", 10),
+                       stringsAsFactors = FALSE)
+    dtable_guide(data)
+    data <- data.frame(x = rep(1, 10), z = rep("A", 10),
+                       stringsAsFactors = FALSE)
+    dtable_guide(data)
 }

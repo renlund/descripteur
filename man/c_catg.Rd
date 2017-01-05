@@ -16,7 +16,7 @@ c_cOR(x, glist, useNA = FALSE, w = NULL, ...)
 
 c_cstd.each(x, glist, useNA = FALSE, w = NULL, ...)
 
-c_cstd(x, glist, useNA = FALSE, w = NULL, expand = TRUE, ...)
+c_cstd(x, glist, useNA = FALSE, w = NULL, expand.levels = TRUE, ...)
 }
 \arguments{
 \item{...}{this is to be able to tolerate unnecessary arguments}
@@ -29,7 +29,7 @@ c_cstd(x, glist, useNA = FALSE, w = NULL, expand = TRUE, ...)
 
 \item{w}{weight}
 
-\item{expand}{if only one value is returned for a multilevel categorical
+\item{expand.levels}{if only one value is returned for a multilevel categorical
 variable, should the results be expanded with \code{NA}:s to match the
 typical output length for a function of such a variable?}
 }

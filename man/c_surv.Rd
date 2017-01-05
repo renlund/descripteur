@@ -2,12 +2,15 @@
 % Please edit documentation in R/flist-comparers.R
 \name{c_surv}
 \alias{c_rr}
+\alias{c_sstd}
 \alias{c_surv}
 \title{various comparer functions for surv types}
 \usage{
 c_surv(...)
 
-c_rr(x, glist, w = NULL, type = "right", ...)
+c_rr(x, glist, w = NULL, cens.type = "right", ...)
+
+c_sstd(x, glist, w = NULL, cens.type = "right", ...)
 }
 \arguments{
 \item{...}{this is to be able to tolerate unnecessary arguments}
@@ -18,7 +21,7 @@ c_rr(x, glist, w = NULL, type = "right", ...)
 
 \item{w}{weight}
 
-\item{type}{type of censoring}
+\item{cens.type}{type of censoring}
 }
 \description{
 various comparer functions for surv types
@@ -26,5 +29,8 @@ various comparer functions for surv types
 \section{Functions}{
 \itemize{
 \item \code{c_rr}: rate ratio, 2 groups only
+
+\item \code{c_sstd}: standardized difference between the rates of two surv
+variables (difference in mean divided by 'average sd'-isch)
 }}
 

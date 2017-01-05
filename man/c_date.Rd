@@ -2,12 +2,15 @@
 % Please edit documentation in R/flist-comparers.R
 \name{c_date}
 \alias{c_date}
+\alias{c_dstd}
 \alias{c_overlap}
 \title{various comparer functions for date types}
 \usage{
 c_date(...)
 
 c_overlap(x, glist, ...)
+
+c_dstd(x, glist, ...)
 }
 \arguments{
 \item{...}{this is to be able to tolerate unnecessary arguments}
@@ -23,5 +26,8 @@ various comparer functions for date types
 \itemize{
 \item \code{c_overlap}: number of records in the overlapping time period, 2
 groups only
+
+\item \code{c_dstd}: standardized difference for date variables (same as for
+real variables when the dates are interpreted as numericals)
 }}
 

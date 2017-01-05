@@ -27,14 +27,16 @@ dtable_fnote <- function(dt, info, fn.var,
     foo(fn.var)
     if(length(format.param)>0) format <- TRUE
     if(format) dt <- dtable_format(dt)
-    infot   <- unique(as.character(unlist(dt[[info]])))
+    infot   <- unique(as.character(stats::na.omit(unlist(dt[[info]]))))
     i.infot <- as.numeric(factor(dt[[info]], levels = infot))
-    symb <- latex_symbols(n = max(i.infot), pre = "$\\phantom{.}^{\\", suff = "}$")
-    symb2 <- latex_symbols(n = max(i.infot), pre = "$^{\\", suff = "}$")
+    symb <- latex_symbols(n = max(i.infot, na.rm = TRUE),
+                          pre = "$\\phantom{.}^{\\", suff = "}$")
+    symb2 <- latex_symbols(n = max(i.infot, na.rm = TRUE),
+                           pre = "$^{\\", suff = "}$")
     sym.infot <- paste0(symb, infot)
     attr(dt, info.attr) <- c(attr(dt, info.attr), sym.infot)
     fn_var <- dt[[fn.var]]
-    new_var <- paste0(dt[[fn.var]], symb2[i.infot])
+    new_var <- paste0(id_or_empty(fn_var), id_or_empty(symb2[i.infot]))
     new_var[is.na(fn_var)] <- ""
     dt[[fn.var]] <- new_var
     dtable_prune(dt, rm = info)
@@ -54,6 +56,9 @@ if(FALSE){
     (test <- dtable_fnote(dt, info = "y", fn.var = "x"))
     attributes(test)
 }
+
+## --- itself or empty string if NA
+id_or_empty <- function(s) ifelse(is.na(s), "", s)
 
 ##  -- a variable to a 'footnote'
 latex_symbols <- function(n, pre = "\\", suff  = "", start = 1){

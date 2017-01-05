@@ -154,6 +154,14 @@ c_overlap <- function(x, glist, ...){
 }
 attr(c_overlap, "dtable") <- "comp"
 
+##' @describeIn c_date standardized difference for date variables (same as for
+##'     real variables when the dates are interpreted as numericals)
+##' @export
+c_dstd <- function(x, glist, ...){
+    c_rstd(x = as.numeric(x), glist = glist)
+}
+attr(c_dstd, "dtable") <- "comp"
+
      ## +----------------------------------------+ ##
      ## | comparing functions for catg variables | ##
      ## +----------------------------------------+ ##
@@ -208,12 +216,11 @@ attr(c_cstd.each, "dtable") <- "comp"
 
 ##' @describeIn c_catg standardized differences (2 groups only) for the variable
 ##' @references \url{https://www.lerner.ccf.org/qhs/software/lib/stddiff.pdf}
-##' @param expand if only one value is returned for a multilevel categorical
+##' @param expand.levels if only one value is returned for a multilevel categorical
 ##'     variable, should the results be expanded with \code{NA}:s to match the
 ##'     typical output length for a function of such a variable?
-##' @importFrom MASS ginv
 ##' @export
-c_cstd <- function(x, glist, useNA = FALSE, w = NULL, expand = TRUE, ...){
+c_cstd <- function(x, glist, useNA = FALSE, w = NULL, expand.levels = TRUE, ...){
     useNA <- FALSE ## could this couse problems?
     if(is.null(w)) w <- rep(1, length(x))
     w1 <- w[glist[[1]]]
@@ -229,12 +236,22 @@ c_cstd <- function(x, glist, useNA = FALSE, w = NULL, expand = TRUE, ...){
             if(i == j){
                 S[i, j] <- (p1[i]*(1-p1[i]) + p2[i]*(1-p2[i])) / 2
             } else {
-                S[i, j] <- (p1[i]*p1[j] + p2[i]*p2[j]) / 2
+                S[i, j] <- -(p1[i]*p1[j] + p2[i]*p2[j]) / 2
             }
         }
     }
-    r <- sqrt(t(p1-p2) %*% MASS::ginv(S) %*% (p1-p2))
-    if(expand) c(r, rep(NA, k)) else r
+    ## r <- sqrt(t(p1-p2) %*% MASS::ginv(S) %*% (p1-p2))
+    r <- if(all(S == 0)){
+             Inf
+         } else if(is.null(
+                    tryCatch(INV <- solve(S),
+                             error = function(e) NULL)
+                )){
+             Inf
+         } else{
+             sqrt(t(p1-p2) %*% INV %*% (p1-p2))
+         }
+    if(expand.levels) c(r, rep(NA, k)) else r
 }
 attr(c_cstd, "dtable") <- "comp"
 
@@ -247,27 +264,45 @@ attr(c_cstd, "dtable") <- "comp"
 ##' @param x vector
 ##' @param glist a grouping list
 ##' @param w weight
-##' @param type type of censoring
+##' @param cens.type type of censoring
 ##' @param ... this is to be able to tolerate unnecessary arguments
 c_surv <- function(...) invisible(NULL)
 
 ##' @describeIn c_surv rate ratio, 2 groups only
 ##' @export
-c_rr <- function(x, glist, w = NULL, type = "right", ...){
+c_rr <- function(x, glist, w = NULL, cens.type = "right", ...){
     survcheck(x)
     if(is.null(w)) w <- rep(1, length(x)/2)
     x1 <- x[glist[[1]]]
     x2 <- x[glist[[2]]]
     w1 <- w[glist[[1]]]
     w2 <- w[glist[[2]]]
-    if(type == "right"){
+    if(cens.type == "right"){
         check_right(x)
-        d_rate(x1, w = w1, type = type) / d_rate(x2, w = w2, type = type)
+        d_rate(x1, w = w1, cens.type = cens.type) / d_rate(x2, w = w2, cens.type = cens.type)
     } else {
-        stop("no type but 'right' has been implemented")
+        stop("no cens.type but 'right' has been implemented")
     }
 }
 attr(c_rr, "dtable") <- "comp"
+
+##' @describeIn c_surv standardized difference between the rates of two surv
+##'     variables (difference in mean divided by 'average sd'-isch)
+##' @export
+c_sstd <- function(x, glist, w = NULL, cens.type = "right", ...){
+    survcheck(x)
+    if(is.null(w)) w <- rep(1, length(x)/2)
+    x1 <- x[glist[[1]]]
+    x2 <- x[glist[[2]]]
+    w1 <- w[glist[[1]]]
+    w2 <- w[glist[[2]]]
+    n1 <- d_esum(x = x1, w = w1, cens.type = cens.type)
+    n2 <- d_esum(x = x2, w = w2, cens.type = cens.type)
+    t1 <- d_tsum(x = x1, w = w1, cens.type = cens.type)
+    t2 <- d_tsum(x = x1, w = w1, cens.type = cens.type)
+    (n1 / t1 - n2 / t2) / sqrt((n1 / (t1^2) + n2 / (t2^2)) / 2)
+}
+attr(c_sstd, "dtable") <- "comp"
 
     ## +----------------------------------+ ##
     ## | compact-type comparing functions | ##
