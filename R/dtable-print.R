@@ -109,6 +109,7 @@ roundisch <- function(x, ...){
 attr2text <- function(dt, perc = FALSE, perc.sign = "%",
                       attr = c("size", "cc", "weight", "units", "info"),
                       sep = ". ", vector = FALSE, rm.if.all = FALSE){
+    if(nrow(dt) == 0) return("")
     da <- dtable_attr(dt, perc = perc, perc.sign = perc.sign)
     gr <- setdiff(names(da), c("measure", "total"))
     n <- length(gr)

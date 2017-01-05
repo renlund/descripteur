@@ -4,7 +4,7 @@
 \alias{d_date}
 \alias{d_dmax}
 \alias{d_dmin}
-\title{various describing functions for surv variables}
+\title{various describing functions for date variables}
 \usage{
 d_date(...)
 
@@ -18,7 +18,7 @@ d_dmax(x, ...)
 \item{x}{vector of dates}
 }
 \description{
-various describing functions for surv variables
+various describing functions for date variables
 }
 \section{Functions}{
 \itemize{

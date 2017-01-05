@@ -9,6 +9,7 @@
 #' @param as.is if TRUE ignore all tolerence parameters
 #' @param no.bnry if TRUE, there will be no distinction between 'bnry' and
 #'     'catg', they will all be 'catg' (default \code{FALSE})
+#' @param reduce.levels if  \code{TRUE}, empty levels will be removed
 #' @param row.id the row identifier, doesn't really do much at this point
 #' @param unit.id the unit identifier, this can later provide information on how
 #'     many unique units there are in a table or subgroups thereof
@@ -26,12 +27,20 @@
 dtable_guide <- function(data, elim.set = NULL,
                          catg.tol = 20, real.tol = 5,
                          as.is = FALSE, no.bnry = FALSE,
+                         reduce.levels = TRUE,
                          row.id = NULL, unit.id = NULL){
     if(catg.tol < 3 | real.tol < 3) stop("be more tolerant...")
     data_source <- as.character(substitute(data))
     org_data <- data
     n_unique <- function(x) length(unique(stats::na.omit(x)))
-    n_is_1 <- function(x) n_unique(x) == 1
+    n_levels <- function(x) length(levels(x))
+    n_is_1 <- function(x){
+        if(is.factor(x) & !reduce.levels){
+            n_levels(x) == 1
+        } else {
+            n_unique(x) == 1
+        }
+    }
     const <- names(data)[unlist(lapply(data, n_is_1))]
     data <- subset(org_data, TRUE,
                    select = setdiff(names(data), c(elim.set, row.id, unit.id, const)))
@@ -39,9 +48,15 @@ dtable_guide <- function(data, elim.set = NULL,
     classy <- lapply(data, class2)
     any_na <- function(x) any(is.na(x))
     real <- classy %in% c("numeric", "integer")
+    char <- classy %in% c("character")
+    data[char] <- lapply(data[char], factor)
     catg <- classy %in% c("factor", "character")
-    date <- classy %in% c("POSIXct", "POSIXlt", "Date")
+    if(reduce.levels){
+        data[catg] <- lapply(data[catg], factor)
+    }
     bnry <- classy %in% c("logical")
+    data[bnry] <- lapply(data[bnry], factor)
+    date <- classy %in% c("POSIXct", "POSIXlt", "Date")
     surv <- classy %in% c("Surv")
     if(as.is){
         r  <- names(data)[real]
@@ -53,7 +68,8 @@ dtable_guide <- function(data, elim.set = NULL,
         b4 <- names(data)[bnry]
     } else {
         real_n <- lapply(subset(data,TRUE,names(data)[real]), n_unique)
-        catg_n <- lapply(subset(data,TRUE,names(data)[catg]), n_unique)
+        ## catg_n <- lapply(subset(data,TRUE,names(data)[catg]), n_unique)
+        catg_n <- lapply(subset(data,TRUE,names(data)[catg]), n_levels)
         date_n <- lapply(subset(data,TRUE,names(data)[date]), n_unique)
         bnry_n <- lapply(subset(data,TRUE,names(data)[bnry]), n_unique)
         r  <- names(data)[real][real_n >  real.tol]
@@ -120,7 +136,15 @@ dtable_guide <- function(data, elim.set = NULL,
     ret <- merge(tmp, labels, by = "variable")
     L <- as.list(NULL)
     for(K in ret$variable[ret$type %in% c("catg", "bnry")]){
-        L[[K]] <- levels(factor(data[[K]]))
+        ## L[[K]] <- levels(factor(data[[K]]))
+        get_or_make_levels <- function(x){
+            if(is.factor(x)) {
+                levels(x)
+            } else {
+                as.character(sort(unique(stats::na.omit(x))))
+            }
+        }
+        L[[K]] <- get_or_make_levels(data[[K]])
     }
     if(!is.null(L)) attr(ret, "levels") <- L
     if(!is.null(row.id)){

@@ -141,13 +141,13 @@ d_bnry <- function(...) invisible(NULL)
 ## turn vector, if possible, into binary factor
 make_bnry <- function(x){
     rev = FALSE ## let this be a setting in opts_desc ??
+    a <- "trying to give binary stats on a non-binary variable"
     if(is.factor(x)){
         if(length(levels(x)) == 2){
             if(rev) return(factor(x, levels = rev(levels(x))))
             if(!rev) return(x)
         } else {
             if(length(unique(stats::na.omit(x))) == 2){
-                a <- "trying to give binary stats on a non-binary variable"
                 b <- paste0(a, ".\n which will work since it only has",
                             " two unique values, but is a bit dodgy.")
                 lev <- levels(factor(x))
@@ -162,7 +162,7 @@ make_bnry <- function(x){
     lev <- sort(stats::na.omit(unique(x)))
     if(rev) lev <- rev(lev)
     if(length(lev) != 2){
-        stop("trying to give binry stats on a non-binary variable")
+        stop(a)
     }
     factor(x, levels = lev)
 }

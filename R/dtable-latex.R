@@ -34,18 +34,19 @@ dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
         lab <- stats::setNames(guide$label, guide$variable)
         x$variable <- lab[x$variable]
     }
-    A <- attributes(dt)
-    d <- A$dtable
-    d1 <- gsub("(meta)|(desc:*)", "", d)
-    d2 <- gsub("comp", "Comparison", d1)
-    r <- rle(d2)
-    if(all(d2 == "")){
-        r <- NULL ## nullify the cgroup and n.cgroup args of Hmisc::latex
-    }
-    text <- paste0("{\\small\\begin{center}\\emph{",
-                   do.call(attr2text, c(dt = list(dt), bling_fixer(bling.param))),
-                   "}\\end{center}}")
     if(bling){
+        A <- attributes(dt)
+        d <- A$dtable
+        d1 <- gsub("(meta)|(desc:*)", "", d)
+        d2 <- gsub("comp", "Comparison", d1)
+        r <- rle(d2)
+        if(all(d2 == "")){
+            r <- NULL ## nullify the cgroup and n.cgroup args of Hmisc::latex
+        }
+        text <- paste0("{\\small\\begin{center}\\emph{",
+                       do.call(attr2text, c(dt = list(dt), bling_fixer(bling.param))),
+                       "}\\end{center}}")
+
         Hmisc::latex(object = x, file = file, where = where,
                      rowname = rowname, cgroup = r$values,
                      n.cgroup = r$lengths, insert.bottom = text, ...)

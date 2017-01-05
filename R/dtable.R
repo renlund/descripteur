@@ -50,6 +50,9 @@ dtable <- function(data, type = NULL, guide = NULL,
     if(!is.null(glist)){
         if(is.character(glist)){
             glist.variable <- data[[glist]]
+            if(glist %in% names(data)){
+                guide <- guide[guide$variable != glist,]
+            }
             glist <- make_glist(x = glist, ref = data)
         }
         if(!is.list(glist)){
@@ -105,16 +108,18 @@ dtable <- function(data, type = NULL, guide = NULL,
         use_na <- if(useNA != "ifany") useNA == "always" else has_na
         if(P$desc){
             for(g in gvar$variable){ ## g <- gvar$variable[2]
-                x <- data[[g]]
+                ## x <- data[[g]]
+                x <- if(type %in% c("bnry", "catg")){
+                         factor(data[[g]], levels = attr(guide, "levels")[[g]])
+                     } else {
+                         data[[g]]
+                     }
                 lab <- gvar$label[gvar$variable == g][1]
                 R0 <- NULL
                 if(is.null(glist)){
                     R0 <- apply_flist(x = x, flist = d_fnc, w = w,
                                       useNA = use_na, xname = lab, ...)
                 } else {
-                    if(type %in% c("bnry", "catg")){
-                        x <- factor(data[[g]], levels = attr(guide, "levels")[[g]])
-                    }
                     for(k in seq_along(glist)){ ## k = 1
                         tmp <- apply_flist(x = x[glist[[k]]],
                                            flist = d_fnc,

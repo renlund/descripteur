@@ -5,7 +5,8 @@
 \title{Description guide}
 \usage{
 dtable_guide(data, elim.set = NULL, catg.tol = 20, real.tol = 5,
-  as.is = FALSE, no.bnry = FALSE, row.id = NULL, unit.id = NULL)
+  as.is = FALSE, no.bnry = FALSE, reduce.levels = TRUE, row.id = NULL,
+  unit.id = NULL)
 }
 \arguments{
 \item{data}{a data frame}
@@ -22,6 +23,8 @@ points to be described as categorical}
 
 \item{no.bnry}{if TRUE, there will be no distinction between 'bnry' and
 'catg', they will all be 'catg' (default \code{FALSE})}
+
+\item{reduce.levels}{if  \code{TRUE}, empty levels will be removed}
 
 \item{row.id}{the row identifier, doesn't really do much at this point}
 
