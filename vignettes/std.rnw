@@ -204,7 +204,7 @@ $\sd(\lambda^*) = \sqrt{\lambda/T} \approx \sqrt{N}/T$. We define, analogous to
 the std for numeric variables, the \emph{standardized difference for rates}
 between processes $X$ and $Y$ to be
  \[ \std_{X,Y} = \Std{surv}_{X,Y} =
-   \frac{N_x/T_x-N_y/T_y}{\sqrt{\left(\frac{N_x}{T_x^2} + \frac{N_y}{T_y^2}\right)/2}}. \]
+   \frac{N_x/T_x-N_y/T_y}{\sqrt{\left(\frac{N_x}{T_x} + \frac{N_y}{T_y}\right)/2}}. \]
 
 
 \end{document}

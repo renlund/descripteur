@@ -300,7 +300,7 @@ c_sstd <- function(x, glist, w = NULL, cens.type = "right", ...){
     n2 <- d_esum(x = x2, w = w2, cens.type = cens.type)
     t1 <- d_tsum(x = x1, w = w1, cens.type = cens.type)
     t2 <- d_tsum(x = x1, w = w1, cens.type = cens.type)
-    (n1 / t1 - n2 / t2) / sqrt((n1 / (t1^2) + n2 / (t2^2)) / 2)
+    (n1 / t1 - n2 / t2) / sqrt((n1 / t1 + n2 / t2) / 2)
 }
 attr(c_sstd, "dtable") <- "comp"
 
