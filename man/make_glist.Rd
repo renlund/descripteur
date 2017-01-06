@@ -4,12 +4,15 @@
 \alias{make_glist}
 \title{make glist}
 \usage{
-make_glist(x, ref = NULL)
+make_glist(x, ref = NULL, max.levels = 25)
 }
 \arguments{
 \item{x}{object}
 
-\item{ref}{reference}
+\item{ref}{reference, a data frame to get \code{x} from (if character) else a
+data frame or vector to compare with lengthwise}
+
+\item{max.levels}{if the number of groups exceed this level stop.}
 }
 \description{
 make a grouping list

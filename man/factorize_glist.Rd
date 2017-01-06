@@ -7,7 +7,7 @@
 factorize_glist(glist)
 }
 \arguments{
-\item{glist}{a glist (duh!)}
+\item{glist}{a list of indices}
 }
 \description{
 reverse-engineer a categorical variable from glist, if possible

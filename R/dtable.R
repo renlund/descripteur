@@ -4,13 +4,18 @@
 ##'     data. see the vignette for examples
 ##' @title create descriptive table
 ##' @param data a \code{data.frame} or such object
-##' @param type what kind of variables to you want to describe?
+##' @param type what kind of variables to you want to describe? 'real', 'bnry',
+##'     'cat', 'date' and 'surv' are available
 ##' @param guide point to guide or get the default
-##' @param desc if to decribe variables
+##' @param desc if to describe variables
 ##' @param desc.flist list of describers, i.e. describing functions
-##' @param comp if, and how to, compare variables (requires a glist)
+##' @param comp if, and how, to compare variables (requires a glist)
 ##' @param comp.flist list of comparers, i.e. comparing functions
-##' @param glist grouping list, if wanted
+##' @param glist grouping list, if wanted. This can either be a list of logical
+##'     vectore equal in length to the numbers of rows (i.e. logical indices), in
+##'     which case overlapping groups can be made, or the name of a variable in
+##'     the data frame (in which case that variable will be removed from output)
+##'     or just any variable in the global workspace
 ##' @param w weights, if wanted
 ##' @param useNA how to handle \code{NA} (requires that functions in
 ##'     flist has this argument)
@@ -50,9 +55,7 @@ dtable <- function(data, type = NULL, guide = NULL,
     if(!is.null(glist)){
         if(is.character(glist)){
             glist.variable <- data[[glist]]
-            if(glist %in% names(data)){
-                guide <- guide[guide$variable != glist,]
-            }
+            guide <- guide[guide$variable != glist,]
             glist <- make_glist(x = glist, ref = data)
         }
         if(!is.list(glist)){

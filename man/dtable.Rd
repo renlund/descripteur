@@ -18,19 +18,24 @@ dtable(data, type = NULL, guide = NULL, desc = NULL, desc.flist = NULL,
 
 \item{...}{arguments passed}
 
-\item{type}{what kind of variables to you want to describe?}
+\item{type}{what kind of variables to you want to describe? 'real', 'bnry',
+'cat', 'date' and 'surv' are available}
 
 \item{guide}{point to guide or get the default}
 
-\item{desc}{if to decribe variables}
+\item{desc}{if to describe variables}
 
 \item{desc.flist}{list of describers, i.e. describing functions}
 
-\item{comp}{if, and how to, compare variables (requires a glist)}
+\item{comp}{if, and how, to compare variables (requires a glist)}
 
 \item{comp.flist}{list of comparers, i.e. comparing functions}
 
-\item{glist}{grouping list, if wanted}
+\item{glist}{grouping list, if wanted. This can either be a list of logical
+vectore equal in length to the numbers of rows (i.e. logical indices), in
+which case overlapping groups can be made, or the name of a variable in
+the data frame (in which case that variable will be removed from output)
+or just any variable in the global workspace}
 
 \item{w}{weights, if wanted}
 

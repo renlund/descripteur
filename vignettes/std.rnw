@@ -22,7 +22,8 @@ devtools::load_all()
 opts_chunk$set(include = TRUE,
                echo = FALSE,
                cache = FALSE,
-               fig.height = 4)
+               fig.height = 4,
+               fig.loc  = "htb")
 if(FALSE){
     knitr::knit2pdf("std.rnw", clean = TRUE)
     shell.exec("std.pdf")
@@ -35,6 +36,12 @@ if(FALSE){
 
 \tableofcontents
 
+\section{About}
+
+This vignettes will briefly define and describe standardized differences as
+implemented in the package \texttt{descripteur}.
+
+\newpage
 \section{Numeric variables}
 
 Given a sample
@@ -54,14 +61,17 @@ y$ is defined as
 The \emph{standardized difference between date variables} is defined as the
 standardized difference for variables interpreted as integers.
 
+\newpage
 \section{Categorical variables}
 
 \subsection{Proportions (binary categorical variables)}
 The \emph{standardized difference between proportions} $p_1$ and $p_2$ is
 \[ \std_{p_1,p_2} = \Std{bnry}_{p_1,p_2} =
   \frac{p_1-p_2}{\sqrt{\frac{p_1(1-p_1) + p_2(1-p_2)}{2}}}. \]
+Figures \ref{fig:small-ref-p} and \ref{fig:large-ref-p} illustrates that the
+standardized difference is larger for small absolut changes to small proportions.
 
-<<fig.cap = "Standardized difference between $p_1 = 0.01$ and a range of $p_2$-values.">>=
+<<"small-ref-p", fig.cap = "Standardized difference between $p_1 = 0.01$ and a range of $p_2$-values.">>=
 bstd <- function(x, y){
     (x-y)/(sqrt((x*(1-x)+y*(1-y))/2))
 }
@@ -71,7 +81,7 @@ curve(bstd(0.01, x), from = 0, to = 0.15, xlab = "Comparative proportion",
 segments(x0 = 0.01, y0 = -1, y1 = 0, lty = 2)
 @
 
-<<fig.cap = "Standardized difference between $p_1 = 0.5$ and a range of $p_2$-values.">>=
+<<"large-ref-p", fig.cap = "Standardized difference between $p_1 = 0.5$ and a range of $p_2$-values.">>=
 curve(bstd(0.5, x), from = 0.25, to = 0.75, xlab = "Comparative proportion",
       ylab = "Standardized difference", ylim = c(-0.5, 0.5),
       yaxp = c(-0.5, 0.5, 2))
@@ -93,6 +103,8 @@ $$ S = [S_{ij}] =
     -\frac{a_ia_j+b_ib_j}{2}, \quad i \neq j
   \end{cases}
 $$
+Tables \ref{tab:cex1} and \ref{tab:cex2} gives examples of the effect of small
+changes to proportion vectors.
 
 <<include = TRUE, results = 'asis'>>=
 bar <- function(a, b){
@@ -156,7 +168,7 @@ Hmisc::latex(M, file = "", label = "tab:cex2",
              caption = paste0("Example of standardized differences between",
                               " three different proportion vectors and a",
                               " reference where the absolut difference is",
-                              " five percentage units."))
+                              " 10 percentage units."))
 
 if(FALSE){
     bstd(1, 0)
@@ -195,6 +207,7 @@ if(FALSE){
 
 @
 
+\clearpage
 \section{Rates}
 
 If $X(t) \sim Po(\lambda t)$ is a Poission process then $E[X(t)] = \lambda t$
