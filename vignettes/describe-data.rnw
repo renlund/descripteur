@@ -276,7 +276,7 @@ counting the number of records and number of missing, \texttt{d\_n} and
 \texttt{real} variables, with names ``count'' and ``count\_missing'',
 respectively:
 
-<<eval = FALSE, include = FALSE>>=
+<<>>=
 opts_desc$set("describe_real" =
                   flist(c("count" = "d_n", "count_missing" = "d_missing")))
 @

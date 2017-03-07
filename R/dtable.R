@@ -164,11 +164,14 @@ dtable <- function(data, type = NULL, guide = NULL,
                 R2 <- dtable_rbind(R2, R0)
             }
         }
-        R <- dtable_order(if(is.null(R1)  | is.null(R2)){
-                              if(!is.null(R1)) R1 else R2
-                          } else {
-                              dtable_cbind(R1, R2)
-                          })
+        R <- dtable_order(
+            if(is.null(R1) & is.null(R2)){
+                as.data.frame(NULL)
+            } else if(is.null(R1)  | is.null(R2)){
+                if(!is.null(R1)) R1 else R2
+            } else {
+                dtable_cbind(R1, R2)
+            })
     }
     attr(R, "size") <- nrow(data)
     variables <- guide$variable[guide$type == type]
@@ -250,10 +253,3 @@ dc_param <- function(desc = NULL, comp = NULL, glist = NULL){
          "comp.style" = comp.style)
 }
 
-
-###############################################################################
-
-if(FALSE){ ## TESTS, some of which are also in tests
-
-
-}

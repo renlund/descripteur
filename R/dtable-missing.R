@@ -81,6 +81,18 @@ get_variables <- function(x = NULL, data = NULL){
     }
 }
 
+##' Standardized differences
+##'
+##' Table with standardized differences for all variable types
+##' @param data data frame or similar
+##' @param v if \code{NULL} all variables are included, else a character vector of the
+##'     names of wanted variables or a formula (if data is null it will look for
+##'     the variables in the global workspace, but they need to be of the same length)
+##' @param guide a guide (by \code{dtable_guide}), either to select variables OR
+##'     to provide unit information (the type-info will not be used)
+##' @param glist an index list or name of grouping variable
+##' @param comp (kind of) comparison
+##' @export
 
 dtable_std <- function(data = NULL, v = NULL, guide = NULL, glist, comp = "across"){
     df <- get_variables(x = v, data = data)
