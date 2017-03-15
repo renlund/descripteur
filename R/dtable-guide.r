@@ -29,21 +29,23 @@ dtable_guide <- function(data, elim.set = NULL,
                          as.is = FALSE, no.bnry = FALSE,
                          reduce.levels = TRUE,
                          row.id = NULL, unit.id = NULL){
-    if(catg.tol < 3 | real.tol < 3) stop("be more tolerant...")
+    if(catg.tol < 3 | real.tol < 3){
+        stop(paste0("tolerance threshold or catg and real should be at least 3"))
+    }
     data_source <- as.character(substitute(data))
     org_data <- data
     n_unique <- function(x) length(unique(stats::na.omit(x)))
     n_levels <- function(x) length(levels(x))
     n_is_1 <- function(x){
         if(is.factor(x) & !reduce.levels){
-            n_levels(x) == 1
+            n_levels(x) <= 1
         } else {
-            n_unique(x) == 1
+            n_unique(x) <= 1
         }
     }
     const <- names(data)[unlist(lapply(data, n_is_1))]
-    data <- subset(org_data, TRUE,
-                   select = setdiff(names(data), c(elim.set, row.id, unit.id, const)))
+    val <- setdiff(names(org_data), c(elim.set, row.id, unit.id, const))
+    data <- subset(org_data, subset = TRUE, select = val)
     class2 <- function(x) class(x)[1]
     classy <- lapply(data, class2)
     any_na <- function(x) any(is.na(x))
