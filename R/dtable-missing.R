@@ -93,7 +93,6 @@ get_variables <- function(x = NULL, data = NULL){
 ##' @param glist an index list or name of grouping variable
 ##' @param comp (kind of) comparison
 ##' @export
-
 dtable_std <- function(data = NULL, v = NULL, guide = NULL, glist, comp = "across"){
     df <- get_variables(x = v, data = data)
     N <- nrow(df)
@@ -110,4 +109,29 @@ dtable_std <- function(data = NULL, v = NULL, guide = NULL, glist, comp = "acros
                   comp = comp, desc = FALSE, glist = glist,
                   expand.levels = FALSE)
     dt
+}
+
+##' get constants
+##'
+##' get the value of the constants in a data set
+##' @param data data frame or some such object
+##' @param guide a guide (optional)
+##' @export
+dtable_constants <- function(data, guide = NULL){
+    if(is.null(guide)) guide <- dtable_guide(data)
+    cguide <- guide[guide$type == "constant",]
+    cdata <- data[, cguide$variable, drop = FALSE]
+    if(nrow(cdata) == 0) return(as.data.frame(NULL))
+    foo <- function(x){
+        val <- unique(na.omit(x))
+        if(length(val) > 1){
+            stop("Some variable deemed constant is, in fact, not constant")
+        } else {
+            if(length(val) == 0) "missing" else val
+        }
+    }
+    data.frame(
+        variable = cguide$label,
+        value = unlist(lapply(cdata, foo))
+    )
 }
