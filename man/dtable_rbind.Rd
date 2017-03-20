@@ -17,4 +17,3 @@ rbind dtables
 \details{
 wrapper for \code{rbind}
 }
-

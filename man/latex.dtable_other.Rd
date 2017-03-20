@@ -24,4 +24,3 @@ latex.dtable_other(x, file = "", where = "htb", rowname = NULL,
 dtable_other objects are objects with an additional attribute 'dtable_other'
     which will be printed alongside the inherited latex method
 }
-

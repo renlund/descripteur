@@ -46,4 +46,3 @@ a data frame describing each variable in the data set (excluding
 \description{
 Determine how to describe a data frame
 }
-

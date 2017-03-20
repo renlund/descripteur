@@ -26,4 +26,3 @@ prune dtable
 \details{
 remove columns by name or index
 }
-

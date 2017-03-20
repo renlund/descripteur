@@ -12,4 +12,3 @@ factorize_glist(glist)
 \description{
 reverse-engineer a categorical variable from glist, if possible
 }
-

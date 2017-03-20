@@ -17,4 +17,3 @@ turn dtable into data.frame
 \details{
 this will just change the class attribute
 }
-

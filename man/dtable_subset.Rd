@@ -16,4 +16,3 @@ dtable_subset(x, ..., all.attr = FALSE)
 \description{
 select rows in a dtable
 }
-

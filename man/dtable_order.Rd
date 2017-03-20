@@ -15,4 +15,3 @@ order dtables according to meta info
 \details{
 place meta info to the left
 }
-

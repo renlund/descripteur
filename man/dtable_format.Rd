@@ -42,8 +42,5 @@ LaTeX might fail.)}
 \description{
 overall, low-precision formatting of dtable objects - quick and
     dirty way of getting something ok (hopefully), fast. could be
-    developed... its weird argument structure (all parameters
-    gathered in a list) is due to it being
-    considered most useful when called from other functions.
+    developed...
 }
-

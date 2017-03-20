@@ -18,4 +18,3 @@ print dtable object
 prints the data.frame part as well as the dtable attributes
     if they are sane
 }
-

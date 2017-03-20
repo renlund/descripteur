@@ -26,4 +26,3 @@ flists(real = FALSE, bnry = FALSE, catg = FALSE, date = FALSE,
 flists is a list of one or more flist, one for each type wanted (and named
 thereafter)
 }
-

@@ -34,4 +34,3 @@ a data.frame with
 \description{
 get some simple stats on missingness for a set of variables
 }
-

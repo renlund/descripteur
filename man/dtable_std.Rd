@@ -23,4 +23,3 @@ to provide unit information (the type-info will not be used)}
 \description{
 Table with standardized differences for all variable types
 }
-

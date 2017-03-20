@@ -2,10 +2,10 @@
 % Please edit documentation in R/flist-describers.R
 \name{d_catg}
 \alias{d_catg}
-\alias{d_cn}
-\alias{d_cp}
 \alias{d_levels}
 \alias{d_percent}
+\alias{d_cn}
+\alias{d_cp}
 \title{various describer functions for catg types}
 \usage{
 d_catg(...)

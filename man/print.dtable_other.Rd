@@ -17,4 +17,3 @@
 dtable_other objects are objects with an additional attribute 'dtable_other'
     which will be printed alongside the inherited print method
 }
-

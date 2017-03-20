@@ -19,4 +19,3 @@ cbind dtables
 \details{
 wrapper for \code{cbind} which keeps dtable attributes sane
 }
-

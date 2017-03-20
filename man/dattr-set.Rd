@@ -17,4 +17,3 @@ get 'dtable'
 \details{
 shortcut and sanity check for \code{"attr<-"(x, "dtable", value)}
 }
-

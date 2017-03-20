@@ -21,4 +21,3 @@ create a function list by specifying the names of functions,
     primarily searching in the descripteur namespace but also in
     other packages
 }
-

@@ -16,4 +16,3 @@ shortcut and sanity check for \code{attr(x,
 \details{
 set 'dtable'
 }
-

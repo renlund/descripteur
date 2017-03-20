@@ -23,4 +23,3 @@ dtables(data, types = NULL, desc.flists = NULL, comp.flists = NULL,
 \description{
 concatenate dtables for mutiple types into a single dtable
 }
-

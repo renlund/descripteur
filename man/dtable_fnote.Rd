@@ -24,4 +24,3 @@ dtable_fnote(dt, info, fn.var, info.attr = "info", format = FALSE,
 make \code{unique(variable)} a part of attribute 'info' and
     place a footnote on another variable
 }
-

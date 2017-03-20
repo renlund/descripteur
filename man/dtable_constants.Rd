@@ -14,4 +14,3 @@ dtable_constants(data, guide = NULL)
 \description{
 get the value of the constants in a data set
 }
-

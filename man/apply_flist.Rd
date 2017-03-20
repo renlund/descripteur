@@ -21,4 +21,3 @@ apply function list
 \details{
 apply the functions in flist to the variable 'x'
 }
-

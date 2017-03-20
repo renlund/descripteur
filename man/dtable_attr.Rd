@@ -16,4 +16,3 @@ dtable_attr(dt, perc = FALSE, perc.sign = "\%")
 \description{
 extract tidy version of attributes from a dtable
 }
-

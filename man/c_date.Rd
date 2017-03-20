@@ -2,8 +2,8 @@
 % Please edit documentation in R/flist-comparers.R
 \name{c_date}
 \alias{c_date}
-\alias{c_dstd}
 \alias{c_overlap}
+\alias{c_dstd}
 \title{various comparer functions for date types}
 \usage{
 c_date(...)

@@ -2,8 +2,8 @@
 % Please edit documentation in R/flist-describers.R
 \name{d_date}
 \alias{d_date}
-\alias{d_dmax}
 \alias{d_dmin}
+\alias{d_dmax}
 \title{various describing functions for date variables}
 \usage{
 d_date(...)

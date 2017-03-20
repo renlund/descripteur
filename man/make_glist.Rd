@@ -24,4 +24,3 @@ description tables with grouping requires a list of indexes to
     can be created by either specifying that variable or the name
     of that variable in data source 'ref'.
 }
-
