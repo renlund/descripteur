@@ -82,17 +82,15 @@ format_fixer <- function(x = as.list(NULL)){
     if(is.null(peq0 <- x$peq0)) peq0 <- TRUE ## can p be zero?
     if(is.null(tmax <- x$tmax)) tmax <- 30 ## max chars to print for text
     if(is.null(repus <- x$repus)) repus <- TRUE ## replace '_' with '\\_'?
-    list(b = b, bh = bh, hfnc = hfnc, bl = bl, lfnc = lfnc, p_b,
-         peq0 = peq0, tmax = tmax, repus = repus)
+    list(b = b, bh = bh, hfnc = hfnc, bl = bl, lfnc = lfnc, br = br,
+         rfnc = rfnc, p_b = p_b, peq0 = peq0, tmax = tmax, repus = repus)
 }
 
 ##' format a dtable
 ##'
 ##' overall, low-precision formatting of dtable objects - quick and
 ##'     dirty way of getting something ok (hopefully), fast. could be
-##'     developed... its weird argument structure (all parameters
-##'     gathered in a list) is due to it being
-##'     considered most useful when called from other functions.
+##'     developed...
 ##' @param dt a dtable
 ##' @param b boundary, if numbers are consistenly higher they are handled by
 ##'     'bh' and 'hfnc', if consistently lower by 'bl' and 'lfnc', and otherwise
@@ -125,10 +123,10 @@ dtable_format <- function(dt, b = 1,
     datum <- which(classy %in% c("Date", "POSIXlt", "POSIXct"))
     R[datum] <- lapply(R[datum], as.character)
     num <- which(classy == "numeric")
-    l <- unlist(lapply(R[num], function(x) min(abs(x), na.rm = TRUE)))
-    h <- unlist(lapply(R[num], function(x) max(abs(x), na.rm = TRUE)))
-    p0 <- unlist(lapply(R[num], function(x) min(x, na.rm = TRUE) >= 0 &
-                                            max(x, na.rm = TRUE) <= 1))
+    l <- unlist(lapply(R[num], function(x) min(abs(x[is.finite(x)]), na.rm = TRUE)))
+    h <- unlist(lapply(R[num], function(x) max(abs(x[is.finite(x)]), na.rm = TRUE)))
+    p0 <- unlist(lapply(R[num], function(x) min(x[is.finite(x)], na.rm = TRUE) >= 0 &
+                                            max(x[is.finite(x)], na.rm = TRUE) <= 1))
     p <- if(!is.null(p0)) which(p0) else NULL
     il <- num[which(l>b)]
     R[il] <- lapply(R[il], hfnc, digits = bh)

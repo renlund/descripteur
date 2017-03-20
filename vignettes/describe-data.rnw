@@ -588,6 +588,10 @@ dtable_latex(dm, format = TRUE,
              bling.param = list(sep = c(". ", "\\newline ")))
 @
 
+\subsubsection{\texttt{dtable\_constants}}
+Use this function to get the values of the constants in the data set.
+
+
 \clearpage
 \subsection{Perhaps worthy of more documentation}
 

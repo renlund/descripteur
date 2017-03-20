@@ -1,7 +1,7 @@
 Package: descripteur
 Type: Package
 Title: Describe Data Sets
-Version: 0.1.1.9011
+Version: 0.1.1.9012
 Author: Henrik Renlund
 Maintainer: Henrik Renlund <henrikrenlund@gmail.com>
 Description: An attempt to systematize my data description.
@@ -15,4 +15,4 @@ Suggests:
     survival,
     devtools
 VignetteBuilder: knitr
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

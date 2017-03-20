@@ -68,9 +68,13 @@ dtable <- function(data, type = NULL, guide = NULL,
     }
     if(!is.null(w)){
         if(is.character(w)){
-            w = data[[w]]
-            if(is.null(w))
+            w.text <- w
+            w = data[[w.text]]
+            if(is.null(w)){
                 warning("weighting variable does not exist in data")
+            } else {
+                guide <- guide[guide$variable != w.text,]
+            }
         }
         if(length(w) != nrow(data))
             stop("bad weighting (want same length as data)")
