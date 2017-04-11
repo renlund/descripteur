@@ -17,7 +17,7 @@ print.dtable <- function(x, ...){
         cat(paste0(rep("-", min(co.n, w)), collapse = ""), sep = "")
         cat("\n## dtable attributes:\n")
         r <- as.list(NULL)
-        for(k in 1:length(a)) r[paste0("v", k)] <- a[k]
+        for(k in seq_along(a)) r[paste0("v", k)] <- a[k]
         r <- as.data.frame(r)
         names(r) <- names(x)
         print(r)

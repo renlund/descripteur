@@ -1,12 +1,14 @@
 Package: descripteur
 Type: Package
 Title: Describe Data Sets
-Version: 0.1.1.9012
+Version: 0.1.2
 Author: Henrik Renlund
 Maintainer: Henrik Renlund <henrikrenlund@gmail.com>
 Description: An attempt to systematize my data description.
 License: GPL-3
 LazyData: TRUE
+URL: https://github.com/renlund/descripteur
+BugReports: http://github.com/renlund/descripteur/issues
 Suggests:
     knitr,
     rmarkdown,

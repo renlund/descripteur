@@ -4,7 +4,8 @@
 \alias{dtable_std}
 \title{Standardized differences}
 \usage{
-dtable_std(data = NULL, v = NULL, guide = NULL, glist, comp = "across")
+dtable_std(data = NULL, v = NULL, guide = NULL, glist, comp = "across",
+  ...)
 }
 \arguments{
 \item{data}{data frame or similar}
@@ -19,6 +20,8 @@ to provide unit information (the type-info will not be used)}
 \item{glist}{an index list or name of grouping variable}
 
 \item{comp}{(kind of) comparison}
+
+\item{...}{arguments passed to \code{dtables}(\code{dtable})}
 }
 \description{
 Table with standardized differences for all variable types

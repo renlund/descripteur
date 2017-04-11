@@ -614,13 +614,13 @@ dt_Q.info <- function(x, ...){
 attr(dt_Q.info, "dtable") <- "meta" ## "footnote" ?
 
 ## ------------------------------------------------------------------------- ##
-dt_msd_helper <- function(x, useNA, info){
+dt_msd_helper <- function(x, useNA, info, ...){
     if(info){
         "Numeric variables: mean(sd)"
     } else {
         NAtxt <- if(useNA) NA_txt(x) else NULL
-        m <- d_mean(x = x)
-        sd <- d_sd(x = x)
+        m <- d_mean(x = x, ...)
+        sd <- d_sd(x = x, ...)
         paste0(roundisch(m), " (", roundisch(sd), ")", NAtxt)
     }
 }
@@ -628,7 +628,7 @@ dt_msd_helper <- function(x, useNA, info){
 ##' @describeIn dt_desc mean and standard deviation
 ##' @export
 dt_msd <- function(x, useNA = FALSE, ...){
-    dt_msd_helper(x, useNA = useNA, info = FALSE)
+    dt_msd_helper(x, useNA = useNA, info = FALSE, ...)
 }
 attr(dt_msd, "dtable") <- "desc"
 
@@ -640,15 +640,15 @@ dt_msd.info <- function(x, ...){
 attr(dt_msd.info, "dtable") <- "meta" ## "footnote" ?
 
 ## ------------------------------------------------------------------------- ##
-dt_bcp_helper <- function(x, useNA, info, perc.sign = NULL){
+dt_bcp_helper <- function(x, useNA, info, perc.sign = NULL, ...){
     if(is.null(perc.sign)) perc.sign <- "\\%"
     if(info){
         "Category variables: count(percentage)"
     } else {
         NAtxt <- if(useNA) NA_txt(x) else NULL
         z <- make_bnry(x)
-        n <- d_bn(x = z)
-        p <- d_bp(x = z)
+        n <- d_bn(x = z, ...)
+        p <- d_bp(x = z, ...)
         paste0(n, " (",
                roundisch(100*p, t = 0.001, scientific = TRUE, digit2 = 2),
                perc.sign, ")", NAtxt)
@@ -658,7 +658,7 @@ dt_bcp_helper <- function(x, useNA, info, perc.sign = NULL){
 ##' @describeIn dt_desc count and percentages (for bnry)
 ##' @export
 dt_bcp <- function(x, useNA = FALSE, ...){
-    dt_bcp_helper(x, useNA = useNA, info = FALSE)
+    dt_bcp_helper(x, useNA = useNA, info = FALSE, ...)
 }
 attr(dt_bcp, "dtable") <- "desc"
 
@@ -670,15 +670,15 @@ dt_bcp.info <- function(x, ...){
 attr(dt_bcp.info, "dtable") <- "meta" ## "footnote" ?
 
 ## ------------------------------------------------------------------------- ##
-dt_ccp_helper <- function(x, useNA, info, perc.sign = NULL){
+dt_ccp_helper <- function(x, useNA, info, perc.sign = NULL, ...){
     if(is.null(perc.sign)) perc.sign <- "\\%"
     if(info){
         "Category variables: count(percentage)"
     } else {
         NAtxt <- if(useNA) NA_txt(x) else NULL
         z <- make_catg(x)
-        n <- d_cn(x = z)
-        p <- d_cp(x = z)
+        n <- d_cn(x = z, ...)
+        p <- d_cp(x = z, ...)
         paste0(n, " (",
                roundisch(100*p, t = 0.001, scientific = TRUE, digit2 = 2),
                perc.sign, ")", c(NAtxt, rep("", length(n)-1)))
@@ -688,7 +688,7 @@ dt_ccp_helper <- function(x, useNA, info, perc.sign = NULL){
 ##' @describeIn dt_desc count and percentages (for catg)
 ##' @export
 dt_ccp <- function(x, useNA = FALSE, ...){
-    dt_ccp_helper(x, useNA = useNA, info = FALSE)
+    dt_ccp_helper(x, useNA = useNA, info = FALSE, ...)
 }
 attr(dt_ccp, "dtable") <- "desc"
 
@@ -763,7 +763,7 @@ dt_event_helper <- function(x, useNA, info, ...){
 ##' @describeIn dt_desc rate of events
 ##' @export
 dt_event <- function(x, useNA = FALSE, ...){
-    dt_event_helper(x, useNA = useNA, info = FALSE)
+    dt_event_helper(x, useNA = useNA, info = FALSE, ...)
 }
 attr(dt_event, "dtable") <- "desc"
 

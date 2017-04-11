@@ -106,7 +106,7 @@ dtable_prune <- function(x, rm = NULL, keep = NULL, info = FALSE,
         if(is.character(keep)){
             rm <- which(!names(x) %in% keep)
         } else {
-            rm <- setdiff(1:ncol(x), keep)
+            rm <- setdiff(seq_along(x), keep)
         }
     }
     if(info){

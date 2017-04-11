@@ -27,12 +27,15 @@ dtables <- function(data, types = NULL, desc.flists = NULL,
     }
     R <- NULL
     dots <- list(...)
-    for(TYP in types){ ## TYP = types[3]
+    for(TYP in types){ ## TYP = types[1] ## TYP = "catg"
+        if(!TYP %in% guide$type) next
+        ## cat("typ:", TYP, "\n")
         tmp <- do.call(dtable, args = c(list(data = data, type = TYP,
                                              guide = guide,
                                              desc.flist = desc.flists[[TYP]],
                                              comp.flist = comp.flists[[TYP]]),
                                         dots))
+        if(nrow(tmp) == 0) next
         suppressWarnings(R <- if(is.null(R)) expr={
             tmp
         } else {
@@ -44,7 +47,7 @@ dtables <- function(data, types = NULL, desc.flists = NULL,
     META <- dtable(data, type = "real", desc = FALSE, comp = FALSE,
                    guide = mod_guide, glist = dots$glist)
     aM <- attributes(META)
-    transf <- setdiff(names(aM), c("names", "row.names", "class"))
+    transf <- setdiff(names(aM), c("names", "row.names", "class", "dc_param"))
     for(K in transf) attr(R, K) <- attr(META, K)
     R
 }
@@ -68,4 +71,9 @@ if(FALSE){
     intersect_if_notnull(a, NULL)
     intersect_if_notnull(NULL, b)
     intersect_if_notnull(NULL, NULL)
+
+    df <- data.frame(x = c(1,-1), v = c(1, 10))
+    dtables(df)
+    dtables(data = df, w = "v")
+
 }

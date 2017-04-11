@@ -6,7 +6,7 @@
 \usage{
 dtable_format(dt, b = 1, bh = 1, hfnc = base::round, bl = 2,
   lfnc = base::signif, br = 2, rfnc = base::round, p_b = 1e-04,
-  peq0 = TRUE, tmax = 30, repus = TRUE)
+  peq0 = TRUE, tmax = 30, repus = TRUE, repwith = "\\\\_")
 }
 \arguments{
 \item{dt}{a dtable}
@@ -36,8 +36,10 @@ case.}
 
 \item{tmax}{how many characters to print for a character vector}
 
-\item{repus}{should we replace "_" with "\\_" in charcter variables? (If not
+\item{repus}{should we replace "_" with 'repwith' in charcter variables? (If not
 LaTeX might fail.)}
+
+\item{repwith}{that which to replace underscore with, default "\\_"}
 }
 \description{
 overall, low-precision formatting of dtable objects - quick and

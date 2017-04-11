@@ -86,7 +86,7 @@ dtable <- function(data, type = NULL, guide = NULL,
         }
     }
     gvar <- guide[guide$type == type,]
-    if(!P$desc & !P$comp) {
+    if((!P$desc & !P$comp) | nrow(gvar) == 0) {
         R <- as.data.frame(NULL)
     } else {
         d_fnc <- if(!is.null(desc.flist)){
@@ -159,6 +159,7 @@ dtable <- function(data, type = NULL, guide = NULL,
                         tmp <- apply_flist(x = x,
                                            glist = glist[c(ref.index,k)],
                                            flist = c_fnc,
+                                           w = w,
                                            useNA = use_na,
                                            xname = lab, ...)
                         R0 <- dtable_cbind(R0, tmp,

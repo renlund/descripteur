@@ -82,8 +82,10 @@ format_fixer <- function(x = as.list(NULL)){
     if(is.null(peq0 <- x$peq0)) peq0 <- TRUE ## can p be zero?
     if(is.null(tmax <- x$tmax)) tmax <- 30 ## max chars to print for text
     if(is.null(repus <- x$repus)) repus <- TRUE ## replace '_' with '\\_'?
+    if(is.null(repwith <- x$repwith)) repwith <- "\\_"
     list(b = b, bh = bh, hfnc = hfnc, bl = bl, lfnc = lfnc, br = br,
-         rfnc = rfnc, p_b = p_b, peq0 = peq0, tmax = tmax, repus = repus)
+         rfnc = rfnc, p_b = p_b, peq0 = peq0, tmax = tmax,
+         repus = repus, repwith = repwith)
 }
 
 ##' format a dtable
@@ -107,15 +109,17 @@ format_fixer <- function(x = as.list(NULL)){
 ##' @param peq0 even if we abbreviate small 'p-values' should we explicitly put
 ##'     = "0" if it is equal to zero?
 ##' @param tmax how many characters to print for a character vector
-##' @param repus should we replace "_" with "\\_" in charcter variables? (If not
+##' @param repus should we replace "_" with 'repwith' in charcter variables? (If not
 ##'     LaTeX might fail.)
+##' @param repwith that which to replace underscore with, default "\\_"
 ##' @export
 dtable_format <- function(dt, b = 1,
                           bh = 1, hfnc = base::round,
                           bl = 2, lfnc = base::signif,
                           br = 2, rfnc = base::round,
                           p_b = 0.0001, peq0 = TRUE,
-                          tmax = 30, repus = TRUE){
+                          tmax = 30, repus = TRUE,
+                          repwith = "\\_"){
     ## format numeric part
     n <- ncol(dt)
     R <- as.data.frame(dt)
@@ -147,7 +151,7 @@ dtable_format <- function(dt, b = 1,
     }
     R[chr] <- lapply(R[chr], foo)
     if(repus){
-        bar <- function(x) gsub("_", "\\_", x, fixed = TRUE)
+        bar <- function(x) gsub("_", repwith, x, fixed = TRUE)
         R[chr] <- lapply(R[chr], bar)
     }
     attributes(R) <- attributes(dt)

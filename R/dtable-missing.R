@@ -92,8 +92,10 @@ get_variables <- function(x = NULL, data = NULL){
 ##'     to provide unit information (the type-info will not be used)
 ##' @param glist an index list or name of grouping variable
 ##' @param comp (kind of) comparison
+##' @param ... arguments passed to \code{dtables}(\code{dtable})
 ##' @export
-dtable_std <- function(data = NULL, v = NULL, guide = NULL, glist, comp = "across"){
+dtable_std <- function(data = NULL, v = NULL, guide = NULL, glist,
+                       comp = "across", ...){
     df <- get_variables(x = v, data = data)
     N <- nrow(df)
     m <- ncol(df)
@@ -104,10 +106,15 @@ dtable_std <- function(data = NULL, v = NULL, guide = NULL, glist, comp = "acros
                        catg = flist(c("Std" = "c_cstd")),
                        date = flist(c("Std" = "c_dstd")),
                        surv = flist(c("Std" = "c_sstd")))
-    dt <- dtables(data = data, guide = guide,
+    dots <- list(...)
+    dt <- do.call(dtables, args = c(list(data = data, guide = guide,
                   comp.flists = a_flists, desc.flists = NULL,
                   comp = comp, desc = FALSE, glist = glist,
-                  expand.levels = FALSE)
+                  expand.levels = FALSE), dots))
+    ## dt <- dtables(data = data, guide = guide,
+    ##               comp.flists = a_flists, desc.flists = NULL,
+    ##               comp = comp, desc = FALSE, glist = glist,
+    ##               expand.levels = FALSE, ...)
     dt
 }
 
@@ -123,7 +130,7 @@ dtable_constants <- function(data, guide = NULL){
     cdata <- data[, cguide$variable, drop = FALSE]
     if(nrow(cdata) == 0) return(as.data.frame(NULL))
     foo <- function(x){
-        val <- unique(na.omit(x))
+        val <- unique(stats::na.omit(x))
         if(length(val) > 1){
             stop("Some variable deemed constant is, in fact, not constant")
         } else {
@@ -134,4 +141,13 @@ dtable_constants <- function(data, guide = NULL){
         variable = cguide$label,
         value = unlist(lapply(cdata, foo))
     )
+}
+
+
+if(FALSE){
+    df <- data.frame(g = c(1,  1,   1,   0,   0,   0),
+                     x = c(1, -1, 0.1,-0.1, 1.1, 100),
+                     v = c(1, 10,   1,   1,   1,   0.01))
+    (tmp <- dtable_std(df, glist = "g"))
+    (tmp <- dtable_std(data = df, glist = "g", w = "v"))
 }
