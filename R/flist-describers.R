@@ -504,9 +504,11 @@ attr(d_rate, "dtable") <- "desc"
 ##' @param xname name of variable
 ##' @param useNA display information on missing
 ##' @param ... arguments passed
+##' @export
 dt_desc <- function(...) invisible(NULL)
 
 NA_txt <- function(x) paste0("[", sum(is.na(x)),"]")
+NA_text_string <- function() "[n] is missing count"
 
 ##' @describeIn dt_desc returns an empty string
 ##' @export
@@ -572,7 +574,7 @@ dt_bname <- function(x, xname = NULL, ...){
 }
 attr(dt_bname, "dtable") <- "meta"
 
-##' @describeIn dt_desc returns name:ref for bnry
+##' @describeIn dt_desc returns name:ref for catg
 ##' @export
 dt_cname <- function(x, xname = NULL, ...){
     rl <- latex_fix(levels(make_catg(x)))
@@ -588,7 +590,8 @@ attr(dt_cname, "dtable") <- "meta"
 ## ------------------------------------------------------------------------- ##
 dt_Q_helper <- function(x, useNA, info){
     if(info){
-        "Numeric variables: median(Q1-Q3)"
+        a <- "Numeric variables: median(Q1-Q3)"
+        if(useNA) paste0(a, ". ", NA_text_string()) else a
     } else {
         NAtxt <- if(useNA) NA_txt(x) else NULL
         Q2 <- d_median(x = x)
@@ -608,15 +611,16 @@ attr(dt_Q, "dtable") <- "desc"
 
 ##' @describeIn dt_desc info for \code{dt_Q}
 ##' @export
-dt_Q.info <- function(x, ...){
-    dt_Q_helper(x, info = TRUE)
+dt_Q.info <- function(x, useNA = FALSE, ...){
+    dt_Q_helper(x, useNA = useNA, info = TRUE)
 }
 attr(dt_Q.info, "dtable") <- "meta" ## "footnote" ?
 
 ## ------------------------------------------------------------------------- ##
 dt_msd_helper <- function(x, useNA, info, ...){
     if(info){
-        "Numeric variables: mean(sd)"
+        a <- "Numeric variables: mean(sd)"
+        if(useNA) paste0(a, ". ", NA_text_string()) else a
     } else {
         NAtxt <- if(useNA) NA_txt(x) else NULL
         m <- d_mean(x = x, ...)
@@ -634,8 +638,8 @@ attr(dt_msd, "dtable") <- "desc"
 
 ##' @describeIn dt_desc info for \code{dt_msd}
 ##' @export
-dt_msd.info <- function(x, ...){
-    dt_msd_helper(x, info = TRUE)
+dt_msd.info <- function(x, useNA = FALSE, ...){
+    dt_msd_helper(x, useNA = useNA, info = TRUE)
 }
 attr(dt_msd.info, "dtable") <- "meta" ## "footnote" ?
 
@@ -643,7 +647,8 @@ attr(dt_msd.info, "dtable") <- "meta" ## "footnote" ?
 dt_bcp_helper <- function(x, useNA, info, perc.sign = NULL, ...){
     if(is.null(perc.sign)) perc.sign <- "\\%"
     if(info){
-        "Category variables: count(percentage)"
+        a <- "Category variables: count(percentage)"
+        if(useNA) paste0(a, ". ", NA_text_string()) else a
     } else {
         NAtxt <- if(useNA) NA_txt(x) else NULL
         z <- make_bnry(x)
@@ -664,8 +669,8 @@ attr(dt_bcp, "dtable") <- "desc"
 
 ##' @describeIn dt_desc info for \code{dt_bcp}
 ##' @export
-dt_bcp.info <- function(x, ...){
-    dt_bcp_helper(x, info = TRUE)
+dt_bcp.info <- function(x, useNA = FALSE, ...){
+    dt_bcp_helper(x, useNA = useNA, info = TRUE)
 }
 attr(dt_bcp.info, "dtable") <- "meta" ## "footnote" ?
 
@@ -673,7 +678,8 @@ attr(dt_bcp.info, "dtable") <- "meta" ## "footnote" ?
 dt_ccp_helper <- function(x, useNA, info, perc.sign = NULL, ...){
     if(is.null(perc.sign)) perc.sign <- "\\%"
     if(info){
-        "Category variables: count(percentage)"
+        a <- "Category variables: count(percentage)"
+        if(useNA) paste0(a, ". ", NA_text_string()) else a
     } else {
         NAtxt <- if(useNA) NA_txt(x) else NULL
         z <- make_catg(x)
@@ -694,15 +700,16 @@ attr(dt_ccp, "dtable") <- "desc"
 
 ##' @describeIn dt_desc info for \code{dt_ccp}
 ##' @export
-dt_ccp.info <- function(x, ...){
-    dt_ccp_helper(x, info = TRUE)
+dt_ccp.info <- function(x, useNA = FALSE, ...){
+    dt_ccp_helper(x, useNA = useNA, info = TRUE)
 }
 attr(dt_ccp.info, "dtable") <- "meta" ## "footnote" ?
 
 ## ------------------------------------------------------------------------- ##
 dt_date_helper <- function(x, useNA, info){
     if(info){
-        "Date variables: min/max"
+        a <- "Date variables: min/max"
+        if(useNA) paste0(a, ". ", NA_text_string()) else a
     } else {
         NAtxt <- if(useNA) NA_txt(x) else NULL
         a <- as.character(d_min(x))
@@ -720,15 +727,16 @@ attr(dt_date, "dtable") <- "desc"
 
 ##' @describeIn dt_desc info for \code{dt_date}
 ##' @export
-dt_date.info <- function(x, ...){
-    dt_date_helper(x, info = TRUE)
+dt_date.info <- function(x, useNA = FALSE, ...){
+    dt_date_helper(x, useNA = useNA, info = TRUE)
 }
 attr(dt_date.info, "dtable") <- "meta" ## "footnote" ?
 
 ## ------------------------------------------------------------------------- ##
 dt_rate_helper <- function(x, useNA, info, ...){
     if(info){
-        "Event data: rate of events"
+        a <- "Event data: rate of events"
+        if(useNA) paste0(a, ". ", NA_text_string()) else a
     } else {
         NAtxt <- if(useNA) paste0(" ", NA_txt(x)) else NULL
         r <- d_rate(x, ...)
@@ -745,15 +753,16 @@ attr(dt_rate, "dtable") <- "desc"
 
 ##' @describeIn dt_desc info for \code{dt_rate}
 ##' @export
-dt_rate.info <- function(x, ...){
-    dt_rate_helper(x, info = TRUE)
+dt_rate.info <- function(x, useNA = FALSE, ...){
+    dt_rate_helper(x, useNA = useNA, info = TRUE)
 }
 attr(dt_rate.info, "dtable") <- "meta" ## "footnote" ?
 
 ## ------------------------------------------------------------------------- ##
 dt_event_helper <- function(x, useNA, info, ...){
     if(info){
-        "Event data: number of events"
+        a <- "Event data: number of events"
+        if(useNA) paste0(a, ". ", NA_text_string()) else a
     } else {
         NAtxt <- if(useNA) paste0(" ", NA_txt(x)) else NULL
         paste(d_esum(x, ...), NAtxt)
@@ -769,7 +778,7 @@ attr(dt_event, "dtable") <- "desc"
 
 ##' @describeIn dt_desc info for \code{dt_rate}
 ##' @export
-dt_event.info <- function(x, ...){
-    dt_event_helper(x, info = TRUE)
+dt_event.info <- function(x, useNA = FALSE, ...){
+    dt_event_helper(x, useNA = useNA, info = TRUE)
 }
 attr(dt_event.info, "dtable") <- "meta" ## "footnote" ?

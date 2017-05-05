@@ -5,7 +5,7 @@
 \title{prune dtable}
 \usage{
 dtable_prune(x, rm = NULL, keep = NULL, info = FALSE,
-  info.attr = "info", info.unique = TRUE)
+  info.attr = "info", info.unique = TRUE, split.unique = TRUE)
 }
 \arguments{
 \item{x}{object}
@@ -14,11 +14,14 @@ dtable_prune(x, rm = NULL, keep = NULL, info = FALSE,
 
 \item{keep}{index or variable name to keep (specify this or 'rm' and not both)}
 
-\item{info}{the discarded information may be keep in attributes}
+\item{info}{store the discarded information in attributes?}
 
 \item{info.attr}{name of attribute to store discarded info (if \code{info = TRUE})}
 
 \item{info.unique}{store only unique info (if \code{info = TRUE})}
+
+\item{split.unique}{if \code{unique.info = TRUE}, also split into indivual
+sentences before determining uniqueness?}
 }
 \description{
 prune dtable

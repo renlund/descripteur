@@ -34,31 +34,31 @@ dt_cname(x, xname = NULL, ...)
 
 dt_Q(x, useNA = FALSE, ...)
 
-dt_Q.info(x, ...)
+dt_Q.info(x, useNA = FALSE, ...)
 
 dt_msd(x, useNA = FALSE, ...)
 
-dt_msd.info(x, ...)
+dt_msd.info(x, useNA = FALSE, ...)
 
 dt_bcp(x, useNA = FALSE, ...)
 
-dt_bcp.info(x, ...)
+dt_bcp.info(x, useNA = FALSE, ...)
 
 dt_ccp(x, useNA = FALSE, ...)
 
-dt_ccp.info(x, ...)
+dt_ccp.info(x, useNA = FALSE, ...)
 
 dt_date(x, useNA = FALSE, ...)
 
-dt_date.info(x, ...)
+dt_date.info(x, useNA = FALSE, ...)
 
 dt_rate(x, useNA = FALSE, ...)
 
-dt_rate.info(x, ...)
+dt_rate.info(x, useNA = FALSE, ...)
 
 dt_event(x, useNA = FALSE, ...)
 
-dt_event.info(x, ...)
+dt_event.info(x, useNA = FALSE, ...)
 }
 \arguments{
 \item{...}{arguments passed}
@@ -80,7 +80,7 @@ various functions for compact summary of variables
 
 \item \code{dt_bname}: returns name:ref for bnry
 
-\item \code{dt_cname}: returns name:ref for bnry
+\item \code{dt_cname}: returns name:ref for catg
 
 \item \code{dt_Q}: quantiles
 

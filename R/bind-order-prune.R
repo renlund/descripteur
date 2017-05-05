@@ -85,12 +85,15 @@ dtable_order <- function(x){
 ##' @param x object
 ##' @param rm index or variable name to remove
 ##' @param keep index or variable name to keep (specify this or 'rm' and not both)
-##' @param info the discarded information may be keep in attributes
+##' @param info store the discarded information in attributes?
 ##' @param info.attr name of attribute to store discarded info (if \code{info = TRUE})
 ##' @param info.unique store only unique info (if \code{info = TRUE})
+##' @param split.unique if \code{unique.info = TRUE}, also split into indivual
+##'     sentences before determining uniqueness?
 ##' @export
 dtable_prune <- function(x, rm = NULL, keep = NULL, info = FALSE,
-                         info.attr = "info", info.unique = TRUE){
+                         info.attr = "info", info.unique = TRUE,
+                         split.unique = TRUE){
     if(is.null(rm) & is.null(keep)) return(x)
     if(!is.null(rm) & !is.null(keep)){
         warning("It does not like to remove AND keep.\nIt will only remove.")
@@ -111,7 +114,13 @@ dtable_prune <- function(x, rm = NULL, keep = NULL, info = FALSE,
     }
     if(info){
         infot <- unlist(lapply(x[,rm], identity))
-        if(info.unique) infot <- unique(infot)
+        if(info.unique){
+            if(split.unique){
+                tmp <- unlist(strsplit(as.character(infot), split = ".", fixed = TRUE))
+                infot <- gsub("(^ )|( $)", "", tmp)
+            }
+            infot <- unique(infot)
+        }
     }
     r <- x[,-rm, drop = FALSE]
     names(r) <- names(x)[-rm]
@@ -120,6 +129,10 @@ dtable_prune <- function(x, rm = NULL, keep = NULL, info = FALSE,
     if(info) attr(r, info.attr) <- c(attr(r, info.attr), infot)
     r
 }
+
+x <- c("Har bar", "Har bar. Sor kor", "Mar furst", "Max mos. Mar furst")
+unique(x)
+unique(unlist(strsplit(x, ".", fixed = TRUE)))
 
 ##' subset a dtable
 ##'

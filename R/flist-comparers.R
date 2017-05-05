@@ -313,6 +313,7 @@ attr(c_sstd, "dtable") <- "comp"
 ##' @param x the data
 ##' @param glist grouping
 ##' @param ... to be able to tolerate unnecessary arguments
+##' @export
 dt_comp <- function(...) invisible(NULL)
 
 ##' @describeIn dt_comp returns an empty string
@@ -387,7 +388,7 @@ dt_chisq.p_helper <- function(x, glist, info){
     n <- length(levels(y)) - 1
     if(n == 1) n <- 0
     if(info){
-        "Chisq"
+        "Chi-square"
     } else {
         c(c_chisq.p(x = x, glist = glist), rep(NA, n))
     }

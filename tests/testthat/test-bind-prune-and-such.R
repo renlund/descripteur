@@ -121,6 +121,6 @@ test_that("dtable_prune works",{
                   class = "data.frame",
                   row.names = 1L,
                   dtable = "foo",
-                  info = c(1, 2))
+                  info = c("1", "2"))
     )
 })

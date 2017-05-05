@@ -27,7 +27,7 @@ will be set to TRUE}
 \item{rowname}{(default \code{NULL}) passed to \code{Hmisc::latex}}
 
 \item{grey}{should every other line be gray to improve readability? This
-requires that '\usepackage[table]\{xcolor\}' be added to the preamble}
+requires that '\\usepackage[table]\{xcolor\}' be added to the preamble}
 
 \item{...}{passed to \code{Hmisc::latex}}
 

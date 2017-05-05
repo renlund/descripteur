@@ -10,7 +10,7 @@
 ##' @param where (default "htb") passed to \code{Hmisc::latex}
 ##' @param rowname (default \code{NULL}) passed to \code{Hmisc::latex}
 ##' @param grey should every other line be gray to improve readability? This
-##'     requires that '\usepackage[table]\{xcolor\}' be added to the preamble
+##'     requires that '\\usepackage[table]\{xcolor\}' be added to the preamble
 ##' @param ... passed to \code{Hmisc::latex}
 ##' @param guide a guide to provide labels, minimally a data frame with
 ##'     variables 'variable' and 'label'

@@ -198,17 +198,20 @@ opts_desc$set(
 Subgroup comparisons can be made by supplying a logical list of indices for the
 subgroups (in this manner the subgroups can be overlapping). In our experience
 however, the typical use of subgroups is via some categorical variable. The
-argument \texttt{glist} will this take a logical list, or if given a character
-string the function will create the logical list from the corresponding variable
-in the data set.
+argument \texttt{glist} will take a logical list, or if given a character string
+the function will create\footnote{Using the function \texttt{make\_glist}.} the
+logical list from the corresponding variable in the data set.
 
 E.g.\ an "overall" (the default) comparison on a grouping based on the
 variable \texttt{gr} (a binary variable)
 <<>>=
 dtable(data = df, type = "real", guide = g, glist = "gr")
 @
+Note above that the \texttt{myMeta} function is included in both the describer
+and comparer functions, but is not repeated (due to \texttt{dtable} attribute
+``meta'').
 
-This overall comparison need not include the description.
+You can supress the description part by setting \texttt{desc} to \texttt{FALSE}.
 <<>>=
 dtable(data = df, type = "real", guide = g, glist = "gr",
        desc = FALSE)
@@ -230,7 +233,7 @@ comparison "adjacent".
        comp = "adjacent"))
 @
 
-A dtable will keep some additional information
+A dtable will keep additional information (some of which are seen when printed).
 <<>>=
 attributes(dt)
 @
@@ -295,7 +298,7 @@ Some definitions are distinct for different data types and so requires different
 functions, if so they can have a ``second'' prefix beginning with the first
 letter of the type, so there is e.g.\ \texttt{d\_rstd} and \texttt{d\_bstd}
 which calculated the standard difference (\texttt{std}) for \texttt{real} and
-\texttt{bnry}, respectively. This may not be 100\% consistently implemented.
+\texttt{bnry}, respectively. (This may not be 100\% consistently implemented.)
 
 The functions available should have some kind of (at least minimal)
 documentation, e.g.\ type \texttt{?d\_real} to get a list of all describers
@@ -459,8 +462,10 @@ dtable_latex(dtable(df, type = "date", glist = gl), format = T,
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "date", glist = gl3, w = vikt, comp = "across"),
              format = T,  guide = dtg,
-             caption = paste("Three weighted groups described and compared",
-                             "'across' for type \\texttt{date}."))
+             caption = paste("Three 'weighted' groups described and compared",
+                             "'across' for type \\texttt{date}. Notice that the",
+                             " default functions ignore weighting (so there is no",
+                             " weighting but no warning)."))
 @
 
 \clearpage
@@ -527,10 +532,10 @@ dtable_latex(dt, label = "tab:info-raw",
 One might want to move the info column to the 'info' attribute to get it to
 print nicely below the table in a \LaTeX-table. This is done by 'pruning' the
 table with option \texttt{info = TRUE} which saves the (unique) pruned
-information.  Also, there is still some info unexplained so we add something to
-the 'info' attribute.
+information.
+%Also, there is still some info unexplained so we add something to
+%the 'info' attribute.
 <<results = 'asis'>>=
-attr(dt, "info") <- c(attr(dt, "info"), "[n] is missing count")
 tmp1 <- dtable_prune(dt, rm = "variable", info = FALSE)
 tmp2 <- dtable_prune(tmp1, rm = "info", info = TRUE)
 dtable_latex(tmp2, label = "tab:info",
@@ -549,9 +554,8 @@ column to a footnote on the \texttt{p} column and supply the guide to get the
 labels of the variable names.
 <<results = 'asis', eval = T>>=
 dlist <- flists(real = TRUE, bnry = TRUE, catg = TRUE) ## get defaults
-dt <- dtables(data = df, useNA = "ifany", ##desc.flists = dlist,
+dt <- dtables(data = df, useNA = "ifany", desc.flists = dlist,
               guide = dtg, glist = "b1")
-attr(dt, "info") <- c(attr(dt, "info"), "[n] is missing count")
 tmp1 <- dtable_prune(dt, rm = "variable", info = FALSE)
 tmp2 <- dtable_prune(tmp1, rm = "info", info = TRUE)
 tmp3 <- dtable_fnote(tmp2, info = "pinfo", fn.var = "p", format = TRUE)
@@ -567,12 +571,12 @@ dtable_latex(tmp3, label = "tab:info",
 
 \subsubsection{\texttt{dtable\_std}}
 This function calculates the standardized difference for all applicable variables.
+Here we also pass \texttt{attr = FALSE} to \texttt{attr2text} to supress the
+inclusion of attributes in the table.
 
 <<results = 'asis'>>=
 ds <- dtable_std(data = df, glist = "b1", guide = dtg)
-tmp <- dtable_subset(x = ds, subset = ds$variable != "binary 1",
-                     all.attr = TRUE)
-dtable_latex(tmp, label = "tab:std", format = TRUE,
+dtable_latex(ds, label = "tab:std", format = TRUE,
              caption = paste0("Standardized differences"),
              bling.param = list(attr = NA))
 @
@@ -583,10 +587,10 @@ This simple description of missing provides counts and percentages for variables
 frame (regardless of type).
 
 <<results = 'asis'>>=
-dm <- dtable_missing(data = df, glist = gl, guide = dtg)
+dm <- dtable_missing(data = df, glist = gl)
 dtable_latex(dm, format = TRUE,
              caption = "Information on missing",
-             bling.param = list(sep = c(". ", "\\newline ")))
+             bling.param = list(sep = c(".\\newline ")))
 @
 
 \subsubsection{\texttt{dtable\_constants}}
@@ -610,6 +614,9 @@ Use this function to get the values of the constants in the data set.
   translated to a text string.
 \item \texttt{dtable\_format} the quick and dirty formating function for
   \texttt{dtable}:s.
+\item \texttt{dtable\_subset} subset a dtable without loosing the attributes
+  (although it is not always clear that all attributes are correct after
+  subsetting).
 \end{itemize}
 
 
