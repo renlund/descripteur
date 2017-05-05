@@ -6,8 +6,8 @@
 \title{latexify a dtable}
 \usage{
 dtable_latex(dt, bling = TRUE, bling.param = as.list(NULL), file = "",
-  where = "htb", rowname = NULL, ..., guide = NULL, format = FALSE,
-  format.param = as.list(NULL))
+  where = "htb", rowname = NULL, grey = FALSE, ..., guide = NULL,
+  format = FALSE, format.param = as.list(NULL))
 
 dtable_list_latex(dtl, ..., label, caption, use.sprintf = TRUE)
 }
@@ -25,6 +25,9 @@ will be set to TRUE}
 \item{where}{(default "htb") passed to \code{Hmisc::latex}}
 
 \item{rowname}{(default \code{NULL}) passed to \code{Hmisc::latex}}
+
+\item{grey}{should every other line be gray to improve readability? This
+requires that '\usepackage[table]\{xcolor\}' be added to the preamble}
 
 \item{...}{passed to \code{Hmisc::latex}}
 

@@ -9,6 +9,8 @@
 ##' @param file (default empty string) passed to \code{Hmisc::latex}
 ##' @param where (default "htb") passed to \code{Hmisc::latex}
 ##' @param rowname (default \code{NULL}) passed to \code{Hmisc::latex}
+##' @param grey should every other line be gray to improve readability? This
+##'     requires that '\usepackage[table]\{xcolor\}' be added to the preamble
 ##' @param ... passed to \code{Hmisc::latex}
 ##' @param guide a guide to provide labels, minimally a data frame with
 ##'     variables 'variable' and 'label'
@@ -18,6 +20,7 @@
 ##' @export
 dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
                          file = "", where = "htb", rowname = NULL,
+                         grey = FALSE,
                          ...,
                          guide = NULL,
                          format = FALSE,
@@ -34,6 +37,9 @@ dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
         lab <- stats::setNames(guide$label, guide$variable)
         x$variable <- lab[x$variable]
     }
+    rnTC <- if(grey){
+        rep(c("","rowcolor[gray]{.9}"), length.out = nrow(dt))
+    } else NULL
     if(bling){
         A <- attributes(dt)
         d <- A$dtable
@@ -49,10 +55,11 @@ dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
 
         Hmisc::latex(object = x, file = file, where = where,
                      rowname = rowname, cgroup = r$values,
+                     rownamesTexCmd = rnTC,
                      n.cgroup = r$lengths, insert.bottom = text, ...)
     } else {
         Hmisc::latex(object = x, file = file, where = where,
-                     rowname = rowname, ...)
+                     rowname = rowname, rownamesTexCmd = rnTC, ...)
     }
 }
 

@@ -4,6 +4,7 @@
 \documentclass{article}
 \addtolength{\hoffset}{-1cm}
 \addtolength{\textwidth}{2cm}
+\usepackage[table]{xcolor}
 % \addtolength{\voffset}{-1.5cm}
 % \addtolength{\textheight}{3cm}
 
