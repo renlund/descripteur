@@ -42,25 +42,10 @@ dtable_fnote <- function(dt, info, fn.var,
     dtable_prune(dt, rm = info)
 }
 
-if(FALSE){
-    dt = data.frame(x = letters[1:5],
-                    y = c("foo", "bar", "bar", "foo", "foo"),
-                    z = rpois(5, 3))
-    class(dt) <- c("dtable", "data.frame")
-    attr(dt, "dtable") <- c("meta", "meta", "desc")
-    info = "y"
-    fn.var = "x"
-    info.attr = "info"
-    format = FALSE
-    format.param = as.list(NULL)
-    (test <- dtable_fnote(dt, info = "y", fn.var = "x"))
-    attributes(test)
-}
-
-## --- itself or empty string if NA
+#-#' --- itself or empty string if NA
 id_or_empty <- function(s) ifelse(is.na(s), "", s)
 
-##  -- a variable to a 'footnote'
+#-#'  -- a variable to a 'footnote'
 latex_symbols <- function(n, pre = "\\", suff  = "", start = 1){
     symb <- c("bot", "forall", "flat", "sharp", "top", "S", "bigstar", "Join",
                "clubsuit", "diamondsuit", "spadesuit",  "heartsuit",

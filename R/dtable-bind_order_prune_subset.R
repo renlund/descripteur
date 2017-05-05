@@ -130,9 +130,14 @@ dtable_prune <- function(x, rm = NULL, keep = NULL, info = FALSE,
     r
 }
 
-x <- c("Har bar", "Har bar. Sor kor", "Mar furst", "Max mos. Mar furst")
-unique(x)
-unique(unlist(strsplit(x, ".", fixed = TRUE)))
+#-#' concatenate attributes
+#-#' @param x atributes
+#-#' @param a adders
+concatenate_attributes <- function(x, a){
+    haz <- attributes(x)
+    add <- setdiff(names(a), names(haz))
+    c(haz, a[add])
+}
 
 ##' subset a dtable
 ##'
@@ -157,27 +162,9 @@ dtable_subset <- function(x, ..., all.attr = FALSE){
     r
 }
 
+#-#' clear selected (most) attributes
+#-#' @param attr attributes
 clear_most_attr <- function(attr){
     keep <- c("names", "row.names", "dtable", "class")
     attr[keep]
-}
-
-
-##' turn dtable into data.frame
-##'
-##' this will just change the class attribute
-##' @title dtable to data.frame
-##' @param x dtable object
-##' @param ... arguments passed
-##' @export
-as.data.frame.dtable <- function(x, ...){
-    class(x) <- "data.frame"
-    x
-}
-
-## -- helper fnc
-concatenate_attributes <- function(x, a){
-    haz <- attributes(x)
-    add <- setdiff(names(a), names(haz))
-    c(haz, a[add])
 }

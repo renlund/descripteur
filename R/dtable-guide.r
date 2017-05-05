@@ -201,12 +201,3 @@ get_label <- function(data){
     }
     data.frame(variable = Names, label = R, stringsAsFactors = FALSE)
 }
-
-if(FALSE){
-    data <- data.frame(x = rep(1, 10), y = 1:10, z = rep("A", 10),
-                       stringsAsFactors = FALSE)
-    dtable_guide(data)
-    data <- data.frame(x = rep(1, 10), z = rep("A", 10),
-                       stringsAsFactors = FALSE)
-    dtable_guide(data)
-}

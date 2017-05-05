@@ -1,7 +1,7 @@
 Package: descripteur
 Type: Package
 Title: Describe Data Sets
-Version: 0.1.2.9100
+Version: 0.1.2.9200
 Author: Henrik Renlund
 Maintainer: Henrik Renlund <henrikrenlund@gmail.com>
 Description: An attempt to systematize my data description.

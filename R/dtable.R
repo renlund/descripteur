@@ -206,7 +206,7 @@ dtable <- function(data, type = NULL, guide = NULL,
     R
 }
 
-## function for setting up sane 'comp' and 'desc' defaults
+#-#' function for setting up sane 'comp' and 'desc' defaults
 dc_param <- function(desc = NULL, comp = NULL, glist = NULL){
     if(is.null(desc)) desc <- TRUE
     if(is.null(comp)) comp <- if(is.null(glist)) FALSE else TRUE

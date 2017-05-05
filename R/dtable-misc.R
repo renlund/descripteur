@@ -1,4 +1,19 @@
-# - # create data set to test things on
+##' turn dtable into data.frame
+##'
+##' this will just change the class attribute
+##' @title dtable to data.frame
+##' @param x dtable object
+##' @param ... arguments passed
+##' @export
+as.data.frame.dtable <- function(x, ...){
+    class(x) <- "data.frame"
+    x
+}
+
+#-#' generate data for testing
+#-#' @title
+#-#' @param n rows
+#-#' @param seed for random number generation
 dtable_data_example <- function(n = 100, seed = 20161207){
     set.seed(seed)
     df <- data.frame(

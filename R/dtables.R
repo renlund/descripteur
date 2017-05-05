@@ -10,7 +10,6 @@
 ##' @export
 dtables <- function(data, types = NULL, desc.flists = NULL,
                     comp.flists = NULL, guide = NULL, ...){
-    ## message("dtables function is still experimental\nHigly likely to change!\n")
     ok_types <- c("real", "bnry", "catg", "date", "surv")
     if(is.null(guide)) guide <- dtable_guide(data)
     if(is.null(types)) types <- intersect_if_notnull(names(desc.flists),
@@ -62,18 +61,4 @@ intersect_if_notnull <- function(a, b){
     } else {
         intersect(a, b)
     }
-}
-
-if(FALSE){
-    a = letters[1:4]
-    b = letters[3:5]
-    intersect_if_notnull(a, b)
-    intersect_if_notnull(a, NULL)
-    intersect_if_notnull(NULL, b)
-    intersect_if_notnull(NULL, NULL)
-
-    df <- data.frame(x = c(1,-1), v = c(1, 10))
-    dtables(df)
-    dtables(data = df, w = "v")
-
 }
