@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{the object}
 
-\item{...}{for compatability}
+\item{...}{for compatibility}
 
 \item{sep}{if multiple dtable_other attributes, how to separate them}
 }

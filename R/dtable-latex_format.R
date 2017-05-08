@@ -50,7 +50,8 @@ dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
             r <- NULL ## nullify the cgroup and n.cgroup args of Hmisc::latex
         }
         text <- paste0("{\\small\\begin{center}\\emph{",
-                       do.call(attr2text, c(dt = list(dt), bling_fixer(bling.param))),
+                       do.call(attr2text, c(dt = list(dt),
+                                            bling_fixer(bling.param))),
                        "}\\end{center}}")
 
         Hmisc::latex(object = x, file = file, where = where,
@@ -67,11 +68,13 @@ dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
 bling_fixer <- function(x = as.list(NULL)){
     if(is.null(perc <- x$perc)) perc <- TRUE
     if(is.null(perc.sign <- x$perc.sign)) perc.sign <- "\\%"
-    if(is.null(attr <- x$attr)) attr <- c("size", "cc", "weight", "units", "info")
+    if(is.null(attr <- x$attr)) attr <- c("size", "cc", "weight",
+                                          "units", "info")
     if(is.null(sep <- x$sep)) sep <- ". "
     if(is.null(rm.if.all <- x$rm.if.all)) rm.if.all <- FALSE
     vector <- FALSE
-    list(perc = perc, perc.sign = perc.sign, attr = attr, sep = sep, vector = FALSE)
+    list(perc = perc, perc.sign = perc.sign, attr = attr,
+         sep = sep, vector = FALSE)
 }
 
 ## - # this sets up the format defaults for dtable_latex
@@ -101,7 +104,7 @@ format_fixer <- function(x = as.list(NULL)){
 ##'     dirty way of getting something ok (hopefully), fast. could be
 ##'     developed...
 ##' @param dt a dtable
-##' @param b boundary, if numbers are consistenly higher they are handled by
+##' @param b boundary, if numbers are consistently higher they are handled by
 ##'     'bh' and 'hfnc', if consistently lower by 'bl' and 'lfnc', and otherwise
 ##'     by 'br' and 'rfnc'
 ##' @param bh digits argument for \code{hfnc}
@@ -116,7 +119,7 @@ format_fixer <- function(x = as.list(NULL)){
 ##' @param peq0 even if we abbreviate small 'p-values' should we explicitly put
 ##'     = "0" if it is equal to zero?
 ##' @param tmax how many characters to print for a character vector
-##' @param repus should we replace "_" with 'repwith' in charcter variables? (If not
+##' @param repus should we replace "_" with 'repwith' in character variables? (If not
 ##'     LaTeX might fail.)
 ##' @param repwith that which to replace underscore with, default "\\_"
 ##' @export
@@ -134,10 +137,13 @@ dtable_format <- function(dt, b = 1,
     datum <- which(classy %in% c("Date", "POSIXlt", "POSIXct"))
     R[datum] <- lapply(R[datum], as.character)
     num <- which(classy == "numeric")
-    l <- unlist(lapply(R[num], function(x) min(abs(x[is.finite(x)]), na.rm = TRUE)))
-    h <- unlist(lapply(R[num], function(x) max(abs(x[is.finite(x)]), na.rm = TRUE)))
-    p0 <- unlist(lapply(R[num], function(x) min(x[is.finite(x)], na.rm = TRUE) >= 0 &
-                                            max(x[is.finite(x)], na.rm = TRUE) <= 1))
+    l <- unlist(lapply(R[num], function(x) min(abs(x[is.finite(x)]),
+                                               na.rm = TRUE)))
+    h <- unlist(lapply(R[num], function(x) max(abs(x[is.finite(x)]),
+                                               na.rm = TRUE)))
+    p0 <- unlist(lapply(R[num],
+                        function(x) min(x[is.finite(x)], na.rm = TRUE) >= 0 &
+                                    max(x[is.finite(x)], na.rm = TRUE) <= 1))
     p <- if(!is.null(p0)) which(p0) else NULL
     il <- num[which(l>b)]
     R[il] <- lapply(R[il], hfnc, digits = bh)

@@ -18,7 +18,9 @@ dtable_attr <- function(dt, perc = FALSE, perc.sign = "%"){
             if(!is.null(w))   "weight" else NULL,
             if(!is.null(u))   "units"  else NULL
         ),
-        total = c(n, if(perc) paste0(roundisch(100*ccn/n), perc.sign) else ccn, w, u),
+        total = c(n,
+                  if(perc) paste0(roundisch(100*ccn/n), perc.sign) else ccn,
+                  w, u),
         stringsAsFactors = FALSE
     )
     fnc <- function(a, b, p){
@@ -30,10 +32,10 @@ dtable_attr <- function(dt, perc = FALSE, perc.sign = "%"){
         stats::setNames(r, names(a))
     }
     if(!is.null(a$glist_size)){
-             size =   fnc(a$glist_size, n, FALSE)
-             cc =     fnc(a$glist_cc, a$glist_size, perc)
-             weight = fnc(a$glist_weight, w, perc)
-             units =  fnc(a$glist_units, u, FALSE)
+             size <-   fnc(a$glist_size, n, FALSE)
+             cc <-     fnc(a$glist_cc, a$glist_size, perc)
+             weight <- fnc(a$glist_weight, w, perc)
+             units <-  fnc(a$glist_units, u, FALSE)
              tmp <- rbind(size, cc, weight, units, stringsAsFactors = FALSE)
              Q <- as.data.frame(tmp, stringsAsFactors = FALSE)
              Q$measure <- rownames(tmp)

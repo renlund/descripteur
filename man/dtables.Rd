@@ -21,5 +21,5 @@ dtables(data, types = NULL, desc.flists = NULL, comp.flists = NULL,
 \item{...}{arguments passed to dtable}
 }
 \description{
-concatenate dtables for mutiple types into a single dtable
+concatenate dtables for multiple types into a single dtable
 }

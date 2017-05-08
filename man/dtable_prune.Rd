@@ -20,7 +20,7 @@ dtable_prune(x, rm = NULL, keep = NULL, info = FALSE,
 
 \item{info.unique}{store only unique info (if \code{info = TRUE})}
 
-\item{split.unique}{if \code{unique.info = TRUE}, also split into indivual
+\item{split.unique}{if \code{unique.info = TRUE}, also split into individual
 sentences before determining uniqueness?}
 }
 \description{

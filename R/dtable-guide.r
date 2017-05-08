@@ -6,11 +6,11 @@
 #'   many unique values
 #' @param real.tol force numeric data with few (\eqn{<=} \code{real.tol}) unique data
 #'   points to be described as categorical
-#' @param as.is if TRUE ignore all tolerence parameters
+#' @param as.is if TRUE ignore all tolerance parameters
 #' @param no.bnry if TRUE, there will be no distinction between 'bnry' and
 #'     'catg', they will all be 'catg' (default \code{FALSE})
 #' @param reduce.levels if  \code{TRUE}, empty levels will be removed
-#' @param row.id the row identifier, doesn't really do much at this point
+#' @param row.id the row identifier, does not really do much at this point
 #' @param unit.id the unit identifier, this can later provide information on how
 #'     many unique units there are in a table or subgroups thereof
 #' @return a data frame describing each variable in the data set (excluding
@@ -30,7 +30,8 @@ dtable_guide <- function(data, elim.set = NULL,
                          reduce.levels = TRUE,
                          row.id = NULL, unit.id = NULL){
     if(catg.tol < 3 | real.tol < 3){
-        stop(paste0("tolerance threshold or catg and real should be at least 3"))
+        stop(paste0("tolerance threshold or catg and real should be at",
+                    " least 3"))
     }
     data_source <- as.character(substitute(data))
     org_data <- data
@@ -111,7 +112,8 @@ dtable_guide <- function(data, elim.set = NULL,
                      data.frame(
                          variable = const,
                          type = "constant",
-                         original_class = unlist(lapply(org_data[const], class)),
+                         original_class = unlist(lapply(org_data[const],
+                                                        class)),
                          has_missing = unlist(lapply(org_data[const], any_na)),
                          check.names = FALSE,
                          row.names = NULL,

@@ -1,6 +1,6 @@
 ##' dtable for multiple types
 ##'
-##' concatenate dtables for mutiple types into a single dtable
+##' concatenate dtables for multiple types into a single dtable
 ##' @param data the data set
 ##' @param types types wanted
 ##' @param desc.flists flists for description
@@ -35,7 +35,7 @@ dtables <- function(data, types = NULL, desc.flists = NULL,
                                              comp.flist = comp.flists[[TYP]]),
                                         dots))
         if(nrow(tmp) == 0) next
-        suppressWarnings(R <- if(is.null(R)) expr={
+        suppressWarnings(R <- if(is.null(R)){
             tmp
         } else {
             dtable_rbind(R, tmp)

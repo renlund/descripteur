@@ -110,7 +110,7 @@ changes to proportion vectors.
 bar <- function(a, b){
     p1 <- a[-1]
     p2 <- b[-1]
-    k = length(p1)
+    k <- length(p1)
     S <- matrix(NA, nrow = k, ncol = k)
     for(i in 1:k){
         for(j in 1:k){

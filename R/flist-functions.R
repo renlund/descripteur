@@ -82,8 +82,10 @@ flists <- function(real = FALSE, bnry = FALSE, catg = FALSE,
                 dummy <- 1
             } else {
                 tryCatch(names(tmp) <- NAMES,
-                         error = function(e) stop(paste0("somethings wrong,",
-                                 "perhaps names don't match flist lengthwise?")))
+                         error = function(e){
+                             stop(paste0("somethings wrong, perhaps names do",
+                                         " not match flist lengthwise?"))
+                         })
             }
             L[[K]] <- tmp
         }

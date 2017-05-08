@@ -3,7 +3,7 @@
 ##' dtable_other objects are objects with an additional attribute 'dtable_other'
 ##'     which will be printed alongside the inherited print method
 ##' @param x the object
-##' @param ... for compatability
+##' @param ... for compatibility
 ##' @param sep if multiple dtable_other attributes, how to separate them
 ##' @export
 print.dtable_other <- function(x, ..., sep = "\n"){

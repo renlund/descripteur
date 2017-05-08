@@ -29,16 +29,14 @@ dtable_list_latex <- function(dtl, ..., label, caption, use.sprintf = TRUE){
     types_code <- c("bnry", "real", "catg", "surv", "date")
     if(!all(types %in% types_code)) stop("there are unknown types in 'dtl'")
     if(use.sprintf){
-        key1 <- stats::setNames(c("binary", "continuous", "categorical", "event",
-                           "date"), types_code)
+        key1 <- stats::setNames(c("binary", "continuous", "categorical",
+                                  "event", "date"), types_code)
         foo <- function(s){ ## Capitalize key1
             paste0(toupper(substring(s,1,1)), substring(s,2,nchar(s)))
         }
         key2 <- unlist(lapply(key1, foo))
         ## use capitalization if %s is at the beginning of a sentence
-        ## lab_key <- if(grepl("(^%s)|(\\. %s)", label))   key2 else key1 ## not needed
         cap_key <- if(grepl("(^%s)|(\\. %s)", caption)) key2 else key1
-        ## label <- sprintf(lab, lab_key[types]) ## not needed
         label <- sprintf(label, types)
         caption <- sprintf(caption, cap_key[types])
     }

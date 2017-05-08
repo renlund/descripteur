@@ -12,7 +12,7 @@
 ##' @param comp if, and how, to compare variables (requires a glist)
 ##' @param comp.flist list of comparers, i.e. comparing functions
 ##' @param glist grouping list, if wanted. This can either be a list of logical
-##'     vectore equal in length to the numbers of rows (i.e. logical indices), in
+##'     vectors equal in length to the numbers of rows (i.e. logical indexes), in
 ##'     which case overlapping groups can be made, or the name of a variable in
 ##'     the data frame (in which case that variable will be removed from output)
 ##'     or just any variable in the global workspace
@@ -35,7 +35,7 @@ dtable <- function(data, type = NULL, guide = NULL,
         guide <- dtable_guide(data = data)
         if(!guide_val){
             filter <- !guide$type %in% c("row.id", "unit.id")
-            guide$type[filter] <- "real" ## this particular value should not matter
+            guide$type[filter] <- "real" ## this value should not matter
         }
     }
     ## you can skip 'type' but if the guide contains several different types
@@ -62,14 +62,15 @@ dtable <- function(data, type = NULL, guide = NULL,
             glist.variable <- glist
             glist <- tryCatch(make_glist(glist, ref = data[[1]]),
                               error = function(e)
-                                  stop("cannot make glist from this glist-argument"))
+                                  stop(paste0("cannot make glist from this",
+                                              " glist-argument")))
         }
         if(length(glist) == 1) stop("only 1 subgroup defined by glist")
     }
     if(!is.null(w)){
         if(is.character(w)){
             w.text <- w
-            w = data[[w.text]]
+            w <- data[[w.text]]
             if(is.null(w)){
                 warning("weighting variable does not exist in data")
             } else {
@@ -199,7 +200,9 @@ dtable <- function(data, type = NULL, guide = NULL,
             tmp_g <- function(x) tmp_f(data[[unit_id]][x])
             attr(R, "glist_units") <- unlist(lapply(glist, tmp_g))
         }
-        tmp_fnc <- function(x, Y = data[,variables,drop = FALSE]) sum(stats::complete.cases(Y[x,]))
+        tmp_fnc <- function(x, Y = data[,variables,drop = FALSE]){
+            sum(stats::complete.cases(Y[x,]))
+        }
         attr(R, "glist_cc") <- unlist(lapply(glist, tmp_fnc))
     }
     attr(R, "dc_param") <- P
@@ -221,7 +224,8 @@ dc_param <- function(desc = NULL, comp = NULL, glist = NULL){
     }
     if(is.character(comp)){
         if(!comp %in% c("overall", "across", "adjacent")){
-            stop("if character, comp should be 'overall', 'across' or 'adjacent'")
+            stop(paste0("if character, comp should be 'overall',",
+                        " 'across' or 'adjacent'"))
         }
         comp.style <- comp
         comp <- TRUE

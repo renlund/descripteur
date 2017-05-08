@@ -50,7 +50,8 @@ dtable_cbind <- function(x, y, groups = NULL){
         y_mod <- dtable_prune(my, rm = ut)
         r <- cbind(as.data.frame(mx), as.data.frame(y_mod))
     } else {
-        message("Something doesn't quite add up. I'll try to fix it - but please check the results.")
+        message(paste0("Something doesn't quite add up. I'll try to fix",
+                       " it - but please check the results."))
         ax <- ay <- FALSE
         if(nrow(mx) >= nrow(y)) ax <- TRUE else ay <- TRUE
         r <- merge(as.data.frame(mx), as.data.frame(my), by = ut,
@@ -88,7 +89,7 @@ dtable_order <- function(x){
 ##' @param info store the discarded information in attributes?
 ##' @param info.attr name of attribute to store discarded info (if \code{info = TRUE})
 ##' @param info.unique store only unique info (if \code{info = TRUE})
-##' @param split.unique if \code{unique.info = TRUE}, also split into indivual
+##' @param split.unique if \code{unique.info = TRUE}, also split into individual
 ##'     sentences before determining uniqueness?
 ##' @export
 dtable_prune <- function(x, rm = NULL, keep = NULL, info = FALSE,
@@ -116,7 +117,8 @@ dtable_prune <- function(x, rm = NULL, keep = NULL, info = FALSE,
         infot <- unlist(lapply(x[,rm], identity))
         if(info.unique){
             if(split.unique){
-                tmp <- unlist(strsplit(as.character(infot), split = ".", fixed = TRUE))
+                tmp <- unlist(strsplit(as.character(infot),
+                                       split = ".", fixed = TRUE))
                 infot <- gsub("(^ )|( $)", "", tmp)
             }
             infot <- unique(infot)

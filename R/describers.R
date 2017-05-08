@@ -102,12 +102,12 @@ attr(d_median, "dtable") <- "desc"
 
 ##' @describeIn d_real minimum
 ##' @export
-d_min = function(x, ...) min(x, na.rm = TRUE)
+d_min <- function(x, ...) min(x, na.rm = TRUE)
 attr(d_min, "dtable") <- "desc"
 
 ##' @describeIn d_real maximum
 ##' @export
-d_max = function(x, ...) max(x, na.rm = TRUE)
+d_max <- function(x, ...) max(x, na.rm = TRUE)
 attr(d_max, "dtable") <- "desc"
 
 ##' @describeIn d_real inter quartile range
@@ -140,7 +140,7 @@ d_bnry <- function(...) invisible(NULL)
 
 ## turn vector, if possible, into binary factor
 make_bnry <- function(x){
-    rev = FALSE ## let this be a setting in opts_desc ??
+    rev <- FALSE ## let this be a setting in opts_desc ??
     a <- "trying to give binary stats on a non-binary variable"
     if(is.factor(x)){
         if(length(levels(x)) == 2){
@@ -175,7 +175,7 @@ d_ref_level <- function(x, ...){
 }
 attr(d_ref_level, "dtable") <- "meta"
 
-##' @describeIn d_bnry number of occurences of the reference value
+##' @describeIn d_bnry number of occurrences of the reference value
 ##' @export
 d_bn <- function(x, w = NULL, ...){
     y <- make_bnry(x)
@@ -185,7 +185,7 @@ d_bn <- function(x, w = NULL, ...){
 }
 attr(d_bn, "dtable") <- "desc"
 
-##' @describeIn d_bnry proportion of occurences of the reference value
+##' @describeIn d_bnry proportion of occurrences of the reference value
 ##' @export
 d_bp <- function(x, w = NULL, ...){
     y <- make_bnry(x)
@@ -216,12 +216,12 @@ d_date <- function(...) invisible(NULL)
 
 ##' @describeIn d_date minimum
 ##' @export
-d_dmin = function(x, ...) as.character(min(x, na.rm = TRUE))
+d_dmin <- function(x, ...) as.character(min(x, na.rm = TRUE))
 attr(d_dmin, "dtable") <- "desc"
 
 ##' @describeIn d_date maximum
 ##' @export
-d_dmax = function(x, ...) as.character(max(x, na.rm = TRUE))
+d_dmax <- function(x, ...) as.character(max(x, na.rm = TRUE))
 attr(d_dmax, "dtable") <- "desc"
 
 
@@ -278,11 +278,13 @@ weighted_tab <- function(x, w = NULL, count = FALSE){
             if(count){
                 as.numeric(colSums(mm*w))
             } else {
-                100*as.numeric(apply(X = mm, MARGIN = 2, FUN = stats::weighted.mean,
+                100*as.numeric(apply(X = mm, MARGIN = 2,
+                                     FUN = stats::weighted.mean,
                                      w = w))
             }
         }, error = function(e)
-            stop(paste0("descripteur internal function weighted_tab fails with error:\n", e))
+            stop(paste0("descripteur internal function weighted_tab",
+                        " fails with error:\n", e))
     )
 }
 
@@ -393,7 +395,8 @@ d_rate <- function(x, w = NULL, cens.type = "right", ...){
     survcheck(x)
     if(cens.type == "right"){
         check_right(x)
-        d_esum(x, w = w, cens.type = cens.type) / d_tsum(x, w = w, cens.type = cens.type)
+        d_esum(x, w = w, cens.type = cens.type) /
+            d_tsum(x, w = w, cens.type = cens.type)
     } else {
         stop("no cens.type but 'right' has been implemented")
     }

@@ -52,8 +52,9 @@ latex_symbols <- function(n, pre = "\\", suff  = "", start = 1){
                "dagger", "ast", "star", "circ", "ddagger", "bullet")
     greekl <- c("alpha", "beta", "gamma", "delta", "epsilon", "varepsilon",
                 "zeta", "eta", "theta", "vartheta", "iota", "kappa", "lambda",
-                "mu", "nu", "xi", "pi", "varpi", "rho", "varrho", "sigma", "varsigma",
-                "tau", "upsilon", "phi", "varphi", "chi", "psi", "omega")
+                "mu", "nu", "xi", "pi", "varpi", "rho", "varrho", "sigma",
+                "varsigma", "tau", "upsilon", "phi", "varphi", "chi",
+                "psi", "omega")
     greeku <- c("Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma",
                 "Upsilon","Phi","Psi","Omega")
     S <- c(symb, greekl, greeku)

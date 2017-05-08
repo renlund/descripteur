@@ -29,7 +29,8 @@ attr2text <- function(dt, perc = FALSE, perc.sign = "%",
         } else {
             b <- if(g) as.character(x[1, 3:(2+n)]) else NULL
             c <- if(g){
-                     paste0(" (", paste0(paste0(gr, ":", b), collapse = ", "), ")")
+                     paste0(" (", paste0(paste0(gr, ":", b),
+                                         collapse = ", "), ")")
                  } else NULL
             paste0(text, " ", a, c)
         }

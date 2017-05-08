@@ -9,7 +9,7 @@
 opts_desc
 }
 \description{
-This list tries to mimic the behaviour of opts_chunk from knitr.
+This list tries to mimic the behavior of opts_chunk from knitr.
 Currently these values are maintained with the functions in (the list)
 \code{opts_desc}:
 \itemize{

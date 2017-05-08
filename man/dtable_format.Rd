@@ -11,7 +11,7 @@ dtable_format(dt, b = 1, bh = 1, hfnc = base::round, bl = 2,
 \arguments{
 \item{dt}{a dtable}
 
-\item{b}{boundary, if numbers are consistenly higher they are handled by
+\item{b}{boundary, if numbers are consistently higher they are handled by
 'bh' and 'hfnc', if consistently lower by 'bl' and 'lfnc', and otherwise
 by 'br' and 'rfnc'}
 
@@ -36,7 +36,7 @@ case.}
 
 \item{tmax}{how many characters to print for a character vector}
 
-\item{repus}{should we replace "_" with 'repwith' in charcter variables? (If not
+\item{repus}{should we replace "_" with 'repwith' in character variables? (If not
 LaTeX might fail.)}
 
 \item{repwith}{that which to replace underscore with, default "\\_"}

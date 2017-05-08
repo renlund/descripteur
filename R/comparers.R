@@ -48,7 +48,9 @@ attr(c_t.test.p, "dtable") <- "comp"
 ##'     but not implemented yet)
 ##' @export
 c_wilcox.p <- function(x, glist, ...){
-    stats::wilcox.test(x = x[glist[[1]]], y = x[glist[[2]]], exact = FALSE)$p.value
+    tmp <- stats::wilcox.test(x = x[glist[[1]]], y = x[glist[[2]]],
+                              exact = FALSE)
+    tmp$p.value
 }
 attr(c_wilcox.p, "dtable") <- "comp"
 
@@ -220,7 +222,8 @@ attr(c_cstd.each, "dtable") <- "comp"
 ##'     variable, should the results be expanded with \code{NA}:s to match the
 ##'     typical output length for a function of such a variable?
 ##' @export
-c_cstd <- function(x, glist, useNA = FALSE, w = NULL, expand.levels = TRUE, ...){
+c_cstd <- function(x, glist, useNA = FALSE, w = NULL,
+                   expand.levels = TRUE, ...){
     useNA <- FALSE ## could this couse problems?
     if(is.null(w)) w <- rep(1, length(x))
     w1 <- w[glist[[1]]]
@@ -279,7 +282,8 @@ c_rr <- function(x, glist, w = NULL, cens.type = "right", ...){
     w2 <- w[glist[[2]]]
     if(cens.type == "right"){
         check_right(x)
-        d_rate(x1, w = w1, cens.type = cens.type) / d_rate(x2, w = w2, cens.type = cens.type)
+        d_rate(x1, w = w1, cens.type = cens.type) /
+            d_rate(x2, w = w2, cens.type = cens.type)
     } else {
         stop("no cens.type but 'right' has been implemented")
     }

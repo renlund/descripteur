@@ -17,14 +17,20 @@ make_glist <- function(x, ref = NULL, max.levels = 25){
             if(is.character(x)){
                 x <- ref[[x]]
             } else {
-                if(length(x) != nrow(ref)) stop("[make_glist] 'x' not a fit for the reference")
+                if(length(x) != nrow(ref)){
+                    stop("[make_glist] 'x' not a fit for the reference")
+                }
             }
         } else {
-            if(length(x) != length(ref)) stop("[make_glist] 'x' not equal in length to reference")
+            if(length(x) != length(ref)){
+                stop("[make_glist] 'x' not equal in length to reference")
+            }
         }
     }
     y <- as.factor(x)
-    if(length(levels(y)) > max.levels) stop("[make_glist] the number of levels exceed 'max.levels'")
+    if(length(levels(y)) > max.levels){
+        stop("[make_glist] the number of levels exceed 'max.levels'")
+    }
     g <- as.list(NULL)
     for(k in levels(y)){
         g[[k]] <- y == k
@@ -44,7 +50,9 @@ factorize_glist <- function(glist){
         text1 <- paste0("[descripteur::factorize_glist]: The grouping in glist",
                         " is not equivalent to a categorical variable")
         ss <- all(rowSums(g, na.rm = TRUE) <= 1)
-        text2 <- if(ss) "\n -- But there may be a natural subset that is!" else NULL
+        text2 <- if(ss){
+                     "\n -- But there may be a natural subset that is!"
+                 } else NULL
         stop(paste0(text1, text2))
     } else {
         r <- g

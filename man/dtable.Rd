@@ -32,7 +32,7 @@ dtable(data, type = NULL, guide = NULL, desc = NULL, desc.flist = NULL,
 \item{comp.flist}{list of comparers, i.e. comparing functions}
 
 \item{glist}{grouping list, if wanted. This can either be a list of logical
-vectore equal in length to the numbers of rows (i.e. logical indices), in
+vectors equal in length to the numbers of rows (i.e. logical indexes), in
 which case overlapping groups can be made, or the name of a variable in
 the data frame (in which case that variable will be removed from output)
 or just any variable in the global workspace}

@@ -43,45 +43,40 @@ desc_set <- function(...){
 desc_restore <- function(){
     assign(x="defaults",
            value=list(
-               ## "describe_real" = flist(c("median" = "d_median", "IQR" = "d_IQR")),
-               "describe_real" = flist(c("mean" = "d_mean", "sd" = "d_sd")),
-               "describe_bnry" = flist(c("value" = "d_ref_level", "prop" = "d_bp")),
-               "describe_catg" = flist(c("levels" = "d_levels", "prop" = "d_cp")),
-               "describe_date" = flist(c("min" = "d_dmin", "max" = "d_dmax")),
+               ## "describe_real" = flist(c("median" = "d_median",
+               ##                           "IQR" = "d_IQR")),
+               "describe_real" = flist(c("mean" = "d_mean",
+                                         "sd" = "d_sd")),
+               "describe_bnry" = flist(c("value" = "d_ref_level",
+                                         "prop" = "d_bp")),
+               "describe_catg" = flist(c("levels" = "d_levels",
+                                         "prop" = "d_cp")),
+               "describe_date" = flist(c("min" = "d_dmin",
+                                         "max" = "d_dmax")),
                "describe_surv" = flist(c("time" = "d_tsum",
-                                 "events" = "d_esum", "rate" = "d_rate")),
+                                         "events" = "d_esum",
+                                         "rate" = "d_rate")),
                "compare_real"  = flist(c("std" = "c_rstd")),
                "compare_bnry"  = flist(c("std" = "c_bstd")),
-               "compare_catg"  = flist(c("levels" = "d_levels", "diff" = "c_pdiff")),
+               "compare_catg"  = flist(c("levels" = "d_levels",
+                                         "diff" = "c_pdiff")),
                "compare_date"  = flist(c("overlap" = "c_overlap")),
                "compare_surv"  = flist(c("RR" = "c_rr")),
                "describe_real_compact" = flist(c("Variables" = "dt_name",
-                                             "info" = "dt_Q.info",
-                                             "Summary" = "dt_Q")),
+                                                 "info" = "dt_Q.info",
+                                                 "Summary" = "dt_Q")),
                "describe_bnry_compact" = flist(c("Variables" = "dt_bname",
-                                             "info" = "dt_bcp.info",
-                                             "Summary" = "dt_bcp")),
+                                                 "info" = "dt_bcp.info",
+                                                 "Summary" = "dt_bcp")),
                "describe_catg_compact" = flist(c("Variables" = "dt_cname",
-                                             "info" = "dt_ccp.info",
-                                             "Summary" = "dt_ccp")),
+                                                 "info" = "dt_ccp.info",
+                                                 "Summary" = "dt_ccp")),
                "describe_date_compact" = flist(c("Variables" = "dt_name",
-                                             "info" = "dt_date.info",
-                                             "Summary" = "dt_date")),
+                                                 "info" = "dt_date.info",
+                                                 "Summary" = "dt_date")),
                "describe_surv_compact" = flist(c("Variables" = "dt_name",
-                                             "info" = "dt_event.info",
-                                             "Summary" = "dt_event")),
-               ## "desc_compact" = flists(real = list("dt_name",  "dt_Q.info",     "dt_Q"),
-               ##                         bnry = list("dt_bname", "dt_bcp.info",   "dt_bcp"),
-               ##                         catg = list("dt_cname", "dt_ccp.info",   "dt_ccp"),
-               ##                         date = list("dt_name",  "dt_date.info",  "dt_date"),
-               ##                         surv = list("dt_name",  "dt_event.info", "dt_event"),
-               ##                         names = c("Variables",  "info",  "Summary")),
-               ## "comp_compact" = flists(real = list("dt_name",  "c_rstd"),
-               ##                         bnry = list("dt_bname", "c_bstd"),
-               ##                         catg = list("dt_cname", "c_cstd"),
-               ##                         date = list("dt_name",  "dt_empty_comp"),
-               ##                         surv = list("dt_name",  "dt_empty_comp"),
-               ##                         names = c("Variables",  "Std")),
+                                                 "info" = "dt_event.info",
+                                                 "Summary" = "dt_event")),
                "compare_real_compact" = flist(c("Variables" = "dt_name",
                                                 "Std" = "c_rstd",
                                                 "pinfo" = "dt_wilcox.p.info",
@@ -102,10 +97,11 @@ desc_restore <- function(){
                                                 "Std" = "c_sstd",
                                                 "pinfo" = "dt_empty_comp",
                                                 "p" = "dt_empty_comp"))
-   ), envir=le_milieu)
-   assign(x="value", value = names(get(x="defaults", envir=le_milieu)), envir=le_milieu)
-   desc_check()
-   invisible(NULL)
+           ), envir=le_milieu)
+    assign(x="value", value = names(get(x="defaults", envir=le_milieu)),
+           envir=le_milieu)
+    desc_check()
+    invisible(NULL)
 }
 
 # @title desc_check
@@ -115,7 +111,7 @@ desc_check <- function(){
 }
 
 #' @title desc options
-#' @description This list tries to mimic the behaviour of opts_chunk from knitr.
+#' @description This list tries to mimic the behavior of opts_chunk from knitr.
 #' Currently these values are maintained with the functions in (the list)
 #' \code{opts_desc}:
 #' \itemize{

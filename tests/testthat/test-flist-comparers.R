@@ -17,19 +17,19 @@ test_that(desc = "c_rstd works", code = {
 })
 
 test_that("c_OR works", {
-    x = factor(c(1,1, 1,0, 0,0, 0,0, NA), levels = 0:1)
+    x <- factor(c(1,1, 1,0, 0,0, 0,0, NA), levels = 0:1)
     gl <- list("A" = c(T,T, F,F, T,T, F,F, F),
                "B" = c(F,F, T,T, F,F, T,T, F))
-    w1 = as.numeric(x)
+    w1 <- as.numeric(x)
     expect_equal(c_OR(x = x, glist = gl), 1/(1/3))
     expect_equal(c_OR(x = x, glist = gl, w = w1), 2/(2/3))
 })
 
 test_that("c_bstd works", {
-    x = factor(c(1,1, 1,0, 0,0, 0,NA), levels = 0:1)
+    x <- factor(c(1,1, 1,0, 0,0, 0,NA), levels = 0:1)
     gl <- list("A" = c(T,T, F,F, T,T, F,F),
                "B" = c(F,F, T,T, F,F, T,T))
-    w1 = as.numeric(x)
+    w1 <- as.numeric(x)
     expect_equal(c_bstd(x = x, glist = gl), (1/2-1/3)/sqrt((1/4+2/9)/2))
     expect_equal(c_bstd(x = x, glist = gl), (2/3-1/2)/sqrt((2/9+1/4)/2))
 })
