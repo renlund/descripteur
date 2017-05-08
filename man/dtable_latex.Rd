@@ -6,7 +6,7 @@
 \title{latexify a dtable}
 \usage{
 dtable_latex(dt, bling = TRUE, bling.param = as.list(NULL), file = "",
-  where = "htb", rowname = NULL, grey = FALSE, ..., guide = NULL,
+  where = "htb", rowname = NULL, grey = NULL, ..., guide = NULL,
   format = FALSE, format.param = as.list(NULL))
 
 dtable_list_latex(dtl, ..., label, caption, use.sprintf = TRUE)

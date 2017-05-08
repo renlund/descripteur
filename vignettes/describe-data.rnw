@@ -411,9 +411,10 @@ dtable_latex(dtable(df, type = "catg", glist = gl), format = T,
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "catg", glist = gl3, w = vikt,
-             comp = "across"), format = T, guide = dtg,
+             comp = "across"), format = T, guide = dtg, grey = TRUE,
              caption = paste("Three weighted groups described and",
-                             "compared 'across' for type \\texttt{catg}."))
+                             "compared 'across' for type \\texttt{catg}.",
+                             "(Every other line grey.)"))
 @
 
 \subsubsection{Is the distinction between \texttt{catg} and \texttt{bnry} annoying?}
@@ -423,10 +424,10 @@ hand, or more quickly supply the \texttt{no.bnry = TRUE} argument.
 <<results = 'asis'>>=
 nobnry <- dtable_guide(df, no.bnry = TRUE)
 dtable_latex(dtable(df, type = "catg", glist = gl, guide = nobnry),
-             format = T,
-             caption = paste("Two groups described and compared",
-                             "for type \\texttt{catg} (including",
-                             " binary variables)."))
+             format = T, grey = "variable",
+             caption = paste("Two groups described and compared for type ",
+                             " \\texttt{catg} (including binary variables). ",
+                             "(Grey lines according to column 'variable'.)"))
 @
 
 \clearpage
@@ -539,8 +540,8 @@ information.
 <<results = 'asis'>>=
 tmp1 <- dtable_prune(dt, rm = "variable", info = FALSE)
 tmp2 <- dtable_prune(tmp1, rm = "info", info = TRUE)
-dtable_latex(tmp2, label = "tab:info",
-             caption = "Compact table with all types")
+dtable_latex(tmp2, label = "tab:info", grey = dt$variable,
+             caption = "Compact table (pruned) with all types")
 @
 
 With \texttt{flists} you can create a list of flist-lists, these need to be of
@@ -560,7 +561,7 @@ dt <- dtables(data = df, useNA = "ifany", desc.flists = dlist,
 tmp1 <- dtable_prune(dt, rm = "variable", info = FALSE)
 tmp2 <- dtable_prune(tmp1, rm = "info", info = TRUE)
 tmp3 <- dtable_fnote(tmp2, info = "pinfo", fn.var = "p", format = TRUE)
-dtable_latex(tmp3, label = "tab:info",
+dtable_latex(tmp3, label = "tab:info", grey = dt$variable,
              caption = paste("Compact table with continuous and",
                              "categorical types."))
 @

@@ -20,7 +20,7 @@
 ##' @export
 dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
                          file = "", where = "htb", rowname = NULL,
-                         grey = FALSE,
+                         grey = NULL,
                          ...,
                          guide = NULL,
                          format = FALSE,
@@ -37,9 +37,7 @@ dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
         lab <- stats::setNames(guide$label, guide$variable)
         x$variable <- lab[x$variable]
     }
-    rnTC <- if(grey){
-        rep(c("","rowcolor[gray]{.9}"), length.out = nrow(dt))
-    } else NULL
+    rnTC <- get_grey(grey, x)
     if(bling){
         A <- attributes(dt)
         d <- A$dtable
@@ -53,7 +51,6 @@ dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
                        do.call(attr2text, c(dt = list(dt),
                                             bling_fixer(bling.param))),
                        "}\\end{center}}")
-
         Hmisc::latex(object = x, file = file, where = where,
                      rowname = rowname, cgroup = r$values,
                      rownamesTexCmd = rnTC,
@@ -96,6 +93,38 @@ format_fixer <- function(x = as.list(NULL)){
     list(b = b, bh = bh, hfnc = hfnc, bl = bl, lfnc = lfnc, br = br,
          rfnc = rfnc, p_b = p_b, peq0 = peq0, tmax = tmax,
          repus = repus, repwith = repwith)
+}
+
+## - ##' determine sequence of colors
+get_grey <- function(grey = NULL, x = NULL){
+    color_vec <- c("","rowcolor[gray]{.9}")
+    if(is.null(grey)){
+        NULL
+    } else if(is.logical(grey)){
+        if(grey){
+            rep(color_vec, length.out = nrow(x))
+        } else NULL
+    } else if(is.character(grey) & length(grey) == 1){
+        grey_var <- x[[grey]]
+        if(is.null(grey_var)){
+            warning(paste0("string '", grey,
+                           "' passed to 'grey' is not",
+                           "recognised as a column"))
+            NULL
+        } else {
+            ns <- rle(grey_var)$lengths
+            rep(rep(color_vec, length.out = length(ns)), ns)
+        }
+    } else {
+        if(length(grey) == nrow(x)){
+            ns <- rle(grey)$lengths
+            rep(rep(color_vec, length.out = length(ns)), ns)
+        } else {
+            warning(paste0("argument passed to 'grey' not equal in ",
+                           "length to the rows of object"))
+            NULL
+        }
+    }
 }
 
 ##' format a dtable

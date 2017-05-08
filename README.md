@@ -7,7 +7,9 @@ The goal of descripteur is to make basic data description easy.
 ## Features
 
  + describe data with arbitrary set of describing functions
- + compare arbitrary (possibly overlapping) subsets in different ways with arbitrary set of comparing functions
+ + compare arbitrary (possibly overlapping) subsets in different ways with
+   arbitrary set of comparing functions
+ + keeping 'metadata' that can be utilized for pretty tables (LaTeX)
 
 ## Data description approch
 
@@ -63,5 +65,6 @@ If you do not want to accept the defaults you can create a guide via
 `dtable_guide` with non-default arguments, or manipulate the resulting
 object directly.
 
-### More details ...
-... see the vignette.
+### More details
+More details can be found in the vignette `describe-data` which functions as the
+major test for this package.
