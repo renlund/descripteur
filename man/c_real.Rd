@@ -46,7 +46,7 @@ but not implemented yet)
 \item \code{c_wilcox.p}: t.test p-value, 2 groups only (could be made with weights
 but not implemented yet)
 
-\item \code{c_anova.p}: anova test p-value, any number of groups
+\item \code{c_anova.p}: ANOVA test p-value, any number of groups
 }}
 
 \references{

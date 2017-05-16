@@ -4,9 +4,9 @@
 \alias{attr2text}
 \title{get attributes as text}
 \usage{
-attr2text(dt, perc = FALSE, perc.sign = "\%", attr = c("size", "cc",
-  "weight", "units", "info"), sep = ". ", vector = FALSE,
-  rm.if.all = FALSE)
+attr2text(dt, perc = FALSE, perc.sign = "\%", lessthan = "<",
+  attr = c("size", "cc", "weight", "units", "info"), sep = ". ",
+  vector = FALSE, rm.if.all = FALSE)
 }
 \arguments{
 \item{dt}{a dtable}
@@ -15,13 +15,15 @@ attr2text(dt, perc = FALSE, perc.sign = "\%", attr = c("size", "cc",
 
 \item{perc.sign}{percentage sign}
 
+\item{lessthan}{'strictly less than' sign}
+
 \item{attr}{which attributes to extract}
 
 \item{sep}{separator between attributes for output}
 
 \item{vector}{return vector instead of a single string}
 
-\item{rm.if.all}{something to do with something}
+\item{rm.if.all}{exclude info on units if all unique}
 }
 \description{
 extract attributes of dtable to a string (or character vector)

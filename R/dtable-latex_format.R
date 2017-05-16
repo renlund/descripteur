@@ -4,14 +4,19 @@
 ##' @param dt a dtable
 ##' @param bling shall we compose suitable table bling from the
 ##'     attributes? (default \code{TRUE})
-##' @param bling.param list of parameters sent to attr2text, if non-empty bling
+##' @param bling.param list of parameters sent to \code{attr2text}, if non-empty \code{bling}
 ##'     will be set to TRUE
 ##' @param file (default empty string) passed to \code{Hmisc::latex}
 ##' @param where (default "htb") passed to \code{Hmisc::latex}
 ##' @param rowname (default \code{NULL}) passed to \code{Hmisc::latex}
-##' @param grey should every other line be gray to improve readability? This
-##'     requires that '\\usepackage[table]\{xcolor\}' be added to the preamble
+##' @param grey should some lines be gray to improve readability? This
+##'     requires that '\\usepackage[table]\{xcolor\}' be added to the
+##'     preamble. If \code{TRUE} then every other line is grey, but this can
+##'     also be specifed as a variable name or a given vector, see the vignette
+##'     'describe-data' for details.
 ##' @param ... passed to \code{Hmisc::latex}
+##' @param no.below shortcut to remove the bling that is places below the table
+##'     (hence will only do something if \code{bling = TRUE})
 ##' @param guide a guide to provide labels, minimally a data frame with
 ##'     variables 'variable' and 'label'
 ##' @param format use \code{dtable_format}?
@@ -22,6 +27,7 @@ dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
                          file = "", where = "htb", rowname = NULL,
                          grey = NULL,
                          ...,
+                         no.below = FALSE,
                          guide = NULL,
                          format = FALSE,
                          format.param = as.list(NULL)){
@@ -47,10 +53,12 @@ dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
         if(all(d2 == "")){
             r <- NULL ## nullify the cgroup and n.cgroup args of Hmisc::latex
         }
-        text <- paste0("{\\small\\begin{center}\\emph{",
-                       do.call(attr2text, c(dt = list(dt),
-                                            bling_fixer(bling.param))),
-                       "}\\end{center}}")
+        text <- if(!no.below){
+                    paste0("{\\small\\begin{center}\\emph{",
+                           do.call(attr2text, c(dt = list(dt),
+                                                bling_fixer(bling.param))),
+                           "}\\end{center}}")
+                } else NULL
         Hmisc::latex(object = x, file = file, where = where,
                      rowname = rowname, cgroup = r$values,
                      rownamesTexCmd = rnTC,
@@ -65,13 +73,14 @@ dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
 bling_fixer <- function(x = as.list(NULL)){
     if(is.null(perc <- x$perc)) perc <- TRUE
     if(is.null(perc.sign <- x$perc.sign)) perc.sign <- "\\%"
+    if(is.null(lessthan <- x$lessthan)) lessthan <- "$<$"
     if(is.null(attr <- x$attr)) attr <- c("size", "cc", "weight",
                                           "units", "info")
     if(is.null(sep <- x$sep)) sep <- ". "
     if(is.null(rm.if.all <- x$rm.if.all)) rm.if.all <- FALSE
     vector <- FALSE
-    list(perc = perc, perc.sign = perc.sign, attr = attr,
-         sep = sep, vector = FALSE)
+    list(perc = perc, perc.sign = perc.sign, lessthan = lessthan,
+         attr = attr, sep = sep, vector = FALSE)
 }
 
 ## - # this sets up the format defaults for dtable_latex

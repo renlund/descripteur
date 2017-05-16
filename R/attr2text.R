@@ -4,16 +4,18 @@
 ##' @param dt a dtable
 ##' @param perc use percentages
 ##' @param perc.sign percentage sign
+##' @param lessthan 'strictly less than' sign
 ##' @param attr which attributes to extract
 ##' @param sep separator between attributes for output
 ##' @param vector return vector instead of a single string
-##' @param rm.if.all something to do with something
+##' @param rm.if.all exclude info on units if all unique
 ##' @export
-attr2text <- function(dt, perc = FALSE, perc.sign = "%",
+attr2text <- function(dt, perc = FALSE, perc.sign = "%", lessthan = "<",
                       attr = c("size", "cc", "weight", "units", "info"),
                       sep = ". ", vector = FALSE, rm.if.all = FALSE){
     if(nrow(dt) == 0) return("")
-    da <- dtable_attr(dt, perc = perc, perc.sign = perc.sign)
+    da <- dtable_attr(dt, perc = perc, perc.sign = perc.sign,
+                      lessthan = lessthan)
     gr <- setdiff(names(da), c("measure", "total"))
     n <- length(gr)
     foo <- function(m, g, text){

@@ -3,9 +3,10 @@
 ##' extract tidy version of attributes from a dtable
 ##' @param dt a dtable object
 ##' @param perc use percentages instead of counts
-##' @param perc.sign what kind of percentage sign, if any
+##' @param perc.sign what kind of percentage sign
+##' @param lessthan what kind of 'strictly less than' sign
 ##' @export
-dtable_attr <- function(dt, perc = FALSE, perc.sign = "%"){
+dtable_attr <- function(dt, perc = FALSE, perc.sign = "%", lessthan = "<"){
     a <- attributes(dt)
     n <- a$size
     ccn <- a$cc
@@ -19,7 +20,8 @@ dtable_attr <- function(dt, perc = FALSE, perc.sign = "%"){
             if(!is.null(u))   "units"  else NULL
         ),
         total = c(n,
-                  if(perc) paste0(roundisch(100*ccn/n), perc.sign) else ccn,
+                  if(perc) paste0(roundisch(100*ccn/n, lessthan = lessthan),
+                                  perc.sign) else ccn,
                   w, u),
         stringsAsFactors = FALSE
     )
@@ -27,7 +29,8 @@ dtable_attr <- function(dt, perc = FALSE, perc.sign = "%"){
         r <- if(is.null(a)){
             NULL
         } else {
-            if(p) paste0(roundisch(100*a/b), perc.sign) else a
+            if(p) paste0(roundisch(100*a/b, lessthan = lessthan),
+                         perc.sign) else a
         }
         stats::setNames(r, names(a))
     }
@@ -49,7 +52,7 @@ dtable_attr <- function(dt, perc = FALSE, perc.sign = "%"){
 ## round numbers, for numbers >1 round to 1 decimal, else
 ## use 1 significant digit when >t, else "<t"
 round_helper <- function(x, t = 0.1, scientific = FALSE,
-                         digit1 = 1, digit2 = 1){
+                         digit1 = 1, digit2 = 1, lessthan = "<"){
     if(is.null(x)) return(NULL)
     if(length(x)==0) return(NULL)
     if(length(x) != 1) stop("want length 1 vector")
@@ -60,7 +63,7 @@ round_helper <- function(x, t = 0.1, scientific = FALSE,
     if(scientific){
         format(x, digits = digit2, scientific = TRUE)
     } else {
-        paste0("<", gsub("^0", "", t))
+        paste0(lessthan, gsub("^0", "", t))
     }
 }
 

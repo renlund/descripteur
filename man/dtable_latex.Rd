@@ -6,8 +6,8 @@
 \title{latexify a dtable}
 \usage{
 dtable_latex(dt, bling = TRUE, bling.param = as.list(NULL), file = "",
-  where = "htb", rowname = NULL, grey = NULL, ..., guide = NULL,
-  format = FALSE, format.param = as.list(NULL))
+  where = "htb", rowname = NULL, grey = NULL, ..., no.below = FALSE,
+  guide = NULL, format = FALSE, format.param = as.list(NULL))
 
 dtable_list_latex(dtl, ..., label, caption, use.sprintf = TRUE)
 }
@@ -17,7 +17,7 @@ dtable_list_latex(dtl, ..., label, caption, use.sprintf = TRUE)
 \item{bling}{shall we compose suitable table bling from the
 attributes? (default \code{TRUE})}
 
-\item{bling.param}{list of parameters sent to attr2text, if non-empty bling
+\item{bling.param}{list of parameters sent to \code{attr2text}, if non-empty \code{bling}
 will be set to TRUE}
 
 \item{file}{(default empty string) passed to \code{Hmisc::latex}}
@@ -26,10 +26,16 @@ will be set to TRUE}
 
 \item{rowname}{(default \code{NULL}) passed to \code{Hmisc::latex}}
 
-\item{grey}{should every other line be gray to improve readability? This
-requires that '\\usepackage[table]\{xcolor\}' be added to the preamble}
+\item{grey}{should some lines be gray to improve readability? This
+requires that '\\usepackage[table]\{xcolor\}' be added to the
+preamble. If \code{TRUE} then every other line is grey, but this can
+also be specifed as a variable name or a given vector, see the vignette
+'describe-data' for details.}
 
 \item{...}{passed to \code{Hmisc::latex}}
+
+\item{no.below}{shortcut to remove the bling that is places below the table
+(hence will only do something if \code{bling = TRUE})}
 
 \item{guide}{a guide to provide labels, minimally a data frame with
 variables 'variable' and 'label'}

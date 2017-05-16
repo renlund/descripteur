@@ -54,7 +54,7 @@ c_wilcox.p <- function(x, glist, ...){
 }
 attr(c_wilcox.p, "dtable") <- "comp"
 
-##' @describeIn c_real anova test p-value, any number of groups
+##' @describeIn c_real ANOVA test p-value, any number of groups
 ##' @export
 c_anova.p <- function(x, glist, ...){
     fg <- factorize_glist(glist)

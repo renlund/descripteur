@@ -4,14 +4,16 @@
 \alias{dtable_attr}
 \title{extract attributes}
 \usage{
-dtable_attr(dt, perc = FALSE, perc.sign = "\%")
+dtable_attr(dt, perc = FALSE, perc.sign = "\%", lessthan = "<")
 }
 \arguments{
 \item{dt}{a dtable object}
 
 \item{perc}{use percentages instead of counts}
 
-\item{perc.sign}{what kind of percentage sign, if any}
+\item{perc.sign}{what kind of percentage sign}
+
+\item{lessthan}{what kind of 'strictly less than' sign}
 }
 \description{
 extract tidy version of attributes from a dtable
