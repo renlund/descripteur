@@ -46,7 +46,8 @@ dtable_guide <- function(data, elim.set = NULL,
     }
     const <- names(data)[unlist(lapply(data, n_is_1))]
     val <- setdiff(names(org_data), c(elim.set, row.id, unit.id, const))
-    data <- subset(org_data, subset = TRUE, select = val)
+    ## data <- subset(org_data, subset = TRUE, select = val)
+    data <- org_data[, val]
     class2 <- function(x) class(x)[1]
     classy <- lapply(data, class2)
     any_na <- function(x) any(is.na(x))
@@ -61,6 +62,7 @@ dtable_guide <- function(data, elim.set = NULL,
     data[bnry] <- lapply(data[bnry], factor)
     date <- classy %in% c("POSIXct", "POSIXlt", "Date")
     surv <- classy %in% c("Surv")
+    unknown <- !real & !catg & !bnry & !date & !surv
     if(as.is){
         r  <- names(data)[real]
         c1 <- NULL
@@ -69,6 +71,8 @@ dtable_guide <- function(data, elim.set = NULL,
         b2 <- NULL
         b3 <- NULL
         b4 <- names(data)[bnry]
+        ign <- NULL
+        u <- names(data)[unknown]
     } else {
         real_n <- lapply(subset(data,TRUE,names(data)[real]), n_unique)
         ## catg_n <- lapply(subset(data,TRUE,names(data)[catg]), n_unique)
@@ -82,6 +86,8 @@ dtable_guide <- function(data, elim.set = NULL,
         b2 <- names(data)[catg][catg_n == 2]
         b3 <- names(data)[date][date_n == 2]
         b4 <- names(data)[bnry]
+        ign <- names(data)[catg][catg_n > catg.tol]
+        u <- names(data)[unknown]
     }
     s <- names(data)[surv]
     d  <- names(data)[date]
@@ -121,12 +127,13 @@ dtable_guide <- function(data, elim.set = NULL,
                      )
                  } else NULL
     tmp_var <- data.frame(
-        variable = c(r, c1, c2, b1, b2, b3, b4, d, s),
-        type = rep(c("real", "catg", "bnry", "date", "surv"),
+        variable = c(r, c1, c2, b1, b2, b3, b4, d, s, ign, u),
+        type = rep(c("real", "catg", "bnry", "date", "surv", "ignored", "unknown"),
                    c(length(r), length(c(c1, c2)), length(c(b1,b2,b3,b4)),
-                     length(d), length(s))),
-        original_class = unlist(classy[c(r, c1, c2, b1, b2, b3, b4, d, s)]),
-        has_missing = unlist(lapply(data[,c(r, c1, c2, b1, b2, b3, b4, d, s),
+                     length(d), length(s), length(ign), length(u))),
+        original_class = unlist(classy[c(r, c1, c2, b1, b2, b3, b4, d, s, ign, u)]),
+        has_missing = unlist(lapply(data[,c(r, c1, c2, b1, b2, b3, b4, d, s,
+                                            ign, u),
                                          drop = FALSE], any_na)),
         check.names = FALSE,
         row.names = NULL,

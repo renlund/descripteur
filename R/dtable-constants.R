@@ -14,12 +14,12 @@ dtable_constants <- function(data, guide = NULL){
         if(length(val) > 1){
             stop("Some variable deemed constant is, in fact, not constant")
         } else {
-            if(length(val) == 0) "missing" else val
+            if(length(val) == 0) "NA (missing)" else val
         }
     }
     data.frame(
         variable = cguide$label,
-        value = unlist(lapply(cdata, foo))
+        value = unlist(lapply(cdata, foo)),
+        stringsAsFactors = FALSE
     )
 }
-
