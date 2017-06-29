@@ -38,8 +38,8 @@ if(FALSE){
 
 \section{About}
 
-This vignettes will briefly discuss weighting in relation to the
-package \texttt{descripteur}.
+This vignette will briefly discuss weighting in relation to the
+package \texttt{descripteur}. It is a bit messy still.
 
 \section{Different ways of weighting}
 
@@ -62,7 +62,8 @@ w <- c(.5, 1, 2) ## weights
 @
 
 In \texttt{descripteur} we can get sums and number of observation with
-\texttt{d\_sum2} and \texttt{d\_n2}, respectively.
+\texttt{d\_sum} and \texttt{d\_n}, respectively, with option \texttt{weight =
+  'case'}.
 
 <<"case-weights">>=
 d_n(x = x, w = w, weight = "case") ## sum(w)
@@ -83,7 +84,8 @@ Each sampling has an expected value of
 where $s = w_a + w_b + w_c$, and we thus expect the sample to have sum $3*E$.
 
 In \texttt{descripteur} we can get sums and number of observation with
-\texttt{d\_sum} and \texttt{d\_n}, respectively.
+\texttt{d\_sum} and \texttt{d\_n}, respectively, with option \texttt{weight =
+  'sample'} (default value).
 
 <<"sampling-weights">>=
 d_n(x = x) ## number of observations is given by the sample, not weights
@@ -105,11 +107,6 @@ d_sum(x = x, w = w_norm, weight = "sample") ==
 
 \section{Influence on statistics}
 
-Generally the included describer and comparer functions are for sampling
-weights. For some statistics, the weighting scheme yields the same result and if
-not there might be a version for the case weight that has the same name but with
-a suffix.
-
 \subsection{Real variables}
 
 \subsubsection{Mean}
@@ -118,7 +115,7 @@ different sampling schemes.
 
 \subsubsection{Standard deviation}
 The \texttt{d\_sd} is implemented as sampling-weight and is \emph{not} equal to
-the case weight version. (There is not currently a version for the latter.)
+the case weight version. (There is not currently an option version for the latter.)
 
 <<"sd-test">>=
 sd_test <- function(n){
