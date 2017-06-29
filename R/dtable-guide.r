@@ -48,8 +48,8 @@ dtable_guide <- function(data, elim.set = NULL,
     val <- setdiff(names(org_data), c(elim.set, row.id, unit.id, const))
     ## data <- subset(org_data, subset = TRUE, select = val)
     data <- org_data[, val]
-    class2 <- function(x) class(x)[1]
-    classy <- lapply(data, class2)
+    ## class2 <- function(x) class(x)[1]
+    classy <- lapply(data, get_class)
     any_na <- function(x) any(is.na(x))
     real <- classy %in% c("numeric", "integer")
     char <- classy %in% c("character")
@@ -181,6 +181,26 @@ dtable_guide <- function(data, elim.set = NULL,
     attr(ret, "data_source") <- data_source
     class(ret) <- c("dtable_guide", "data.frame")
     ret
+}
+
+##' get class
+##'
+##' get/infer the class of a vector, giving priority to numeric, integer,
+##'     character, factor, logical, Surv, Date, POSIXct and POSIXt
+##' @param x a vector
+##' @export
+get_class <- function(x){
+    x <- class(x)
+    if(any(x == "numeric")) return("numeric")
+    if(any(x == "integer")) return("integer")
+    if(any(x == "character")) return("character")
+    if(any(x == "factor")) return("factor")
+    if(any(x == "logical")) return("logical")
+    if(any(x == "Surv")) return("Surv")
+    if(any(x == "Date")) return("Date")
+    if(any(x == "POSIXct")) return("POSIXct")
+    if(any(x == "POSIXt")) return("POSIXt")
+    x[1]
 }
 
 ##' print dtable_guide objects

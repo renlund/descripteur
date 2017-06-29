@@ -6,18 +6,39 @@
 ##'
 ##' @param x vector
 ##' @param w weight
+##' @param weight style of weighting, 'sample' (default) or 'case'
 ##' @param ... this is to be able to tolerate unnecessary arguments
 d_real <- function(...) invisible(NULL)
 
+check_weight_style <- function(weight){
+    if(!weight %in% c("sample", "case")){
+        warning("'weight' should be 'sample' (which will be used) or 'case'")
+    }
+    invisible(NULL)
+}
+
 ##' @describeIn d_real number of non-missing elements
 ##' @export
-d_n <- function(x, w = NULL, ...){
-    if(is.null(w)) w <- rep(1, length(x))
-    sum(w[!is.na(x)])
+d_n <- function(x, w = NULL, weight = "sample", ...){
+    check_weight_style(weight)
+    if(is.null(w) | weight == "sample"){
+        length(stats::na.omit(x))
+    } else {
+        if(is.null(w)) w <- rep(1, length(x))
+        sum(w[!is.na(x)])
+    }
 }
 attr(d_n, "dtable") <- "desc"
 
-##' @describeIn d_real number of  elements
+## ##' @describeIn d_real number of non-missing elements, case-weighted
+## ##' @export
+## d_n2 <- function(x, w = NULL, ...){
+##     if(is.null(w)) w <- rep(1, length(x))
+##     sum(w[!is.na(x)])
+## }
+## attr(d_n2, "dtable") <- "desc" ## note 'd_n2' is old 'd_n'
+
+##' @describeIn d_real length of vector
 ##' @export
 d_length <- function(x, ...) length(x)
 attr(d_length, "dtable") <- "desc"
@@ -38,18 +59,28 @@ d_missing.perc <- function(x, w = NULL, ...){
 }
 attr(d_missing.perc, "dtable") <- "desc"
 
-##' @describeIn d_real sum of all elements
+##' @describeIn d_real sum of all elements, sample-weighted
 ##' @export
-d_sum <- function(x, w = NULL, ...){
-    s <- if(is.null(w)){
-             mean(x, na.rm = TRUE)
-         } else {
-             if(is.null(w)) w <- rep(1, length(x))
-             stats::weighted.mean(x, w = w, na.rm = TRUE)
-         }
-    d_n(x) * s
+d_sum <- function(x, w = NULL, weight = "sample", ...){
+    check_weight_style(weight)
+    if(is.null(w)){
+        d_n(x) * mean(x, na.rm = TRUE)
+    } else if(weight == "sample"){
+        ## if(is.null(w)) w <- rep(1, length(x)) ## superfluous
+        d_n(x) * stats::weighted.mean(x, w = w, na.rm = TRUE)
+    } else if(weight == "case"){
+        sum(w*x, na.rm = TRUE)
+    }
 }
 attr(d_sum, "dtable") <- "desc"
+
+## ##' @describeIn d_real sum of all elements, case-weighted
+## ##' @export
+## d_sum2 <- function(x, w = NULL, ...){
+##     if(is.null(w)) w <- rep(1, length(x))
+##     sum(w*x, na.rm = TRUE)
+## }
+## attr(d_sum2, "dtable") <- "desc"
 
 ##' @describeIn d_real mean
 ##' @export
@@ -135,6 +166,7 @@ attr(d_Q3, "dtable") <- "desc"
 ##'
 ##' @param x vector
 ##' @param w weight
+##' @param weight style of weighting, 'sample' (default) or 'case'
 ##' @param ... this is to be able to tolerate unnecessary arguments
 d_bnry <- function(...) invisible(NULL)
 
@@ -177,13 +209,26 @@ attr(d_ref_level, "dtable") <- "meta"
 
 ##' @describeIn d_bnry number of occurrences of the reference value
 ##' @export
-d_bn <- function(x, w = NULL, ...){
+d_bn <- function(x, w = NULL, weight = "sample", ...){
+    check_weight_style(weight)
     y <- make_bnry(x)
     if(is.null(w)) w <- rep(1, length(x))
     z <- ifelse(y==d_ref_level(y), 1L, 0L)
-    sum(w[z==1], na.rm = TRUE)
+    ## sum(w[z==1], na.rm = TRUE)
+    d_sum(x = z, w = w, weight = weight)
 }
 attr(d_bn, "dtable") <- "desc"
+
+## ##' @describeIn d_bnry number of occurrences of the reference value
+## ##' @export
+## d_bn2 <- function(x, w = NULL, ...){
+##     y <- make_bnry(x)
+##     if(is.null(w)) w <- rep(1, length(x))
+##     z <- ifelse(y==d_ref_level(y), 1L, 0L)
+##     sum(w[z==1], na.rm = TRUE)
+## }
+## attr(d_bn2, "dtable") <- "desc"
+
 
 ##' @describeIn d_bnry proportion of occurrences of the reference value
 ##' @export
@@ -194,6 +239,7 @@ d_bp <- function(x, w = NULL, ...){
     stats::weighted.mean(x = z, w = w, na.rm = TRUE)
 }
 attr(d_bp, "dtable") <- "desc"
+
 
 ##' @describeIn d_bnry the odds of the reference level
 ##' @export
@@ -333,6 +379,7 @@ attr(d_cp, "dtable") <- "desc"
 ##'
 ##' @param x vector
 ##' @param w weight
+##' @param weight style of weighting, 'sample' (default) or 'case'
 ##' @param cens.type what kind of censoring?
 ##' @param ... this is to be able to tolerate unnecessary arguments
 d_surv <- function(...) invisible(NULL)
@@ -361,13 +408,13 @@ consurv <- function(x, cens.type = "right"){
 
 ##' @describeIn d_surv sum of follow up time
 ##' @export
-d_tsum <- function(x, w = NULL, cens.type = "right", ...){
+d_tsum <- function(x, w = NULL, weight = "sample", cens.type = "right", ...){
     survcheck(x)
     if(is.null(w)) w <- rep(1L, length(x)/2)
     if(cens.type == "right"){
         check_right(x)
         d <- consurv(x, cens.type)
-        d_sum(d$time, w)
+        d_sum(d$time, w, weight = weight)
     } else {
         stop("no cens.type but 'right' has been implemented")
     }
@@ -376,13 +423,13 @@ attr(d_tsum, "dtable") <- "desc"
 
 ##' @describeIn d_surv sum of events
 ##' @export
-d_esum <- function(x, w = NULL, cens.type = "right", ...){
+d_esum <- function(x, w = NULL, weight = "sample", cens.type = "right", ...){
     survcheck(x)
     if(is.null(w)) w <- rep(1L, length(x)/2)
     if(cens.type == "right"){
         check_right(x)
         d <- consurv(x, cens.type)
-        d_sum(d$event, w)
+        d_sum(d$event, w, weight = weight)
     } else {
         stop("no cens.type but 'right' has been implemented")
     }

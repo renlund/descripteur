@@ -12,7 +12,7 @@ d_bnry(...)
 
 d_ref_level(x, ...)
 
-d_bn(x, w = NULL, ...)
+d_bn(x, w = NULL, weight = "sample", ...)
 
 d_bp(x, w = NULL, ...)
 
@@ -24,6 +24,8 @@ d_odds(x, w = NULL, ...)
 \item{x}{vector}
 
 \item{w}{weight}
+
+\item{weight}{style of weighting, 'sample' (default) or 'case'}
 }
 \description{
 various describer functions for bnry types

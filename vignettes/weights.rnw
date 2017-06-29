@@ -1,0 +1,209 @@
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{std}
+%\VignetteEncoding{UTF-8}
+\documentclass{article}
+\addtolength{\hoffset}{-1cm}
+\addtolength{\textwidth}{2cm}
+% \addtolength{\voffset}{-1.5cm}
+% \addtolength{\textheight}{3cm}
+\usepackage{amsmath}
+
+\newcommand{\sd}{\mbox{sd}}
+\newcommand{\std}{\mbox{std}}
+\newcommand{\Std}[1]{\mbox{std}^{\mbox{\footnotesize\texttt{#1}}}}
+
+\title{Weighting}
+\author{Henrik Renlund}
+
+<<"setup", cache = FALSE, echo = FALSE, include = FALSE>>=
+library(knitr)
+## library(descripteur)
+devtools::load_all()
+opts_chunk$set(include = TRUE,
+               echo = TRUE,
+               cache = FALSE,
+               fig.height = 4,
+               fig.loc  = "htb")
+if(FALSE){
+    knitr::knit2pdf("weights.rnw", clean = TRUE)
+    shell.exec("weights.pdf")
+}
+@
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{About}
+
+This vignettes will briefly discuss weighting in relation to the
+package \texttt{descripteur}.
+
+\section{Different ways of weighting}
+
+\subsection{What weights are ok?}
+Weights should probably be non-missing, strictly positive numbers, otherwise it
+is unclear that anything weighted makes sense. The function \texttt{dtable},
+which is at the center of many 'higher-level' functions in the
+\texttt{descripeur} package checks if this is the case.
+
+\subsection{Case weights}
+Case weights are conceptually simple, they represent a multiplication of the
+given data. Given a sample with data points $a, b$ and $c$ with weights $w_a, w_b$
+and $w_c$, respectively, we should think of the sample as containing $w_a$
+$a$'s, $w_b$ $b$'s and $w_c$ $c$'s, i.e.\ we have a sample of size $w_a + w_b + w_c$.
+
+We will use the following sample and weights to illustrate:
+<<"the-data">>=
+x <- 1:3 ## sample
+w <- c(.5, 1, 2) ## weights
+@
+
+In \texttt{descripteur} we can get sums and number of observation with
+\texttt{d\_sum2} and \texttt{d\_n2}, respectively.
+
+<<"case-weights">>=
+d_n(x = x, w = w, weight = "case") ## sum(w)
+d_sum(x = x, w = w, weight = "case") ## w * x
+d_sum(x, w, weight = "case") / d_n(x, w, weight = "case")
+d_mean(x = x, w = w)
+@
+
+\subsection{Sample weights}\label{sec:sw}
+Sampling weights are slightly more abstract, they represent an importance we
+give to each observation, and as such are only relevant in relation to all other
+weights (and hence invariant under a rescaling of the weights).
+
+Given 3 data points (as before), the sample weighted sum is the sum we would
+expect when sampling with the sampling probabilities infered from the sample weights.
+Each sampling has an expected value of
+\[ E = a*\frac{w_a}{s} + b*\frac{w_b}{s} + c*\frac{w_c}{s}, \]
+where $s = w_a + w_b + w_c$, and we thus expect the sample to have sum $3*E$.
+
+In \texttt{descripteur} we can get sums and number of observation with
+\texttt{d\_sum} and \texttt{d\_n}, respectively.
+
+<<"sampling-weights">>=
+d_n(x = x) ## number of observations is given by the sample, not weights
+d_sum(x = x, w = w, weight = "sample") ## d_n(x) * expected value with sampling probabilities
+d_sum(x = x, w = 7.23*w, weight = "sample") ## rescaling does not matter
+d_sum(x, w, weight = "sample") / d_n(x)
+@
+\noindent Note that the sample weighted mean value is the same as the case weighted mean value.
+
+Sampling and case weighting is essentially the same if the total weight equals
+the sample size.
+
+<<"equality">>=
+w_norm <- length(x) * w / sum(w)
+sum(w_norm) == length(x)
+d_sum(x = x, w = w_norm, weight = "sample") ==
+    d_sum(x = x, w = w_norm, weight = "case")
+@
+
+\section{Influence on statistics}
+
+Generally the included describer and comparer functions are for sampling
+weights. For some statistics, the weighting scheme yields the same result and if
+not there might be a version for the case weight that has the same name but with
+a suffix.
+
+\subsection{Real variables}
+
+\subsubsection{Mean}
+We saw in Section \label{sec:sw} that the mean value is the same under the two
+different sampling schemes.
+
+\subsubsection{Standard deviation}
+The \texttt{d\_sd} is implemented as sampling-weight and is \emph{not} equal to
+the case weight version. (There is not currently a version for the latter.)
+
+<<"sd-test">>=
+sd_test <- function(n){
+    x <- runif(n, 0, 10)
+    w <- rpois(n, 3) + 1
+    x_expanded <- rep(x, w)
+    d_sd(x, w = w) == stats::sd(x_expanded)
+}
+sd_test(100)
+@
+
+\subsubsection{Median}
+The sample weighted median should be the point where the corresponding
+distribution function\footnote{The cumulative sum of the infered probabilities
+  when ordered as the sample.} reaches 0.5 (or the midpoint of points where is crosses
+0.5), this will be the same as the case weighted sample median (at least for
+integer weights):
+
+<<"median-test">>=
+median_test <- function(n){
+    x <- runif(n, min = 0, max = 10)
+    w <- rpois(n, lambda = 3) + 1
+    x_expanded <- rep(x, w)
+    d_median(x, w = w) == stats::median(x_expanded)
+}
+median_test(100)
+median_test(101)
+@
+
+\subsection{Binary variables}
+
+\subsubsection{Counting occurences}
+\texttt{d\_bn} counts the number of occurences of the reference value. This sum
+will depend on wether case or sample weights are considered.
+
+
+<<"count-test">>=
+x <- c(1, 1, 0, 0)
+w <- c(2, 4, 1, 1)
+x_expanded <- rep(x, w)
+sum(x) == d_bn(x)
+d_bn(x, w = w, weight = "sample") ## 4 * (2 + 4 + 0 + 0) / (2 + 4 + 1 + 1)
+d_bn(x, w = w, weight = "case") ## 2 + 4
+sum(x_expanded) == d_bn(x, w = w, weight = "case")
+@
+
+\subsubsection{Proportions}
+\texttt{d\_bp} counts the proportion of occurences of the reference value. This ratio
+is the mean value of the variable when the reference value is considered to be 1
+(and the other value 0), hence weighting scheme does not matter. It follows that
+all derivatives of proportions (such as risk ratios, odds, odds ratios) are also
+independent of the weighting schemes.
+
+\subsection{Censored variables}
+
+The sum of events and times for 'Surv' objects will depend on the weighting
+scheme, wheras rates will not.
+
+<<"surv-test">>=
+
+a <- c(10, 5, 10)
+b <- c(1,0, 1)
+test <- data.frame(
+    s = survival::Surv(time = a, event= b),
+    g = letters[c(1,1,2)],
+    w = c(0.5,0.5, 1)
+)
+d_tsum(test$s)
+d_tsum(test$s, w = test$w, weight = "sample")
+## d_sum(a, w = test$w, weight = "sample")
+d_tsum(test$s, w = test$w, weight = "case")
+## d_sum(a, w = test$w, weight = "case")
+
+d_esum(test$s)
+d_esum(test$s, w = test$w, weight = "sample")
+## d_sum(b, w = test$w, weight = "sample")
+d_esum(test$s, w = test$w, weight = "case")
+## d_sum(b, w = test$w, weight = "case")
+
+d_rate(test$s, w = test$w)
+d_esum(test$s, w = test$w, weight = "sample") /
+    d_tsum(test$s, w = test$w, weight = "sample")
+d_esum(test$s, w = test$w, weight = "case") /
+    d_tsum(test$s, w = test$w, weight = "case")
+
+@
+
+\end{document}

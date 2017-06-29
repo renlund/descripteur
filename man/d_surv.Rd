@@ -9,9 +9,9 @@
 \usage{
 d_surv(...)
 
-d_tsum(x, w = NULL, cens.type = "right", ...)
+d_tsum(x, w = NULL, weight = "sample", cens.type = "right", ...)
 
-d_esum(x, w = NULL, cens.type = "right", ...)
+d_esum(x, w = NULL, weight = "sample", cens.type = "right", ...)
 
 d_rate(x, w = NULL, cens.type = "right", ...)
 }
@@ -21,6 +21,8 @@ d_rate(x, w = NULL, cens.type = "right", ...)
 \item{x}{vector}
 
 \item{w}{weight}
+
+\item{weight}{style of weighting, 'sample' (default) or 'case'}
 
 \item{cens.type}{what kind of censoring?}
 }

@@ -2,7 +2,8 @@ x <- c(1, NA, 2)
 w <- c(1, 2, 4)
 test_that("d_n", {
     expect_equal(d_n(x), 2)
-    expect_equal(d_n(x, w), 5)
+    expect_equal(d_n(x, w, weight = 'sample'), 2)
+    expect_equal(d_n(x, w, weight = 'case'), 5)
 })
 
 test_that("d_length", {
@@ -24,9 +25,15 @@ test_that("d_mean works", {
     expect_equal(d_mean(x, w), 9/5)
 })
 
-test_that("d_sd works", {
+test_that("d_sd works (1)", {
     expect_equal(d_sd(x), sqrt(.5))
     expect_equal(d_sd(x = x, w = w), sqrt(1.6 / 5))
+})
+
+test_that("d_sum works", {
+    expect_equal(d_sum(x), 3)
+    expect_equal(d_sum(x = x, w = w), (1+2*4)*2/5)
+    expect_equal(d_sum(x = c(1,1), w = c(2,2)), 2)
 })
 
 x <- c(1, NA, 7, 3, 5, 4)
@@ -41,9 +48,11 @@ test_that("d_median works", {
     expect_equal(d_median(y, v), 2.5)
 })
 
-test_that("d_sum works", {
+test_that("d_sum works (2)", {
     expect_equal(d_sum(x), 20)
     expect_equal(d_sum(x = x, w = w), 22*5/7)
+    ## d_sum(x[1:3], w = w[1:3])
+    ## d_sum(x[4:6], w = w[4:6])
 })
 ######################################################
 
@@ -51,7 +60,7 @@ x <- factor(c(1,1,0,NA,0,0), levels = 0:1)
 w <-        c(2,2,1,7, 1,1)
 test_that("d_bn works", {
     expect_equal(d_bn(x), 2)
-    expect_equal(d_bn(x, w), 4)
+    expect_equal(d_bn(x, w, weight = 'case'), 4)
 })
 
 test_that("d_bp works", {

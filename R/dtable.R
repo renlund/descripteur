@@ -85,6 +85,9 @@ dtable <- function(data, type = NULL, guide = NULL,
         if(any(w<0)){
             warning("weight has negative elements")
         }
+        if(any(w == 0)){
+            warning("weight has elements equal to zero")
+        }
     }
     gvar <- guide[guide$type == type,]
     if((!P$desc & !P$comp) | nrow(gvar) == 0) {

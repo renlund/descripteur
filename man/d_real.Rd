@@ -19,7 +19,7 @@
 \usage{
 d_real(...)
 
-d_n(x, w = NULL, ...)
+d_n(x, w = NULL, weight = "sample", ...)
 
 d_length(x, ...)
 
@@ -27,7 +27,7 @@ d_missing(x, w = NULL, ...)
 
 d_missing.perc(x, w = NULL, ...)
 
-d_sum(x, w = NULL, ...)
+d_sum(x, w = NULL, weight = "sample", ...)
 
 d_mean(x, w = NULL, ...)
 
@@ -51,6 +51,8 @@ d_Q3(x, ...)
 \item{x}{vector}
 
 \item{w}{weight}
+
+\item{weight}{style of weighting, 'sample' (default) or 'case'}
 }
 \description{
 various describer functions for real types
@@ -59,13 +61,13 @@ various describer functions for real types
 \itemize{
 \item \code{d_n}: number of non-missing elements
 
-\item \code{d_length}: number of  elements
+\item \code{d_length}: length of vector
 
 \item \code{d_missing}: Count missing
 
 \item \code{d_missing.perc}: Percent missing
 
-\item \code{d_sum}: sum of all elements
+\item \code{d_sum}: sum of all elements, sample-weighted
 
 \item \code{d_mean}: mean
 
