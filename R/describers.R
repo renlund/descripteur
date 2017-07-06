@@ -108,25 +108,81 @@ d_sd <- function(x, w = NULL, ...){
 }
 attr(d_sd, "dtable") <- "desc"
 
+
+##' weighted quantile
+##'
+##' Compute weighted quantiles
+##' @param x numeric vector whose sample quantiles are wanted
+##' @param probs numeric vector of probabilities with values in [0,1]
+##' @param w a numerical vector of weights the same length as 'x' giving
+##'          the weights to use for elements of 'x'
+##' @export
+weighted.quantile <- function(x, probs = seq(0, 1, 0.25), w = NULL){
+    if(length(probs) == 0) stop("need some probs")
+    if(min(probs) < 0 | max(probs) > 1 | any(is.na(probs))){
+        stop("need non-missing probs in [0,1]")
+    }
+    if(is.null(w)){
+        stats::quantile(x, probs = probs, names = FALSE, na.rm = TRUE, type = 7)
+    } else {
+        w1 <- w[!is.na(x)]
+        x1 <- x[!is.na(x)]
+        if(length(x1) == 0) stop("x is a missing-fest")
+        w2 <- w1[order(x1)]
+        x2 <- x1[order(x1)]
+        s  <- sum(w2)
+        cs <- cumsum(w2)
+        R <- rep(NA_real_, )
+        for(j in seq_along(probs)){
+            p <- probs[j]
+            is <- which(cs < p*s)
+            R[j] <- if(length(is) == 0){
+                        x2[1]
+                    } else {
+                        i <- is[length(is)]
+                        if(cs[i+1] == p*s){
+                            ## (x2[i+1] + x2[i+2]) / 2
+                            stats::weighted.mean(c(x2[i+1], x2[i+2]),
+                                                 w = c(cs[i+1], s-cs[i+1]))
+                        } else {
+                            x2[i+1]
+                        }
+                    }
+        }
+        R
+    }
+}
+
+if(FALSE){ ## TEST OF weighted.quantile
+    n <- 100
+    x <- runif(n, 0, 100)
+    w0 <- rep(1, n)
+    w <- stats::rpois(n, lambda = 2) + 1
+    weighted.quantile(x)
+    weighted.quantile(x, w = w0)
+    weighted.quantile(x, w = w)
+}
+
 ##' @describeIn d_real median
 ##' @export
 d_median <- function(x, w = NULL, ...){
     if(is.null(w)){
         stats::median(x, na.rm = TRUE)
     } else {
-        w1 <- w[!is.na(x)]
-        x1 <- x[!is.na(x)]
-        w2 <- w1[order(x1)]
-        x2 <- x1[order(x1)]
-        s  <- sum(w2)
-        cs <- cumsum(w2)
-        is <- which(cs < s/2)
-        i <- is[length(is)]
-        if(cs[i+1] == s/2){
-            (x2[i+1] + x2[i+2]) / 2
-        } else {
-            x2[i+1]
-        }
+        ## w1 <- w[!is.na(x)]
+        ## x1 <- x[!is.na(x)]
+        ## w2 <- w1[order(x1)]
+        ## x2 <- x1[order(x1)]
+        ## s  <- sum(w2)
+        ## cs <- cumsum(w2)
+        ## is <- which(cs < s/2)
+        ## i <- is[length(is)]
+        ## if(cs[i+1] == s/2){
+        ##     (x2[i+1] + x2[i+2]) / 2
+        ## } else {
+        ##     x2[i+1]
+        ## }
+        weighted.quantile(x = x, probs = .5, w = w)
     }
 }
 attr(d_median, "dtable") <- "desc"
@@ -143,25 +199,29 @@ attr(d_max, "dtable") <- "desc"
 
 ##' @describeIn d_real inter quartile range
 ##' @export
-d_IQR <- function(x, ...){
-    warn_if_weight_not_used(...)
-    stats::IQR(x, na.rm = TRUE)
+d_IQR <- function(x, w = NULL, ...){
+    ## warn_if_weight_not_used(...)
+    ## stats::IQR(x, na.rm = TRUE)
+    weighted.quantile(x, probs = .75, w = w) -
+        weighted.quantile(x, probs = .25, w = w)
 }
 attr(d_IQR, "dtable") <- "desc"
 
 ##' @describeIn d_real first quartile
 ##' @export
-d_Q1 <- function(x, ...) {
-    warn_if_weight_not_used(...)
-    stats::quantile(x, na.rm = TRUE, probs = 0.25, names = FALSE)
+d_Q1 <- function(x, w = NULL, ...) {
+    ## warn_if_weight_not_used(...)
+    ## stats::quantile(x, na.rm = TRUE, probs = 0.25, names = FALSE)
+    weighted.quantile(x = x, probs = .25, w = w)
 }
 attr(d_Q1, "dtable") <- "desc"
 
 ##' @describeIn d_real third quartile
 ##' @export
-d_Q3 <- function(x, ...) {
-    warn_if_weight_not_used(...)
-    stats::quantile(x, na.rm = TRUE, probs = 0.75, names = FALSE)
+d_Q3 <- function(x, w = NULL, ...) {
+    ## warn_if_weight_not_used(...)
+    ## stats::quantile(x, na.rm = TRUE, probs = 0.75, names = FALSE)
+    weighted.quantile(x = x, probs = .75, w = w)
 }
 attr(d_Q3, "dtable") <- "desc"
 

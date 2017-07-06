@@ -13,8 +13,8 @@
 
 <<"setup", cache = FALSE, echo = FALSE, include = FALSE>>=
 library(knitr)
-## library(descripteur)
-devtools::load_all()
+library(descripteur)
+## devtools::load_all()
 opts_chunk$set(include = TRUE, echo = TRUE, cache = FALSE)
 if(FALSE){
     knitr::knit2pdf("describe-data.rnw", clean = TRUE)
@@ -120,6 +120,10 @@ list each. There are a few restrictions and/or features if you want to write
 your own functions:
 \begin{itemize}
 \item If a function has a 'weight'-parameter, this should be called \texttt{w}.
+
+  Functions within the package should warn if you pass a \texttt{w} argument to
+  a function that could be thought to use a weighting argument but where none is
+  implemented.
 \item Functions need to have the argument \texttt{...} for technical reasons
   (all parameters are passed to the function lists, so functions must be able to
   ignore parameter values that they do not use).
@@ -142,6 +146,9 @@ your own functions:
     probably a better way to handle it, but it is due to that groupings need not
     be created from a categorical variable to begin with (to allow for
     overlaping groups).} a categorical variable from the \texttt{glist}.
+
+  Functions within the package should warn if e.g.\ a glist of length 3 is
+  passed to a function that only makes a pairwise comparison.
 \item A function that needs the variable name can use \texttt{xname} as this is
   passed internally to the function (and hence you should not use that argument
   name for something else)
@@ -183,8 +190,9 @@ and 'cc' is complete cases.)
 However, we anticipate that the describers and comparers are typically wanted
 for repeat use in which case one can change the default values. The default
 values are viewed with \texttt{opts\_desc\$get()}, changed with
-\texttt{opts\_desc\$set} and restored with \texttt{opts\_desc\$restore()} (in line
-with global parameter settings in \textbf{knitr}).
+\texttt{opts\_desc\$set} and restored to default values with
+\texttt{opts\_desc\$restore()} (in line with global parameter settings in
+\textbf{knitr}).
 
 With the function list we defined above, we can change to default describers and
 comparers for the \texttt{real} type with the following:
@@ -464,9 +472,7 @@ dtable_latex(dtable(df, type = "date", glist = gl), format = T,
 dtable_latex(dtable(df, type = "date", glist = gl3, w = vikt, comp = "across"),
              format = T,  guide = dtg,
              caption = paste("Three 'weighted' groups described and compared",
-                             "'across' for type \\texttt{date}. Notice that ",
-                             " the default functions ignore weighting (so",
-                             " there is no weighting but no warning)."))
+                             "'across' for type \\texttt{date}."))
 @
 
 \clearpage
@@ -531,10 +537,10 @@ dtable_latex(dt, label = "tab:info-raw",
              caption = "Compact table with all types")
 @
 
-One might want to move the info column to the 'info' attribute to get it to
-print nicely below the table in a \LaTeX-table. This is done by 'pruning' the
-table with option \texttt{info = TRUE} which saves the (unique) pruned
-information.
+One might want to completely remove the 'variable' column and move the info
+column to the 'info' attribute to get it to print nicely below the table in a
+\LaTeX-table. This is done by 'pruning' the table without and with the option
+\texttt{info = TRUE}, respectively, which saves the (unique) pruned information.
 %Also, there is still some info unexplained so we add something to
 %the 'info' attribute.
 <<results = 'asis'>>=

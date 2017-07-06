@@ -8,7 +8,7 @@
 \usage{
 c_date(...)
 
-c_overlap(x, glist, ...)
+c_overlap(x, glist, w = NULL, ...)
 
 c_dstd(x, glist, ...)
 }
@@ -18,13 +18,15 @@ c_dstd(x, glist, ...)
 \item{x}{vector}
 
 \item{glist}{a grouping list}
+
+\item{w}{weights}
 }
 \description{
 various comparer functions for date types
 }
 \section{Functions}{
 \itemize{
-\item \code{c_overlap}: number of records in the overlapping time period, 2
+\item \code{c_overlap}: proportion of records in the overlapping time period, 2
 groups only
 
 \item \code{c_dstd}: standardized difference for date variables (same as for

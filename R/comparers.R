@@ -14,9 +14,11 @@ warn_if_weight_not_used <- function(...){
     if(desc_get("warn_if_weight_not_used")){
         l <- list(...)
         if("w" %in% names(l)){
-            x <- paste0("'w' is being passed to a function that does not ",
-                        "use weighting")
-            warning(x)
+            if(!is.null(l[['w']])){
+                x <- paste0("'w' is being passed to a function that does not ",
+                            "use weighting")
+                warning(x)
+            }
         }
     }
     invisible(NULL)
@@ -178,20 +180,25 @@ attr(c_chisq.p, "dtable") <- "comp"
 ##'
 ##' @param x vector
 ##' @param glist a grouping list
+##' @param w weights
 ##' @param ... this is to be able to tolerate unnecessary arguments
 c_date <- function(...) invisible(NULL)
 
-##' @describeIn c_date number of records in the overlapping time period, 2
+##' @describeIn c_date proportion of records in the overlapping time period, 2
 ##'     groups only
 ##' @export
-c_overlap <- function(x, glist, ...){
-    warn_if_weight_not_used(...)
+c_overlap <- function(x, glist, w = NULL, ...){
     warn_if_wrong_glist_length(glist, 2)
+    if(is.null(w)) w <- rep(1, length(x))
     x1 <- x[glist[[1]]]
     x2 <- x[glist[[2]]]
+    w1 <- w[glist[[1]]]
+    w2 <- w[glist[[2]]]
     a <- max(min(x1, na.rm = TRUE), min(x2, na.rm = TRUE))
     b <- min(max(x1, na.rm = TRUE), max(x2, na.rm = TRUE))
-    sum(x >= a & x <= b, na.rm = TRUE) ## / sum(!is.na(x))
+    ## sum(x >= a & x <= b, na.rm = TRUE) ## / sum(!is.na(x))
+    overlap <- x >= a & x <= b
+    sum(w[overlap], na.rm = TRUE) / sum(w[!is.na(x)], na.rm = TRUE)
 }
 attr(c_overlap, "dtable") <- "comp"
 
