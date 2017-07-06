@@ -39,9 +39,9 @@ d_min(x, ...)
 
 d_max(x, ...)
 
-d_IQR(x, ...)
+d_IQR(x, w = NULL, ...)
 
-d_Q1(x, ...)
+d_Q1(x, w = NULL, ...)
 
 d_Q3(x, ...)
 }

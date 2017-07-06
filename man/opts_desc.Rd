@@ -13,7 +13,9 @@ This list tries to mimic the behavior of opts_chunk from knitr.
 Currently these values are maintained with the functions in (the list)
 \code{opts_desc}:
 \itemize{
-\item value - default: foo
+\item get - get the current values
+\item set - set new values
+\item restore - restore default values
 }
 }
 \keyword{datasets}
