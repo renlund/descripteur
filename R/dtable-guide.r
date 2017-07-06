@@ -1,3 +1,20 @@
+##' describable types
+##'
+##' function that returns the names of all types that can be described
+##' @export
+.descripteur_desc_types <- function(){
+    c("real", "catg", "bnry", "date", "surv")
+}
+
+##' other types
+##'
+##' function that returns the types, other than describable ones, that can occur
+##'     in a guide
+##' @export
+.descripteur_other_types <- function(){
+    c("row id.", "unit id.", "ignored", "unknown")
+}
+
 #' @title Description guide
 #' @description Determine how to describe a data frame
 #' @param data a data frame
@@ -30,8 +47,8 @@ dtable_guide <- function(data, elim.set = NULL,
                          reduce.levels = TRUE,
                          row.id = NULL, unit.id = NULL){
     if(catg.tol < 3 | real.tol < 3){
-        stop(paste0("tolerance threshold or catg and real should be at",
-                    " least 3"))
+        stop(paste0("tolerance threshold or catg and real ",
+                    "should be at least 3"))
     }
     data_source <- as.character(substitute(data))
     org_data <- data

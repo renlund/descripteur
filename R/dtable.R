@@ -34,20 +34,20 @@ dtable <- function(data, type = NULL, guide = NULL,
         guide_val <- guide
         guide <- dtable_guide(data = data)
         if(!guide_val){
-            filter <- !guide$type %in% c("row.id", "unit.id")
+            filter <- !guide$type %in% .descripteur_other_types()
             guide$type[filter] <- "real" ## this value should not matter
         }
     }
     ## you can skip 'type' but if the guide contains several different types
     ## this will raise a warning
     if(is.null(type)){
-            tmp <- setdiff(guide$type, c("id.row", "id.unit"))
+            tmp <- setdiff(guide$type, .descripteur_other_types())
             type <- tmp[1]
             if(length(unique(tmp)) != 1){
                 warning(paste0("no type given, has been set to ", type, "."))
             }
     }
-    if(!type %in% c("real","bnry", "date", "catg", "surv")){
+    if(!type %in% .descripteur_desc_types()){
         stop("type not supported")
     }
     P <- dc_param(desc = desc, comp = comp, glist = glist)
