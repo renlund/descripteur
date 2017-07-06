@@ -1,3 +1,26 @@
+warn_if_wrong_glist_length <- function(glist, length){
+    if(desc_get("warn_if_wrong_glist_length")){
+        n <- length(glist)
+        if(n != length){
+            x <- paste0("glist of length ", n, " is given to a function ",
+                        "that only makes use of ", length, ".")
+            warning(x)
+        }
+    }
+    invisible(NULL)
+}
+
+warn_if_weight_not_used <- function(...){
+    if(desc_get("warn_if_weight_not_used")){
+        l <- list(...)
+        if("w" %in% names(l)){
+            x <- paste0("'w' is being passed to a function that does not ",
+                        "use weighting")
+            warning(x)
+        }
+    }
+    invisible(NULL)
+}
 
      ## +----------------------------------------+ ##
      ## | comparing functions for real variables | ##
@@ -14,6 +37,8 @@ c_real <- function(...) invisible(NULL)
 ##' @describeIn c_real median shift measured in units of original IQR, 2 groups only
 ##' @export
 c_shift <- function(x, glist, ...){
+    warn_if_weight_not_used(...)
+    warn_if_wrong_glist_length(glist, 2)
     x1 <- x[glist[[1]]]
     x2 <- x[glist[[2]]]
     (stats::median(x1, na.rm = TRUE) - stats::median(x2, na.rm = TRUE)) /
@@ -26,6 +51,7 @@ attr(c_shift, "dtable") <- "comp"
 ##' @references \url{https://www.lerner.ccf.org/qhs/software/lib/stddiff.pdf}
 ##' @export
 c_rstd <- function(x, glist, w = NULL, ...){
+    warn_if_wrong_glist_length(glist, 2)
     if(is.null(w)) w <- rep(1, length(x))
     x1 <- x[glist[[1]]]
     w1 <- w[glist[[1]]]
@@ -40,14 +66,17 @@ attr(c_rstd, "dtable") <- "comp"
 ##'     but not implemented yet)
 ##' @export
 c_t.test.p <- function(x, glist, ...){
+    warn_if_weight_not_used(...)
+    warn_if_wrong_glist_length(glist, 2)
     stats::t.test(x = x[glist[[1]]], y = x[glist[[2]]])$p.value
 }
 attr(c_t.test.p, "dtable") <- "comp"
 
-##' @describeIn c_real t.test p-value, 2 groups only (could be made with weights
-##'     but not implemented yet)
+##' @describeIn c_real wilcoxon test p.value
 ##' @export
 c_wilcox.p <- function(x, glist, ...){
+    warn_if_weight_not_used(...)
+    warn_if_wrong_glist_length(glist, 2)
     tmp <- stats::wilcox.test(x = x[glist[[1]]], y = x[glist[[2]]],
                               exact = FALSE)
     tmp$p.value
@@ -57,6 +86,7 @@ attr(c_wilcox.p, "dtable") <- "comp"
 ##' @describeIn c_real ANOVA test p-value, any number of groups
 ##' @export
 c_anova.p <- function(x, glist, ...){
+    warn_if_weight_not_used(...)
     fg <- factorize_glist(glist)
     a <- stats::anova(stats::lm(x~fg))
     a[["Pr(>F)"]][1]
@@ -79,6 +109,7 @@ c_bnry <- function(...) invisible(NULL)
 ##' @describeIn c_bnry risk ratio, 2 groups only
 ##' @export
 c_RR <- function(x, glist, w = NULL, ...){
+    warn_if_wrong_glist_length(glist, 2)
     d_bp(x[glist[[1]]], w = w[glist[[1]]]) /
         d_bp(x[glist[[2]]], w = w[glist[[2]]])
 }
@@ -87,6 +118,7 @@ attr(c_RR, "dtable") <- "comp"
 ##' @describeIn c_bnry odds ratio, 2 groups only
 ##' @export
 c_OR <- function(x, glist, w = NULL, ...){
+    warn_if_wrong_glist_length(glist, 2)
     if(is.null(w)) w <- rep(1, length(x))
     w1 <- w[glist[[1]]]
     w2 <- w[glist[[2]]]
@@ -100,6 +132,7 @@ attr(c_OR, "dtable") <- "comp"
 ##' @export
 ##' @references \url{https://www.lerner.ccf.org/qhs/software/lib/stddiff.pdf}
 c_bstd <- function(x, glist, w = NULL, ...){
+    warn_if_wrong_glist_length(glist, 2)
     if(is.null(w)) w <- rep(1, length(x))
     w1 <- w[glist[[1]]]
     w2 <- w[glist[[2]]]
@@ -114,6 +147,8 @@ attr(c_bstd, "dtable") <- "comp"
 ##' @describeIn c_bnry fisher test p-value
 ##' @export
 c_fisher.p <- function(x, glist, ...){
+    warn_if_weight_not_used(...)
+    warn_if_wrong_glist_length(glist, 2)
     x1 <- x[glist[[1]]]
     x2 <- x[glist[[2]]]
     x <- c(x1, x2)
@@ -125,6 +160,8 @@ attr(c_fisher.p, "dtable") <- "comp"
 ##' @describeIn c_bnry chisquare test p-value
 ##' @export
 c_chisq.p <- function(x, glist, ...){
+    warn_if_weight_not_used(...)
+    warn_if_wrong_glist_length(glist, 2)
     x1 <- x[glist[[1]]]
     x2 <- x[glist[[2]]]
     x <- c(x1, x2)
@@ -148,6 +185,8 @@ c_date <- function(...) invisible(NULL)
 ##'     groups only
 ##' @export
 c_overlap <- function(x, glist, ...){
+    warn_if_weight_not_used(...)
+    warn_if_wrong_glist_length(glist, 2)
     x1 <- x[glist[[1]]]
     x2 <- x[glist[[2]]]
     a <- max(min(x1, na.rm = TRUE), min(x2, na.rm = TRUE))
@@ -160,7 +199,7 @@ attr(c_overlap, "dtable") <- "comp"
 ##'     real variables when the dates are interpreted as numericals)
 ##' @export
 c_dstd <- function(x, glist, ...){
-    c_rstd(x = as.numeric(x), glist = glist)
+    c_rstd(x = as.numeric(x), glist = glist, ...)
 }
 attr(c_dstd, "dtable") <- "comp"
 
@@ -182,6 +221,7 @@ c_catg <- function(...) invisible(NULL)
 ##' @describeIn c_catg difference in proportions, 2 groups only
 ##' @export
 c_pdiff <- function(x, glist, useNA = FALSE, w = NULL, ...){
+    warn_if_wrong_glist_length(glist, 2)
     w1 <- w[glist[[1]]]
     w2 <- w[glist[[2]]]
     p1 <- d_cp(x[glist[[1]]], w = w1, useNA = useNA)
@@ -193,6 +233,7 @@ attr(c_pdiff, "dtable") <- "comp"
 ##' @describeIn c_catg odds ratios, 2 groups only
 ##' @export
 c_cOR <- function(x, glist, useNA = FALSE, w = NULL, ...){
+    warn_if_wrong_glist_length(glist, 2)
     w1 <- w[glist[[1]]]
     w2 <- w[glist[[2]]]
     p1 <- d_cp(x[glist[[1]]], w = w1, useNA=useNA)
@@ -204,6 +245,7 @@ attr(c_cOR, "dtable") <- "comp"
 ##' @describeIn c_catg standardized differences (2 groups only) for each level
 ##' @export
 c_cstd.each <- function(x, glist, useNA = FALSE, w = NULL, ...){
+    warn_if_wrong_glist_length(glist, 2)
     useNA <- FALSE ## could this couse problems?
     if(is.null(w)) w <- rep(1, length(x))
     w1 <- w[glist[[1]]]
@@ -224,6 +266,7 @@ attr(c_cstd.each, "dtable") <- "comp"
 ##' @export
 c_cstd <- function(x, glist, useNA = FALSE, w = NULL,
                    expand.levels = TRUE, ...){
+    warn_if_wrong_glist_length(glist, 2)
     useNA <- FALSE ## could this couse problems?
     if(is.null(w)) w <- rep(1, length(x))
     w1 <- w[glist[[1]]]
@@ -274,6 +317,7 @@ c_surv <- function(...) invisible(NULL)
 ##' @describeIn c_surv rate ratio, 2 groups only
 ##' @export
 c_rr <- function(x, glist, w = NULL, cens.type = "right", ...){
+    warn_if_wrong_glist_length(glist, 2)
     survcheck(x)
     if(is.null(w)) w <- rep(1, length(x)/2)
     x1 <- x[glist[[1]]]
@@ -294,16 +338,17 @@ attr(c_rr, "dtable") <- "comp"
 ##'     variables (difference in mean divided by 'average sd'-isch)
 ##' @export
 c_sstd <- function(x, glist, w = NULL, cens.type = "right", ...){
+    warn_if_wrong_glist_length(glist, 2)
     survcheck(x)
     if(is.null(w)) w <- rep(1, length(x)/2)
     x1 <- x[glist[[1]]]
     x2 <- x[glist[[2]]]
     w1 <- w[glist[[1]]]
     w2 <- w[glist[[2]]]
-    n1 <- d_esum(x = x1, w = w1, cens.type = cens.type)
-    n2 <- d_esum(x = x2, w = w2, cens.type = cens.type)
-    t1 <- d_tsum(x = x1, w = w1, cens.type = cens.type)
-    t2 <- d_tsum(x = x1, w = w1, cens.type = cens.type)
+    n1 <- d_esum(x = x1, w = w1, cens.type = cens.type, ...)
+    n2 <- d_esum(x = x2, w = w2, cens.type = cens.type, ...)
+    t1 <- d_tsum(x = x1, w = w1, cens.type = cens.type, ...)
+    t2 <- d_tsum(x = x1, w = w1, cens.type = cens.type, ...)
     (n1 / t1 - n2 / t2) / sqrt((n1 / t1 + n2 / t2) / 2)
 }
 attr(c_sstd, "dtable") <- "comp"
@@ -332,24 +377,24 @@ attr(dt_empty_comp, "dtable") <- "comp"
 ## always the same you can just use e.g.
 ##     dt_wilcox.p = c_wilcox.p, and
 ##     dt_wilcox.p.info = function(x, glist, ...) "Wilcox"
-## instead) since the current setup of 'apply_flist' only allows one value of
+## (instead) since the current setup of 'apply_flist' only allows one value of
 ## being captured from each function in the function list (well at least one
 ## variable, strictly speaking you could return a vector of the value and the
-## information, but that seems highly untidy). This would one reason to allow
+## information, but that seems highly untidy). This would be one reason to allow
 ## several variables to be recorded from each function (but I think there would
 ## be other complications with that approach).
-dt_wilcox.p_helper <- function(x, glist, info){
+dt_wilcox.p_helper <- function(x, glist, info, ...){
     if(info){
         "Wilcoxon"
     } else {
-        c_wilcox.p(x = x, glist = glist)
+        c_wilcox.p(x = x, glist = glist, ...)
     }
 }
 
 ##' @describeIn dt_comp wilcoxon test p-value
 ##' @export
 dt_wilcox.p <- function(x, glist, ...){
-    dt_wilcox.p_helper(x = x, glist = glist, info = FALSE)
+    dt_wilcox.p_helper(x = x, glist = glist, info = FALSE, ...)
 }
 attr(dt_wilcox.p, "dtable") <- "comp"
 
@@ -361,21 +406,21 @@ dt_wilcox.p.info <- function(x, glist, ...){
 attr(dt_wilcox.p.info, "dtable") <- "meta"
 
 ## ----------------------------------------------------------------------------
-dt_fisher.p_helper <- function(x, glist, info){
+dt_fisher.p_helper <- function(x, glist, info, ...){
     y <- make_catg(x)
     n <- length(levels(y)) - 1
     if(n == 1) n <- 0
     if(info){
         "Fisher"
     } else {
-        c(c_fisher.p(x = x, glist = glist), rep(NA, n))
+        c(c_fisher.p(x = x, glist = glist, ...), rep(NA, n))
     }
 }
 
 ##' @describeIn dt_comp fishers exact test p-value
 ##' @export
 dt_fisher.p <- function(x, glist, ...){
-    dt_fisher.p_helper(x = x, glist = glist, info = FALSE)
+    dt_fisher.p_helper(x = x, glist = glist, info = FALSE, ...)
 }
 attr(dt_fisher.p, "dtable") <- "comp"
 
@@ -387,21 +432,21 @@ dt_fisher.p.info <- function(x, glist, ...){
 attr(dt_fisher.p.info, "dtable") <- "meta"
 
 ## ----------------------------------------------------------------------------
-dt_chisq.p_helper <- function(x, glist, info){
+dt_chisq.p_helper <- function(x, glist, info, ...){
     y <- make_catg(x)
     n <- length(levels(y)) - 1
     if(n == 1) n <- 0
     if(info){
         "Chi-square"
     } else {
-        c(c_chisq.p(x = x, glist = glist), rep(NA, n))
+        c(c_chisq.p(x = x, glist = glist, ...), rep(NA, n))
     }
 }
 
 ##' @describeIn dt_comp chisquare test p-value
 ##' @export
 dt_chisq.p <- function(x, glist, ...){
-    dt_chisq.p_helper(x = x, glist = glist, info = FALSE)
+    dt_chisq.p_helper(x = x, glist = glist, info = FALSE, ...)
 }
 attr(dt_chisq.p, "dtable") <- "comp"
 

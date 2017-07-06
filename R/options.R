@@ -96,7 +96,9 @@ desc_restore <- function(){
                "compare_surv_compact" = flist(c("Variables" = "dt_name",
                                                 "Std" = "c_sstd",
                                                 "pinfo" = "dt_empty_comp",
-                                                "p" = "dt_empty_comp"))
+                                                "p" = "dt_empty_comp")),
+               "warn_if_weight_not_used" = TRUE,
+               "warn_if_wrong_glist_length" = TRUE
            ), envir=le_milieu)
     assign(x="value", value = names(get(x="defaults", envir=le_milieu)),
            envir=le_milieu)
@@ -115,7 +117,9 @@ desc_check <- function(){
 #' Currently these values are maintained with the functions in (the list)
 #' \code{opts_desc}:
 #' \itemize{
-#' \item value - default: foo
+#' \item get - get the current values
+#' \item set - set new values
+#' \item restore - restore default values
 #' }
 #' @export
 opts_desc <- list(

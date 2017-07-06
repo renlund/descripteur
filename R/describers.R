@@ -143,19 +143,26 @@ attr(d_max, "dtable") <- "desc"
 
 ##' @describeIn d_real inter quartile range
 ##' @export
-d_IQR <- function(x, ...) stats::IQR(x, na.rm = TRUE)
+d_IQR <- function(x, ...){
+    warn_if_weight_not_used(...)
+    stats::IQR(x, na.rm = TRUE)
+}
 attr(d_IQR, "dtable") <- "desc"
 
 ##' @describeIn d_real first quartile
 ##' @export
-d_Q1 <- function(x, ...) stats::quantile(x, na.rm = TRUE, probs = 0.25,
-                                         names = FALSE)
+d_Q1 <- function(x, ...) {
+    warn_if_weight_not_used(...)
+    stats::quantile(x, na.rm = TRUE, probs = 0.25, names = FALSE)
+}
 attr(d_Q1, "dtable") <- "desc"
 
 ##' @describeIn d_real third quartile
 ##' @export
-d_Q3 <- function(x, ...) stats::quantile(x, na.rm = TRUE, probs = 0.75,
-                                         names = FALSE)
+d_Q3 <- function(x, ...) {
+    warn_if_weight_not_used(...)
+    stats::quantile(x, na.rm = TRUE, probs = 0.75, names = FALSE)
+}
 attr(d_Q3, "dtable") <- "desc"
 
     ## +-----------------------------------------+ ##
@@ -638,15 +645,15 @@ dt_cname <- function(x, xname = NULL, ...){
 attr(dt_cname, "dtable") <- "meta"
 
 ## ------------------------------------------------------------------------- ##
-dt_Q_helper <- function(x, useNA, info){
+dt_Q_helper <- function(x, useNA, info, ...){
     if(info){
         a <- "Numeric variables: median(Q1-Q3)"
         if(useNA) paste0(a, ". ", NA_text_string()) else a
     } else {
         NAtxt <- if(useNA) NA_txt(x) else NULL
-        Q2 <- d_median(x = x)
-        Q1 <- d_Q1(x = x)
-        Q3 <- d_Q3(x = x)
+        Q2 <- d_median(x = x, ...)
+        Q1 <- d_Q1(x = x, ...)
+        Q3 <- d_Q3(x = x, ...)
         paste0(roundisch(Q2), " (", roundisch(Q1),"-",
                roundisch(Q3),")", NAtxt)
     }
@@ -655,7 +662,7 @@ dt_Q_helper <- function(x, useNA, info){
 ##' @describeIn dt_desc quantiles
 ##' @export
 dt_Q <- function(x, useNA = FALSE, ...){
-    dt_Q_helper(x, useNA = useNA, info = FALSE)
+    dt_Q_helper(x, useNA = useNA, info = FALSE, ...)
 }
 attr(dt_Q, "dtable") <- "desc"
 
