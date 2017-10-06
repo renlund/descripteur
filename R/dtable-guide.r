@@ -91,11 +91,14 @@ dtable_guide <- function(data, elim.set = NULL,
         ign <- NULL
         u <- names(data)[unknown]
     } else {
-        real_n <- lapply(subset(data,TRUE,names(data)[real]), n_unique)
-        ## catg_n <- lapply(subset(data,TRUE,names(data)[catg]), n_unique)
-        catg_n <- lapply(subset(data,TRUE,names(data)[catg]), n_levels)
-        date_n <- lapply(subset(data,TRUE,names(data)[date]), n_unique)
-        bnry_n <- lapply(subset(data,TRUE,names(data)[bnry]), n_unique)
+        ## real_n <- lapply(subset(data,TRUE,names(data)[real]), n_unique)
+        real_n <- lapply(data[, names(data)[real], drop = FALSE], n_unique)
+        ## catg_n <- lapply(subset(data,TRUE,names(data)[catg]), n_levels)
+        catg_n <- lapply(data[, names(data)[catg], drop = FALSE], n_levels)
+        ## date_n <- lapply(subset(data,TRUE,names(data)[date]), n_unique)
+        date_n <- lapply(data[, names(data)[date], drop = FALSE], n_unique)
+        ## bnry_n <- lapply(subset(data,TRUE,names(data)[bnry]), n_unique)
+        bnry_n <- lapply(data[, names(data)[bnry], drop = FALSE], n_unique)
         r  <- names(data)[real][real_n >  real.tol]
         c1 <- names(data)[real][real_n <= real.tol & real_n != 2]
         c2 <- names(data)[catg][catg_n <= catg.tol & catg_n != 2]
