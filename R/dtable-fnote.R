@@ -26,7 +26,10 @@ dtable_fnote <- function(dt, info, fn.var,
     foo(info)
     foo(fn.var)
     if(length(format.param)>0) format <- TRUE
-    if(format) dt <- dtable_format(dt)
+    if(format){
+        dt <- do.call(dtable_format,
+                      c('dt' = list(dt), format_fixer(format.param)))
+    }
     infot   <- unique(as.character(stats::na.omit(unlist(dt[[info]]))))
     i.infot <- as.numeric(factor(dt[[info]], levels = infot))
     symb <- latex_symbols(n = max(i.infot, na.rm = TRUE),
