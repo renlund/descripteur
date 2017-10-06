@@ -14,8 +14,10 @@
 <<"setup", cache = FALSE, echo = FALSE, include = FALSE>>=
 library(knitr)
 library(descripteur)
-## devtools::load_all()
-opts_chunk$set(include = TRUE, echo = TRUE, cache = FALSE)
+devtools::load_all()
+opts_chunk$set(include = TRUE,
+               echo = TRUE,
+               cache = FALSE)
 if(FALSE){
     knitr::knit2pdf("describe-data.rnw", clean = TRUE)
     shell.exec("describe-data.pdf")
@@ -343,7 +345,7 @@ misser <- function(x, m = length(x)){
     x[sample(1:n, size = p, replace = FALSE)] <- NA
     x
 }
-df[2:(length(df)-2)] <- lapply(df[2:(length(df)-2)], misser)
+df[c(2,4,7,10)] <- lapply(df[c(2,4,7,10)], misser)
 dtg <- dtable_guide(df, unit.id = "id")
 dtg$label <- c("binary 1", "bengt", "bio", "bam", "B before A",
                "cats are fun", "cool",
@@ -397,17 +399,16 @@ dtable_latex(dtable(df, type = "bnry", glist = gl3, w = vikt,
 @
 
 <<eval = FALSE, include = FALSE, echo = FALSE>>=
-dtable(df, type = "bnry", glist = gl3, w = vikt,
-       comp = "across", guide = dtable_guide(df, reduce.levels = F))
-(dt <- dtable(df, type = "bnry", glist = "b1", w = vikt,
-       comp = "across", guide = dtable_guide(df, reduce.levels = F)))
-a <- attributes(dt)
-for(k in 5:11) attr(dt, names(a)[k]) <- NULL
-attr2text(a)
-dtable_attr(a)
-dtable_latex(dt, bling = FALSE)
-dtable_latex(dt, bling = TRUE)
-
+## dtable(df, type = "bnry", glist = gl3, w = vikt,
+##        comp = "across", guide = dtable_guide(df, reduce.levels = F))
+## (dt <- dtable(df, type = "bnry", glist = "b1", w = vikt,
+##        comp = "across", guide = dtable_guide(df, reduce.levels = F)))
+## a <- attributes(dt)
+## for(k in 5:11) attr(dt, names(a)[k]) <- NULL
+## attr2text(a)
+## dtable_attr(a)
+## dtable_latex(dt, bling = FALSE)
+## dtable_latex(dt, bling = TRUE)
 @
 
 \clearpage
@@ -560,7 +561,7 @@ predefined compact-style functions suitable for \texttt{dtables}.
 For the defaults to print nicely we will also translate the \texttt{pinfo}
 column to a footnote on the \texttt{p} column and supply the guide to get the
 labels of the variable names.
-<<results = 'asis', eval = T>>=
+<<results = 'asis', eval = TRUE>>=
 dlist <- flists(real = TRUE, bnry = TRUE, catg = TRUE) ## get defaults
 dt <- dtables(data = df, useNA = "ifany", desc.flists = dlist,
               guide = dtg, glist = "b1")

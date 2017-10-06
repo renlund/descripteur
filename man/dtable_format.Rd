@@ -5,7 +5,7 @@
 \title{format a dtable}
 \usage{
 dtable_format(dt, b = 1, bh = 1, hfnc = base::round, bl = 2,
-  lfnc = base::signif, br = 2, rfnc = base::round, p_b = 1e-04,
+  lfnc = base::signif, br = 2, rfnc = base::signif, p_b = 1e-04,
   peq0 = TRUE, tmax = 30, repus = TRUE, repwith = "\\\\_")
 }
 \arguments{
@@ -21,7 +21,8 @@ by 'br' and 'rfnc'}
 
 \item{bl}{digits argument for \code{lfnc}}
 
-\item{lfnc}{format function for below boundary numbers}
+\item{lfnc}{format function for below boundary numbers? But current
+implementation might override this, I can't figure out what is best here}
 
 \item{br}{digits argument for \code{rfnc}}
 

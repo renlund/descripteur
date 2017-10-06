@@ -6,6 +6,7 @@
 \alias{c_rstd}
 \alias{c_t.test.p}
 \alias{c_wilcox.p}
+\alias{c_kruskal.p}
 \alias{c_anova.p}
 \title{various comparer functions for real types}
 \usage{
@@ -18,6 +19,8 @@ c_rstd(x, glist, w = NULL, ...)
 c_t.test.p(x, glist, ...)
 
 c_wilcox.p(x, glist, ...)
+
+c_kruskal.p(x, glist, ...)
 
 c_anova.p(x, glist, ...)
 }
@@ -44,6 +47,8 @@ independence
 but not implemented yet)
 
 \item \code{c_wilcox.p}: wilcoxon test p.value
+
+\item \code{c_kruskal.p}: kruskal-wallis p-value, any number of groups
 
 \item \code{c_anova.p}: ANOVA test p-value, any number of groups
 }}
