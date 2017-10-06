@@ -85,6 +85,16 @@ c_wilcox.p <- function(x, glist, ...){
 }
 attr(c_wilcox.p, "dtable") <- "comp"
 
+##' @describeIn c_real kruskal-wallis p-value, any number of groups
+##' @export
+c_kruskal.p <- function(x, glist, ...){
+    warn_if_weight_not_used(...)
+    g <- factor(factorize_glist(glist))
+    tmp <- stats::kruskal.test(x = x, g = g)
+    tmp$p.value
+}
+attr(c_kruskal.p, "dtable") <- "comp"
+
 ##' @describeIn c_real ANOVA test p-value, any number of groups
 ##' @export
 c_anova.p <- function(x, glist, ...){
@@ -150,11 +160,12 @@ attr(c_bstd, "dtable") <- "comp"
 ##' @export
 c_fisher.p <- function(x, glist, ...){
     warn_if_weight_not_used(...)
-    warn_if_wrong_glist_length(glist, 2)
-    x1 <- x[glist[[1]]]
-    x2 <- x[glist[[2]]]
-    x <- c(x1, x2)
-    g <- rep(0:1, c(length(x1), length(x2)))
+    ## warn_if_wrong_glist_length(glist, 2)
+    ## x1 <- x[glist[[1]]]
+    ## x2 <- x[glist[[2]]]
+    ## x <- c(x1, x2)
+    ## g <- rep(0:1, c(length(x1), length(x2)))
+    g <- factorize_glist(glist)
     stats::fisher.test(x = x, y = g, simulate.p.value = TRUE)$p.value
 }
 attr(c_fisher.p, "dtable") <- "comp"
@@ -163,11 +174,12 @@ attr(c_fisher.p, "dtable") <- "comp"
 ##' @export
 c_chisq.p <- function(x, glist, ...){
     warn_if_weight_not_used(...)
-    warn_if_wrong_glist_length(glist, 2)
-    x1 <- x[glist[[1]]]
-    x2 <- x[glist[[2]]]
-    x <- c(x1, x2)
-    g <- rep(0:1, c(length(x1), length(x2)))
+    ## warn_if_wrong_glist_length(glist, 2)
+    ## x1 <- x[glist[[1]]]
+    ## x2 <- x[glist[[2]]]
+    ## x <- c(x1, x2)
+    ## g <- rep(0:1, c(length(x1), length(x2)))
+    g <- factorize_glist(glist)
     stats::chisq.test(x = x, y = g)$p.value
 }
 attr(c_chisq.p, "dtable") <- "comp"
