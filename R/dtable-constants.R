@@ -8,7 +8,10 @@ dtable_constants <- function(data, guide = NULL){
     if(is.null(guide)) guide <- dtable_guide(data)
     cguide <- guide[guide$type == "constant",]
     cdata <- data[, cguide$variable, drop = FALSE]
-    if(nrow(cdata) == 0) return(as.data.frame(NULL))
+    if(ncol(cdata) == 0){
+        message("There are no constants in data")
+        return(as.data.frame(NULL))
+    }
     foo <- function(x){
         val <- unique(stats::na.omit(x))
         if(length(val) > 1){

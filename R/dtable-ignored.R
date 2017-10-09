@@ -8,7 +8,10 @@ dtable_ignored <- function(data, guide = NULL){
     if(is.null(guide)) guide <- dtable_guide(data)
     cguide <- guide[guide$type == "ignored",]
     cdata <- data[, cguide$variable, drop = FALSE]
-    if(nrow(cdata) == 0) return(as.data.frame(NULL))
+    if(ncol(cdata) == 0) {
+        message("There are no ignored variables in data")
+        return(as.data.frame(NULL))
+    }
     foo <- function(x) length(unique(stats::na.omit(x)))
     data.frame(
         variable = cguide$label,

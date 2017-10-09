@@ -373,7 +373,7 @@ The labels will be used in \LaTeX\, tables (provided the guide is specified).
 \clearpage
 \subsection{Type \texttt{real}}
 <<results = 'asis'>>=
-dtable_latex(dtable(df, type = "real", glist = gl), format = T,
+dtable_latex(dtable(df, type = "real", glist = gl), format = TRUE,
              caption = paste("Two groups described and compared",
                              "for type \\texttt{real}."))
 @
@@ -414,7 +414,7 @@ dtable_latex(dtable(df, type = "bnry", glist = gl3, w = vikt,
 \clearpage
 \subsection{Type \texttt{catg}}
 <<results = 'asis'>>=
-dtable_latex(dtable(df, type = "catg", glist = gl), format = T,
+dtable_latex(dtable(df, type = "catg", glist = gl), format = TRUE,
              caption = paste("Two groups described and compared",
                              "for type \\texttt{catg}."))
 @
@@ -433,7 +433,7 @@ hand, or more quickly supply the \texttt{no.bnry = TRUE} argument.
 <<results = 'asis'>>=
 nobnry <- dtable_guide(df, no.bnry = TRUE)
 dtable_latex(dtable(df, type = "catg", glist = gl, guide = nobnry),
-             format = T, grey = "variable",
+             format = TRUE, grey = "variable",
              caption = paste("Two groups described and compared for type ",
                              " \\texttt{catg} (including binary variables). ",
                              "(Grey lines according to column 'variable'.)"))

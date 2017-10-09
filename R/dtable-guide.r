@@ -2,7 +2,7 @@
 ##'
 ##' function that returns the names of all types that can be described
 ##' @export
-.descripteur_desc_types <- function(){
+descripteur_desc_types <- function(){
     c("real", "catg", "bnry", "date", "surv")
 }
 
@@ -11,8 +11,8 @@
 ##' function that returns the types, other than describable ones, that can occur
 ##'     in a guide
 ##' @export
-.descripteur_other_types <- function(){
-    c("row id.", "unit id.", "ignored", "unknown")
+descripteur_other_types <- function(){
+    c("row id.", "unit id.", "constant", "ignored", "unknown")
 }
 
 #' @title Description guide
@@ -64,7 +64,7 @@ dtable_guide <- function(data, elim.set = NULL,
     const <- names(data)[unlist(lapply(data, n_is_1))]
     val <- setdiff(names(org_data), c(elim.set, row.id, unit.id, const))
     ## data <- subset(org_data, subset = TRUE, select = val)
-    data <- org_data[, val]
+    data <- org_data[, val, drop = FALSE]
     ## class2 <- function(x) class(x)[1]
     classy <- lapply(data, get_class)
     any_na <- function(x) any(is.na(x))

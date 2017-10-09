@@ -91,7 +91,7 @@ format_fixer <- function(x = as.list(NULL)){
     if(is.null(hfnc <- x$hfnc)) hfnc <- base::round ## format fnc
     ## for numbers all < boundary
     if(is.null(bl   <- x$bl))   bl <- 2 ## digits argument for lfnc
-    if(is.null(lfnc <- x$lfnc)) lfnc <- base::signif ## format fnc
+    if(is.null(lfnc <- x$lfnc)) lfnc <- NULL ## base::signif ## format fnc
     if(is.null(br   <- x$br))   br <- 2 ## digits argument for rfnc
     if(is.null(rfnc <- x$rfnc)) rfnc <- base::round ## format fnc
     if(is.null(p_b  <- x$p_b))  p_b <- 0.0001 ## threshold for p-values
@@ -182,11 +182,16 @@ get_grey <- function(grey = NULL, x = NULL){
 ##' @export
 dtable_format <- function(dt, b = 1,
                           bh = 1, hfnc = base::round,
-                          bl = 2, lfnc = base::signif,
+                          bl = 2, lfnc = NULL, ##lfnc = base::signif,
                           br = 2, rfnc = base::signif,
                           p_b = 0.0001, peq0 = TRUE,
                           tmax = 30, repus = TRUE,
                           repwith = "\\_"){
+    if(is.null(lfnc)){
+        lfnc <- function(x, digits){
+            sprintf(paste0("%#.", digits, "g"), x)
+        }
+    }
     ## format numeric part
     n <- ncol(dt)
     R <- as.data.frame(dt)
@@ -201,7 +206,8 @@ dtable_format <- function(dt, b = 1,
     p0 <- unlist(lapply(R[num],
                         function(x) min(x[is.finite(x)], na.rm = TRUE) >= 0 &
                                     max(x[is.finite(x)], na.rm = TRUE) <= 1))
-    p <- if(!is.null(p0)) which(p0) else NULL
+    ## p <- if(!is.null(p0)) which(p0) else NULL
+    p <- if(!is.null(p0)) num[which(p0)] else NULL
     il <- num[which(l>b)]
     R[il] <- lapply(R[il], hfnc, digits = bh)
     ih <- setdiff(num[which(h<=b)], p) ## num[which(h<=b)]
@@ -209,25 +215,29 @@ dtable_format <- function(dt, b = 1,
     ## maybe_zero <- function(x) ifelse(x < p_b & x >= 0, paste0("<", p_b), x)
     ## zero <- function(x, not) if(not) not_zero(x) else maybe_zero(x)
     ## R[num[p]] <- lapply(R[num[p]], zero, not = peq0)
-    small.fixer <- function(x, digits, peq0, reps = TRUE){
+    small.fixer <- function(x, fnc = lfnc, digits, reps = TRUE, peq0){
         izero  <- which(x == 0)
         ismall <- which(x < p_b)
-        y <- sprintf(paste0("%#.", digits, "g"), x)
+        isna <- which(is.na(x))
+        y <- lfnc(x, digits = digits) ## sprintf(paste0("%#.", digits, "g"), x)
         if(reps) y[ismall] <- paste0("<", p_b)
-        if(peq0) y[izero] <- "0"
+        if(peq0) y[izero] <- 0
+        y[isna] <- NA
         y
     }
     ## R[ih] <- lapply(R[ih], lfnc, digits = bl)
-    R[ih] <- lapply(R[ih], small.fixer, digits = bl,
+    R[ih] <- lapply(R[ih], FUN = small.fixer, digits = bl,
                     peq0 = FALSE, reps = FALSE)
-    R[num[p]] <- lapply(R[num[p]], small.fixer, digits = bl,
+    R[p] <- lapply(R[p], FUN = small.fixer, digits = bl,
                         peq0 = peq0, reps = TRUE)
     i_rest <- setdiff(num, c(il, ih, p))
-    R[i_rest] <- lapply(R[i_rest], rfnc, br)
+    R[i_rest] <- lapply(R[i_rest], FUN = rfnc, digits = br)
     R[i_rest] <- lapply(R[i_rest], format, drop0trailing = TRUE)
     ## format character
-    chr <- which(classy == "character")
+    ## chr <- which(classy == "character")
+    chr <- which(classy %in% c("character", "factor"))
     foo <- function(x){
+        if("factor" %in% class(x)) x <- as.character(x)
         ifelse(nchar(x)>tmax + 2,
                paste0(substring(x, 1, tmax), "..."),
                x)
@@ -241,6 +251,35 @@ dtable_format <- function(dt, b = 1,
     R
 }
 
+
+
+if(FALSE){
+
+    ## dt = data.frame(
+    ##     text1 = letters[1:3],
+    ##     big = c(2, 10.5, 100.2131),
+    ##     small = c(-0.555, 0.0101, 0.6788),
+    ##     ps = c(0.0111, 0.23, 0.00002342),
+    ##     mix = c(-.12345, .909, 1000.123),
+    ##     text2 = c("a_b", "X", "fskdjjfhsdjkfhksdjfhsdkjfhskdjfhsdkfhsdjkfhksd")
+    ## )
+    ## dt
+    ## dtable_format(dt)
+    ## b = 1
+    ## bh = 1
+    ## hfnc = base::round
+    ## bl = 2
+    ## ## lfnc = base::signif
+    ## lfnc = NULL
+    ## br = 2
+    ## rfnc = base::signif
+    ## p_b = 0.0001
+    ## peq0 = TRUE
+    ## tmax = 30
+    ## repus = TRUE
+    ## repwith = "\\_"
+
+}
 
 ## dtable_format2 <- function(dt, b = 1, dh = 1, dl = 2, dr = 2, dp = 2,
 ##                            p_b = 0.0001, peq0 = TRUE, tmax = 30,
