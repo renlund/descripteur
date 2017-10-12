@@ -2,15 +2,15 @@
 ##'
 ##' concatenate dtables for multiple types into a single dtable
 ##' @param data the data set
+##' @param guide a dtable guide
+##' @param ... arguments passed to dtable
 ##' @param types types wanted
 ##' @param desc.flists flists for description
 ##' @param comp.flists flists for comparison
-##' @param guide a dtable guide
-##' @param ... arguments passed to dtable
 ##' @export
-dtables <- function(data, types = NULL, desc.flists = NULL,
-                    comp.flists = NULL, guide = NULL, ...){
-    ok_types <- c("real", "bnry", "catg", "date", "surv")
+dtables <- function(data, guide = NULL, ..., types = NULL,
+                    desc.flists = NULL, comp.flists = NULL){
+    ok_types <- c("real", "bnry", "catg", "date", "surv") ## descripteur_desc_types
     if(is.null(guide)) guide <- dtable_guide(data)
     if(is.null(types)) types <- intersect_if_notnull(names(desc.flists),
                                                      names(comp.flists))

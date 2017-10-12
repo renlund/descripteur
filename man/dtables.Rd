@@ -4,21 +4,21 @@
 \alias{dtables}
 \title{dtable for multiple types}
 \usage{
-dtables(data, types = NULL, desc.flists = NULL, comp.flists = NULL,
-  guide = NULL, ...)
+dtables(data, guide = NULL, ..., types = NULL, desc.flists = NULL,
+  comp.flists = NULL)
 }
 \arguments{
 \item{data}{the data set}
+
+\item{guide}{a dtable guide}
+
+\item{...}{arguments passed to dtable}
 
 \item{types}{types wanted}
 
 \item{desc.flists}{flists for description}
 
 \item{comp.flists}{flists for comparison}
-
-\item{guide}{a dtable guide}
-
-\item{...}{arguments passed to dtable}
 }
 \description{
 concatenate dtables for multiple types into a single dtable
