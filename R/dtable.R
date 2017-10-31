@@ -54,6 +54,9 @@ dtable <- function(data, type = NULL, guide = NULL,
     glist.variable <- NULL
     if(!is.null(glist)){
         if(is.character(glist)){
+            if(!glist %in% names(data)){
+                stop("glist variable ('", glist, "') not found in data")
+            }
             glist.variable <- data[[glist]]
             guide <- guide[guide$variable != glist,]
             glist <- make_glist(x = glist, ref = data)

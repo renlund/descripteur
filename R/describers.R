@@ -771,7 +771,7 @@ dt_bcp_helper <- function(x, useNA, info, perc.sign = NULL, ...){
         z <- make_bnry(x)
         n <- d_bn(x = z, ...)
         p <- d_bp(x = z, ...)
-        paste0(n, " (",
+        paste0(if(all(n == as.integer(n))) n else round(n, 1), " (",
                roundisch(100*p, t = 0.001, scientific = TRUE, digit2 = 2),
                perc.sign, ")", NAtxt)
     }

@@ -6,7 +6,8 @@
 ##' @title flist
 ##' @param x vector of function names
 ##' @param dattr the dtable attribute
-##' @param local look for function first in locally or 'descripteur'
+##' @param local if \code{TRUE}, look for function first locally, then in
+##'     'descripteur'
 ##' @export
 flist <- function(x, dattr= NULL, local = FALSE){
     l <- as.list(NULL)

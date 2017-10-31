@@ -215,7 +215,7 @@ dtable_format <- function(dt, b = 1,
     ## maybe_zero <- function(x) ifelse(x < p_b & x >= 0, paste0("<", p_b), x)
     ## zero <- function(x, not) if(not) not_zero(x) else maybe_zero(x)
     ## R[num[p]] <- lapply(R[num[p]], zero, not = peq0)
-    small.fixer <- function(x, fnc = lfnc, digits, reps = TRUE, peq0){
+    small.fixer <- function(x, fnc = lfnc, digits, reps = TRUE, peq0=peq0){
         izero  <- which(x == 0)
         ismall <- which(x < p_b)
         isna <- which(is.na(x))
@@ -251,6 +251,59 @@ dtable_format <- function(dt, b = 1,
     R
 }
 
+##' alternative formating
+##'
+##' alternative formating for numeric values
+##' @param x vector of numeric values
+##' @param dg rounding digits for 'great' (abs>1) numbers
+##' @param ds significance digits for 'small' numbers (abs<1)
+##' @param maybe.p is x possible p-values?
+##' @param p.bound if p-values, numbers below this will be '<p.bound'
+##' @param miss character string to replace missing values
+##' @param some.scientific possibly write some numbers in scientific notation
+##' @param low lower threshold for when to resort to scientific notation
+##' @param high upper threshold for when to resort to scientific notation
+##' @export
+alt_num_format <- function(x, dg = 1, ds = 2,
+                     maybe.p = TRUE, p.bound = 0.001,
+                     miss = "", some.scientific = TRUE,
+                     low = 1e-8, high = 1e8){
+    ret <- rep(NA_character_, length(x))
+    absx <- abs(x)
+    is.p <- FALSE
+    if(maybe.p){
+        a <- min(x, na.rm = TRUE)
+        b <- max(x, na.rm = TRUE)
+        if(a >= 0 & b <= 1) is.p <- TRUE
+    }
+    nas <- is.na(x)
+    g <- !nas & absx >= 1
+    t <- !nas & absx < 1e-3
+    s <- !nas & !g & !t
+    gf <- function(z, d) sprintf(paste0("%#.", d, "f"), z)
+    gs <- function(z, d) sprintf(paste0("%#.", d, "g"), z)
+    ## ret[g] <-  gf(round(x[g], dg), dg)
+    ## ret[s] <-  gs(signif(x[s], ds), ds)
+    ret[g] <-  sprintf(paste0("%#.", dg, "f"), round(x[g], dg))
+    ret[s] <-  sprintf(paste0("%#.", ds, "g"), round(x[s], dg))
+    for(i in seq_along(x[t])){
+        u <- format(x[t][i], digits = ds, scientific = FALSE)
+        if(!grepl(pattern = ".*[1-9][0-9]$", x = u)){
+            u <- paste0(u, "0")
+        }
+        ret[t][i] <- u
+    }
+    if(some.scientific){
+        i <- !nas & (absx >= high | absx <= low)
+        ret[i] <- format(x[i], digits = ds, scientific = TRUE)
+    }
+    if(is.p){
+        ret[x < p.bound] <- paste0("<", p.bound)
+    }
+    ret[nas] <- miss
+    ret
+}
+
 
 
 if(FALSE){
@@ -278,6 +331,8 @@ if(FALSE){
     ## tmax = 30
     ## repus = TRUE
     ## repwith = "\\_"
+
+
 
 }
 

@@ -250,3 +250,34 @@ get_label <- function(data){
     }
     data.frame(variable = Names, label = R, stringsAsFactors = FALSE)
 }
+
+if(FALSE){
+    ## tests on ordering
+    ##  ... should/could dtable_guide imply an ordering of variables in
+    ##      e.g. dtable_latex
+
+    ## n <- 100
+    ## df  <- data.frame(
+    ##     c_var = round(rnorm(10), 1),
+    ##     a_var = sample(letters[1:3], size = n, replace = TRUE),
+    ##     rid = as.character(1:n),
+    ##     f_var = as.Date("2010-01-01") + rpois(n, 365),
+    ##     b_var = factor(rpois(n, 50)),
+    ##     d_var = sample(c(TRUE, FALSE), size = n, replace = TRUE),
+    ##     g_var = rep(NA, n),
+    ##     id = paste0(letters, 1:n),
+    ##     h_var = rep(1:2, n/2),
+    ##     e_var = round(runif(n, 10, 20), 1)
+    ## )
+    ## g <- dtable_guide(df, elim.set = "h_var", row.id = "rid",
+    ##                   unit.id = "id", no.bnry = TRUE)
+
+    ## names(df)
+    ## g$variable
+
+    ## m <- match(names(df), g$variable)
+    ## (g2 <- g[m[!is.na(m)], ])
+
+    ## g2[order(g2$type, decreasing = TRUE), ]
+
+}
