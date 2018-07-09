@@ -62,3 +62,48 @@ intersect_if_notnull <- function(a, b){
         intersect(a, b)
     }
 }
+
+##' standard dtables to latex operations
+##'
+##' helper function for common transformation of ungrouped dtables object into
+##'     latex output; remove column 'variable' and put 'info' in info attribute
+##' @param dt an object from \code{dtables}
+##' @param format argument passed to \code{dtable_latex}
+##' @param ... arguments passed to \code{dtable_latex}
+##' @export
+dtables2latex_ungrouped_helper <- function(dt, format = TRUE, ...){
+    a1 <- dtable_prune(x = dt, rm = "variable")
+    a2 <- dtable_prune(x = a1, rm = "info", info = TRUE)
+    dtable_latex(a2, format = format, ...)
+}
+
+##' @describeIn dtables2latex_ungrouped_helper helper function for common
+##'     transformation of grouped dtables object into; in addition to
+##'     \code{dtables2latex_ungrouped_helper}, also put column 'pinfo' as a
+##'     footnote to column 'p' (and format)
+##' @export
+dtables2latex_grouped_helper <- function(dt, format = TRUE, ...){
+    a1 <- dtable_prune(x = dt, rm = "variable")
+    a2 <- dtable_prune(x = a1, rm = "info", info = TRUE)
+    a3 <- dtable_fnote(dt = a2, info = "pinfo", fn.var = "p", format = format)
+    dtable_latex(a3, ...)
+}
+##' for exporting dtables (experimental)
+##'
+##' make a dtable ready to write to file
+##' @param dt a dtables
+##' @param rm columns to remove
+##' @param reps vector of replacements, where the name replaces the entry,
+##'     e.g. \code{c('foo' = 'bar')} will replace all 'bar' with 'foo'
+##' @export
+dtables2file_helper <- function(dt, rm = NULL, reps = NULL){
+    if(is.null(reps)) reps <- c("   " = "\\quad:", "%" = "\\%")
+    if(is.null(rm)) rm <- intersect(names(dt), c("variable", "pinfo", "p", "info"))
+    a1 <- dtable_prune(dt, rm = rm)
+    for(i in seq_along(reps)){
+        a1[] <- lapply(a1[], FUN = function(x) gsub(reps[i], names(reps)[i], x=x, fixed = TRUE))
+    }
+    ## a1[] <- lapply(a1[], FUN = function(x) gsub("\\quad:", "   ", x=x, fixed = TRUE))
+    ## a1[] <- lapply(a1[], FUN = function(x) gsub("\\%", "%", x=x, fixed = TRUE))
+    a1
+}
