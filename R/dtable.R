@@ -148,6 +148,8 @@ dtable <- function(data, type = NULL, guide = NULL,
                 R1 <- if(is.null(R1)) R0 else dtable_rbind(R1, R0)
             }
         }
+        ## 20180709: added this tryCatch
+        tryCatch(expr =
         if(P$comp){
             for(g in gvar$variable){ ## g = gvar$variable[1]
                 lab <- gvar$label[gvar$variable == g][1]
@@ -175,7 +177,14 @@ dtable <- function(data, type = NULL, guide = NULL,
                 }
                 R2 <- dtable_rbind(R2, R0)
             }
+        }, error = function(e){
+            txt <- paste0("The comparison part of dtable does not compute,",
+                          " set if to FALSE or make sure that the comparing",
+                          " functions are appropriate. The error message was:")
+            message(txt)
+            print(e)
         }
+        )
         R <- dtable_order(
             if(is.null(R1) & is.null(R2)){
                 as.data.frame(NULL)
@@ -267,4 +276,3 @@ dc_param <- function(desc = NULL, comp = NULL, glist = NULL){
          "comp" = comp,
          "comp.style" = comp.style)
 }
-
