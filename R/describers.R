@@ -676,7 +676,7 @@ if(FALSE){
 ##' @export
 dt_name <- function(x, xname = NULL, ...){
     if(is.null(xname)) xname <- as.character(substitute(x))
-    xname <- latex_fix(xname)
+    ## xname <- latex_fix(xname) ## XK removed 2018-01-11
     abbrev(xname)
 }
 attr(dt_name, "dtable") <- "meta"
@@ -686,7 +686,7 @@ attr(dt_name, "dtable") <- "meta"
 dt_bname <- function(x, xname = NULL, ...){
     rl <- d_ref_level(x)
     if(is.null(xname)) xname <- as.character(substitute(x))
-    xname <- latex_fix(xname)
+    ## xname <- latex_fix(xname) ## XK removed 2018-01-11
     abbrev2(xname, rl, sep = ": ")
 }
 attr(dt_bname, "dtable") <- "meta"
@@ -694,10 +694,11 @@ attr(dt_bname, "dtable") <- "meta"
 ##' @describeIn dt_desc returns name:ref for catg
 ##' @export
 dt_cname <- function(x, xname = NULL, ...){
-    rl <- latex_fix(levels(make_catg(x)))
+    ## rl <- latex_fix(levels(make_catg(x))) ## XK removed 2018-01-11
+    rl <- levels(make_catg(x))
     n <- length(rl)
     if(is.null(xname)) xname <- as.character(substitute(x))
-    xname <- latex_fix(xname)
+    ## xname <- latex_fix(xname) ## XK removed 2018-01-11
     a <- abbrev2(xname, rl[1], sep = ": ")
     b <- paste0("\\quad: ", abbrev(rl[-1], 25))
     c(a, b)
@@ -802,7 +803,7 @@ dt_ccp_helper <- function(x, useNA, info, perc.sign = NULL, ...){
         z <- make_catg(x)
         n <- d_cn(x = z, ...)
         p <- d_cp(x = z, ...)
-        paste0(n, " (",
+        paste0(if(all(n == as.integer(n))) n else round(n, 1), " (",
                roundisch(100*p, t = 0.001, scientific = TRUE, digit2 = 2),
                perc.sign, ")", c(NAtxt, rep("", length(n)-1)))
     }

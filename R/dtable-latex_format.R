@@ -232,7 +232,7 @@ dtable_format <- function(dt, b = 1,
                         peq0 = peq0, reps = TRUE)
     i_rest <- setdiff(num, c(il, ih, p))
     R[i_rest] <- lapply(R[i_rest], FUN = rfnc, digits = br)
-    R[i_rest] <- lapply(R[i_rest], format, drop0trailing = TRUE)
+    ## R[i_rest] <- lapply(R[i_rest], format, drop0trailing = TRUE)
     ## format character
     ## chr <- which(classy == "character")
     chr <- which(classy %in% c("character", "factor"))
