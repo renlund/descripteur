@@ -61,10 +61,11 @@ dtable_guide <- function(data, elim.set = NULL,
             n_unique(x) <= 1
         }
     }
-    const <- names(data)[unlist(lapply(data, n_is_1))]
+    ## const <- names(data)[unlist(lapply(data, n_is_1))] ## MOVED down
     val <- setdiff(names(org_data), c(elim.set, row.id, unit.id, const))
     ## data <- subset(org_data, subset = TRUE, select = val)
     data <- org_data[, val, drop = FALSE]
+    const <- names(data)[unlist(lapply(data, n_is_1))]
     ## class2 <- function(x) class(x)[1]
     classy <- lapply(data, get_class)
     any_na <- function(x) any(is.na(x))
