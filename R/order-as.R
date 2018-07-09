@@ -20,7 +20,7 @@ order_as <- function(given, wanted, incl.unordered = TRUE){
     spl <- lapply(split(df, f = df$given), foo)
     dc <- unsplit(spl, f = df$given)
     rownames(dc) <- NULL
-    sdc <- subset(dc, attention == 1)
+    sdc <- subset(dc, dc$attention == 1)
     lw <- as.list(want)
     names(lw) <- want
     for(k in seq_along(sdc$given)){ ## k = 1

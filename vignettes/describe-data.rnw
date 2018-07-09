@@ -14,7 +14,7 @@
 <<"setup", cache = FALSE, echo = FALSE, include = FALSE>>=
 library(knitr)
 library(descripteur)
-devtools::load_all()
+##devtools::load_all()
 opts_chunk$set(include = TRUE,
                echo = TRUE,
                cache = FALSE)

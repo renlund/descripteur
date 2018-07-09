@@ -253,7 +253,7 @@ dtable_format <- function(dt, b = 1,
 
 ##' alternative formating
 ##'
-##' alternative formating for numeric values
+##' alternative formating for numeric values, BUT IT DOES NOT SEEM TO DO WHAT I WANT
 ##' @param x vector of numeric values
 ##' @param dg rounding digits for 'great' (abs>1) numbers
 ##' @param ds significance digits for 'small' numbers (abs<1)
@@ -303,8 +303,6 @@ alt_num_format <- function(x, dg = 1, ds = 2,
     ret[nas] <- miss
     ret
 }
-
-
 
 if(FALSE){
 
