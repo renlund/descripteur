@@ -115,7 +115,7 @@ dtable_guide <- function(data, elim.set = NULL,
                    data.frame(
                        variable = row.id,
                        type = "row id.",
-                       original_class = class(org_data[[row.id]]),
+                       original_class = get_class(org_data[[row.id]]),
                        has_missing = any(is.na(org_data[[row.id]])),
                        check.names = FALSE,
                        row.names = NULL,
@@ -126,7 +126,7 @@ dtable_guide <- function(data, elim.set = NULL,
                    data.frame(
                        variable = unit.id,
                        type = "unit id.",
-                       original_class = class(org_data[[unit.id]]),
+                       original_class = get_class(org_data[[unit.id]]),
                        has_missing = any(is.na(org_data[[unit.id]])),
                        check.names = FALSE,
                        row.names = NULL,
@@ -139,7 +139,7 @@ dtable_guide <- function(data, elim.set = NULL,
                          variable = const,
                          type = "constant",
                          original_class = unlist(lapply(org_data[const],
-                                                        class)),
+                                                        get_class)),
                          has_missing = unlist(lapply(org_data[const], any_na)),
                          check.names = FALSE,
                          row.names = NULL,
@@ -245,7 +245,14 @@ get_label <- function(data){
         R[k] <- if(is.null(x <- attr(data[[k]], "label"))){
                     Names[k]
                 } else {
-                    x
+                    if(length(x) == 1 & is.character(x)){
+                        x
+                    } else {
+                        s <- paste0("label for '", Names[k], "' is not what",
+                                    " one, i.e. me the programmer, would expect.")
+                        message(s)
+                        Names[k]
+                    }
                 }
     }
     data.frame(variable = Names, label = R, stringsAsFactors = FALSE)
