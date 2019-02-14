@@ -27,5 +27,5 @@ alt_num_format(x, dg = 1, ds = 2, maybe.p = TRUE, p.bound = 0.001,
 \item{high}{upper threshold for when to resort to scientific notation}
 }
 \description{
-alternative formating for numeric values
+alternative formating for numeric values, BUT IT DOES NOT SEEM TO DO WHAT I WANT
 }

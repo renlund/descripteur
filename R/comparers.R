@@ -70,7 +70,8 @@ attr(c_rstd, "dtable") <- "comp"
 c_t.test.p <- function(x, glist, ...){
     warn_if_weight_not_used(...)
     warn_if_wrong_glist_length(glist, 2)
-    stats::t.test(x = x[glist[[1]]], y = x[glist[[2]]])$p.value
+    tryCatch(stats::t.test(x = x[glist[[1]]], y = x[glist[[2]]])$p.value,
+             error = function(e) NA_real_)
 }
 attr(c_t.test.p, "dtable") <- "comp"
 
@@ -79,9 +80,9 @@ attr(c_t.test.p, "dtable") <- "comp"
 c_wilcox.p <- function(x, glist, ...){
     warn_if_weight_not_used(...)
     warn_if_wrong_glist_length(glist, 2)
-    tmp <- stats::wilcox.test(x = x[glist[[1]]], y = x[glist[[2]]],
-                              exact = FALSE)
-    tmp$p.value
+    tryCatch(stats::wilcox.test(x = x[glist[[1]]], y = x[glist[[2]]],
+                                exact = FALSE)$p.value,
+             error = function(e) NA_real_)
 }
 attr(c_wilcox.p, "dtable") <- "comp"
 
@@ -90,10 +91,18 @@ attr(c_wilcox.p, "dtable") <- "comp"
 c_kruskal.p <- function(x, glist, ...){
     warn_if_weight_not_used(...)
     g <- factor(factorize_glist(glist))
-    tmp <- stats::kruskal.test(x = x, g = g)
-    tmp$p.value
+    tryCatch(stats::kruskal.test(x = x, g = g)$p.value,
+             error = function(e) NA_real_)
 }
 attr(c_kruskal.p, "dtable") <- "comp"
+
+if(FALSE){
+    df <- data.frame(
+        g = rep(letters[1:2], each = 20),
+        x = rnorm(40, mean = rep(1:2, each = 20), 1)
+    )
+    c_kruskal.p(x = df$x, glist = make_glist(x = "g", ref = df))
+}
 
 ##' @describeIn c_real ANOVA test p-value, any number of groups
 ##' @export
@@ -166,7 +175,8 @@ c_fisher.p <- function(x, glist, ...){
     ## x <- c(x1, x2)
     ## g <- rep(0:1, c(length(x1), length(x2)))
     g <- factorize_glist(glist)
-    stats::fisher.test(x = x, y = g, simulate.p.value = TRUE)$p.value
+    tryCatch(stats::fisher.test(x = x, y = g, simulate.p.value = TRUE)$p.value,
+             error = function(e) NA_real_)
 }
 attr(c_fisher.p, "dtable") <- "comp"
 
@@ -180,9 +190,19 @@ c_chisq.p <- function(x, glist, ...){
     ## x <- c(x1, x2)
     ## g <- rep(0:1, c(length(x1), length(x2)))
     g <- factorize_glist(glist)
-    stats::chisq.test(x = x, y = g)$p.value
+    ##stats::chisq.test(x = x, y = g)$p.value
+    tryCatch(expr = stats::chisq.test(x = x, y = g)$p.value,
+             error = function(e) NA_real_)
 }
 attr(c_chisq.p, "dtable") <- "comp"
+
+if(FALSE){
+    x <- rep(0:2, each = 10000)
+    y <- rep(1, length(x)) ## x ##1-x ##ifelse(x==0, rbinom(200, 1, 0.3), 0)
+    table(x,y)
+    chisq.test(x, y)
+}
+
 
      ## +----------------------------------------+ ##
      ## | comparing functions for date variables | ##
@@ -389,6 +409,12 @@ dt_comp <- function(...) invisible(NULL)
 dt_empty_comp <- function(x, ...) NA
 attr(dt_empty_comp, "dtable") <- "comp"
 
+##' @describeIn dt_comp returns an empty string
+##' @export
+dt_empty_meta <- function(x, ...) NA
+attr(dt_empty_meta, "dtable") <- "meta"
+
+
 ## ----------------------------------------------------------------------------
 ## the cumbersome setup below of having a 'helper' function either return the
 ## value of interest OR the information about what it has returned is only
@@ -425,6 +451,29 @@ dt_wilcox.p.info <- function(x, glist, ...){
 attr(dt_wilcox.p.info, "dtable") <- "meta"
 
 ## ----------------------------------------------------------------------------
+dt_kruskal.p_helper <- function(x, glist, info, ...){
+    if(info){
+        "Kruskal-Wallis"
+    } else {
+        c_kruskal.p(x = x, glist = glist, ...)
+    }
+}
+
+##' @describeIn dt_comp kruskal-wallis test p-value
+##' @export
+dt_kruskal.p <- function(x, glist, ...){
+    dt_kruskal.p_helper(x = x, glist = glist, info = FALSE, ...)
+}
+attr(dt_kruskal.p, "dtable") <- "comp"
+
+##' @describeIn dt_comp info on kruskal-wallis test p-value
+##' @export
+dt_kruskal.p.info <- function(x, glist, ...){
+    dt_kruskal.p_helper(x = x, glist = glist, info = TRUE)
+}
+attr(dt_kruskal.p.info, "dtable") <- "meta"
+
+## ----------------------------------------------------------------------------
 dt_fisher.p_helper <- function(x, glist, info, ...){
     y <- make_catg(x)
     n <- length(levels(y)) - 1
@@ -432,6 +481,7 @@ dt_fisher.p_helper <- function(x, glist, info, ...){
     if(info){
         "Fisher"
     } else {
+        ## c_fisher.p(x = x, glist = glist, ...)
         c(c_fisher.p(x = x, glist = glist, ...), rep(NA, n))
     }
 }
@@ -458,6 +508,7 @@ dt_chisq.p_helper <- function(x, glist, info, ...){
     if(info){
         "Chi-square"
     } else {
+        ## c_chisq.p(x = x, glist = glist, ...)
         c(c_chisq.p(x = x, glist = glist, ...), rep(NA, n))
     }
 }
@@ -475,4 +526,3 @@ dt_chisq.p.info <- function(x, glist, ...){
     dt_chisq.p_helper(x = x, glist = glist, info = TRUE)
 }
 attr(dt_chisq.p.info, "dtable") <- "meta"
-

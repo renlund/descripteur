@@ -3,8 +3,11 @@
 \name{dt_comp}
 \alias{dt_comp}
 \alias{dt_empty_comp}
+\alias{dt_empty_meta}
 \alias{dt_wilcox.p}
 \alias{dt_wilcox.p.info}
+\alias{dt_kruskal.p}
+\alias{dt_kruskal.p.info}
 \alias{dt_fisher.p}
 \alias{dt_fisher.p.info}
 \alias{dt_chisq.p}
@@ -15,9 +18,15 @@ dt_comp(...)
 
 dt_empty_comp(x, ...)
 
+dt_empty_meta(x, ...)
+
 dt_wilcox.p(x, glist, ...)
 
 dt_wilcox.p.info(x, glist, ...)
+
+dt_kruskal.p(x, glist, ...)
+
+dt_kruskal.p.info(x, glist, ...)
 
 dt_fisher.p(x, glist, ...)
 
@@ -41,9 +50,15 @@ various functions for compact summary of variables
 \itemize{
 \item \code{dt_empty_comp}: returns an empty string
 
+\item \code{dt_empty_meta}: returns an empty string
+
 \item \code{dt_wilcox.p}: wilcoxon test p-value
 
 \item \code{dt_wilcox.p.info}: info on wilcoxon test p-value
+
+\item \code{dt_kruskal.p}: kruskal-wallis test p-value
+
+\item \code{dt_kruskal.p.info}: info on kruskal-wallis test p-value
 
 \item \code{dt_fisher.p}: fishers exact test p-value
 
