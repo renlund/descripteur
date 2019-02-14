@@ -27,7 +27,9 @@ dtable_rbind <- function(x, y){
 ##' @param y object 2
 ##' @param groups add meta info to the groups
 ##' @export
-dtable_cbind <- function(x, y, groups = NULL){
+dtable_cbind <- function(x = NULL, y = NULL, groups = NULL){
+    if(is.null(y)) return(x)
+    if(is.null(x)) return(y)
     mx <- dtable_order(x)
     my <- dtable_order(y)
     a <- attr(mx, "dtable")

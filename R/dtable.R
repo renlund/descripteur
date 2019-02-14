@@ -7,10 +7,12 @@
 ##' @param type what kind of variables to you want to describe? 'real', 'bnry',
 ##'     'cat', 'date' and 'surv' are available
 ##' @param guide point to guide or get the default
-##' @param desc if to describe variables
+##' @param desc if, and how, to describe variables
 ##' @param desc.flist list of describers, i.e. describing functions
 ##' @param comp if, and how, to compare variables (requires a glist)
 ##' @param comp.flist list of comparers, i.e. comparing functions
+##' @param test if to test variables
+##' @param test.flist list of testers, i.e. testing functions
 ##' @param glist grouping list, if wanted. This can either be a list of logical
 ##'     vectors equal in length to the numbers of rows (i.e. logical indexes), in
 ##'     which case overlapping groups can be made, or the name of a variable in
@@ -24,6 +26,7 @@
 dtable <- function(data, type = NULL, guide = NULL,
                    desc = NULL, desc.flist = NULL,
                    comp = NULL, comp.flist = NULL,
+                   test = NULL, test.flist = NULL,
                    glist = NULL, w = NULL, useNA = "no", ...){
     if(!useNA %in% c("ifany", "always", "no")){
         message("wrong useNA specification (set to 'no')")
@@ -50,7 +53,8 @@ dtable <- function(data, type = NULL, guide = NULL,
     if(!type %in% descripteur_desc_types()){
         stop("type not supported")
     }
-    P <- dc_param(desc = desc, comp = comp, glist = glist)
+    P <- dc_param(desc = desc, comp = comp, test = test, glist = glist)
+    ## examine glist argument -------------------------------------------------
     glist.variable <- NULL
     if(!is.null(glist)){
         if(is.character(glist)){
@@ -70,6 +74,7 @@ dtable <- function(data, type = NULL, guide = NULL,
         }
         if(length(glist) == 1) stop("only 1 subgroup defined by glist")
     }
+    ## examine w argument -----------------------------------------------------
     if(!is.null(w)){
         if(is.character(w)){
             w.text <- w
@@ -93,9 +98,10 @@ dtable <- function(data, type = NULL, guide = NULL,
         }
     }
     gvar <- guide[guide$type == type,]
-    if((!P$desc & !P$comp) | nrow(gvar) == 0) {
+    if((!P$desc & !P$comp & !P$test) | nrow(gvar) == 0) {
         R <- as.data.frame(NULL)
     } else {
+        ## make sure there are describers -------------------------------------
         d_fnc <- if(!is.null(desc.flist)){
                      desc.flist
                  } else {
@@ -106,6 +112,7 @@ dtable <- function(data, type = NULL, guide = NULL,
             warning("dattr for describers is off, reset to 'desc'")
             attr(d_fnc, "dtable") <- rep("desc", length(d_fnc))
         }
+        ## make sure there are comparers --------------------------------------
         c_fnc <- if(!is.null(comp.flist)){
                      comp.flist
                  } else {
@@ -116,10 +123,22 @@ dtable <- function(data, type = NULL, guide = NULL,
             warning("dattr for comparers is off, reset to 'comp'")
             attr(c_fnc, "dtable") <- rep("comp", length(c_fnc))
         }
-        R1 <- NULL
-        R2 <- NULL
+        ## make sure there are testers ----------------------------------------
+        t_fnc <- if(!is.null(test.flist)){
+                     test.flist
+                 } else {
+                     opts_desc$get(paste0("test_", type))
+                 }
+        dattr_t_fnc <- attr(t_fnc, "dtable")
+        if(length(dattr_t_fnc) != length(t_fnc)){
+            warning("dattr for testers is off, reset to 'test'")
+            attr(t_fnc, "dtable") <- rep("test", length(t_fnc))
+        }
+        ## --------------------------------------------------------------------
+        R1 <- R2 <- R3 <- NULL
         has_na <- any(gvar$has_missing)
         use_na <- if(useNA != "ifany") useNA == "always" else has_na
+        ## apply describers ---------------------------------------------------
         if(P$desc){
             for(g in gvar$variable){ ## g <- gvar$variable[2]
                 ## x <- data[[g]]
@@ -148,6 +167,7 @@ dtable <- function(data, type = NULL, guide = NULL,
                 R1 <- if(is.null(R1)) R0 else dtable_rbind(R1, R0)
             }
         }
+        ## apply comparers ----------------------------------------------------
         ## 20180709: added this tryCatch
         tryCatch(expr =
         if(P$comp){
@@ -178,21 +198,59 @@ dtable <- function(data, type = NULL, guide = NULL,
                 R2 <- dtable_rbind(R2, R0)
             }
         }, error = function(e){
-            txt <- paste0("The comparison part of dtable does not compute,",
+            txt <- paste0("\n-----------------------------------------------\n",
+                          "The comparison part of dtable does not compute,",
                           " set if to FALSE or make sure that the comparing",
-                          " functions are appropriate. The error message was:")
+                          " functions are appropriate. The error message was:\n")
             message(txt)
             print(e)
+            message(paste0("\n-----------------------------------------------\n"))
         }
         )
-        R <- dtable_order(
-            if(is.null(R1) & is.null(R2)){
-                as.data.frame(NULL)
-            } else if(is.null(R1)  | is.null(R2)){
-                if(!is.null(R1)) R1 else R2
-            } else {
-                dtable_cbind(R1, R2)
-            })
+        ## apply testers ------------------------------------------------------
+        if(P$test){
+            for(g in gvar$variable){ ## g = gvar$variable[1]
+                lab <- gvar$label[gvar$variable == g][1]
+                x <- if(type %in% c("bnry", "catg")){
+                         factor(data[[g]], levels = attr(guide, "levels")[[g]])
+                     } else {
+                         data[[g]]
+                     }
+                if(P$test.style == "overall"){
+                    R0 <- apply_flist(x = x, flist = t_fnc, useNA = use_na,
+                                      glist = glist, w = w, xname = lab, ...)
+                }
+                ## ## THIS PART NOT IMPLEMENTED YET
+                ## else {
+                ##     R0 <- NULL
+                ##     for(k in 2:length(glist)){ ## k = 2
+                ##         ref.index <- if(P$test.style == "across") 1 else k-1
+                ##         tmp <- apply_flist(x = x,
+                ##                            glist = glist[c(ref.index,k)],
+                ##                            flist = t_fnc,
+                ##                            w = w,
+                ##                            useNA = use_na,
+                ##                            xname = lab, ...)
+                ##         R0 <- dtable_cbind(R0, tmp,
+                ##                            groups = names(glist)[k])
+                ##     }
+                ## }
+                R2 <- dtable_rbind(R2, R0)
+            }
+        }
+        ## combine results ----------------------------------------------------
+        dtable_cbind(R1, dtable_cbind(R2, R3))
+        ## ## dtable_cbind has been updated so the above line should work
+        ## ## old way of doing things below
+        ## R <- dtable_order(
+        ##     if(is.null(R1) & is.null(R2)){
+        ##         as.data.frame(NULL)
+        ##     } else if(is.null(R1)  | is.null(R2)){
+        ##         if(!is.null(R1)) R1 else R2
+        ##     } else {
+        ##         dtable_cbind(R1, R2)
+        ##     })
+
     }
     attr(R, "size") <- nrow(data)
     variables <- guide$variable[guide$type == type]
@@ -225,9 +283,10 @@ dtable <- function(data, type = NULL, guide = NULL,
 }
 
 #-#' function for setting up sane 'comp' and 'desc' defaults
-dc_param <- function(desc = NULL, comp = NULL, glist = NULL){
+dc_param <- function(desc = NULL, comp = NULL, test = NULL, glist = NULL){
     if(is.null(desc)) desc <- TRUE
     if(is.null(comp)) comp <- if(is.null(glist)) FALSE else TRUE
+    if(is.null(test)) test <- FALSE
     if(is.character(desc)){
         if(!desc %in% c("each", "first")){
             stop("if character, desc should be 'each' or 'first'")
@@ -247,6 +306,14 @@ dc_param <- function(desc = NULL, comp = NULL, glist = NULL){
     } else {
         comp.style <- NA_character_
     }
+    if(is.character(test)){
+        if(!test %in% c("overall")){
+            stop(paste0("if character, test should be 'overall'",
+                        " (awaiting other implementations)"))
+        }
+        test.style <- test
+        test <- TRUE
+    }
     if(comp){
         if(is.null(glist)){
             warning("comp set, but no glist?")
@@ -254,6 +321,15 @@ dc_param <- function(desc = NULL, comp = NULL, glist = NULL){
             comp.style <- NA_character_
         } else if(is.na(comp.style)){
             comp.style <- "overall"
+        }
+    }
+    if(test){
+        if(is.null(glist)){
+            warning("test set, but no glist?")
+            test <- FALSE
+            test.style <- NA_character_
+        } else if(is.na(test.style)){
+            test.style <- "overall"
         }
     }
     if(desc){
@@ -274,5 +350,7 @@ dc_param <- function(desc = NULL, comp = NULL, glist = NULL){
     list("desc" = desc,
          "desc.style" = desc.style,
          "comp" = comp,
-         "comp.style" = comp.style)
+         "comp.style" = comp.style,
+         "test" = test,
+         "test.style" = test.style)
 }

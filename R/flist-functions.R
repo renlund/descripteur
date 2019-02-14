@@ -45,13 +45,13 @@ flist <- function(x, dattr= NULL, local = FALSE){
 ##' @param date logical or an flist
 ##' @param surv logical or an flist
 ##' @param names row names wanted
-##' @param thing character; 'desc' or 'comp'
+##' @param thing character; 'desc', 'comp' or 'test'
 ##' @export
 flists <- function(real = FALSE, bnry = FALSE, catg = FALSE,
                    date = FALSE, surv = FALSE, names = NULL,
                    thing = "desc"){
     NAMES <- names
-    if(!thing %in% c("desc", "comp")) stop("nah1")
+    if(!thing %in% c("desc", "comp", "test")) stop("nah1")
     types <- c("real", "bnry", "catg", "date", "surv")
     foo <- function(x){
         ## tmp <- get(x, envir = environment(), inherits  = FALSE)
@@ -67,8 +67,10 @@ flists <- function(real = FALSE, bnry = FALSE, catg = FALSE,
             if(tmp){
                 if(thing == "desc"){
                     desc_get(paste0("describe_", x, "_compact"))
-                } else {
+                } else if(thing == "comp") {
                     desc_get(paste0("compare_",  x, "_compact"))
+                } else if(thing == "test"){
+                    desc_get(paste0("test_",  x, "_compact"))
                 }
             } else NULL
         } else tmp
@@ -106,4 +108,3 @@ flists_default <- function(types, names = NULL, thing = "desc"){
         names = names, thing = thing
     )
 }
-

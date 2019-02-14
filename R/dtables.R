@@ -7,19 +7,23 @@
 ##' @param types types wanted
 ##' @param desc.flists flists for description
 ##' @param comp.flists flists for comparison
+##' @param test.flists flists for testing
 ##' @export
 dtables <- function(data, guide = NULL, ..., types = NULL,
-                    desc.flists = NULL, comp.flists = NULL){
+                    desc.flists = NULL, comp.flists = NULL, test.flists = NULL){
     ok_types <- c("real", "bnry", "catg", "date", "surv") ## descripteur_desc_types
     if(is.null(guide)) guide <- dtable_guide(data)
     if(is.null(types)) types <- intersect_if_notnull(names(desc.flists),
-                                                     names(comp.flists))
+                                intersect_if_notnull(names(comp.flists),
+                                                     names(test.flists)))
     if(is.null(types)) types <- ok_types
     types <- intersect(types, unique(guide$type))
     if(is.null(desc.flists)) desc.flists <- flists_default(types = types,
                                                           thing = "desc")
     if(is.null(comp.flists)) comp.flists <- flists_default(types = types,
                                                           thing = "comp")
+    if(is.null(test.flists)) comp.flists <- flists_default(types = types,
+                                                           thing = "test")
     if(!all(types %in% ok_types)){
         wot <- paste0(setdiff(types, ok_types), collapse = ", ")
         stop(paste0("some types specified are unknow: ", wot, "."))
@@ -32,7 +36,8 @@ dtables <- function(data, guide = NULL, ..., types = NULL,
         tmp <- do.call(dtable, args = c(list(data = data, type = TYP,
                                              guide = guide,
                                              desc.flist = desc.flists[[TYP]],
-                                             comp.flist = comp.flists[[TYP]]),
+                                             comp.flist = comp.flists[[TYP]],
+                                             test.flist = test.flists[[TYP]]),
                                         dots))
         if(nrow(tmp) == 0) next
         suppressWarnings(R <- if(is.null(R)){
@@ -43,7 +48,8 @@ dtables <- function(data, guide = NULL, ..., types = NULL,
     }
     mod_guide <- subset(guide, guide$type %in% c(types, "unit.id"))
     mod_guide$type <- "real" ## this choice should not matter
-    META <- dtable(data, type = "real", desc = FALSE, comp = FALSE,
+    META <- dtable(data, type = "real",
+                   desc = FALSE, comp = FALSE, test = FALSE,
                    guide = mod_guide, glist = dots$glist)
     aM <- attributes(META)
     transf <- setdiff(names(aM), c("names", "row.names", "class", "dc_param"))

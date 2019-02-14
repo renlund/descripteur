@@ -4,10 +4,6 @@
 \alias{c_real}
 \alias{c_shift}
 \alias{c_rstd}
-\alias{c_t.test.p}
-\alias{c_wilcox.p}
-\alias{c_kruskal.p}
-\alias{c_anova.p}
 \title{various comparer functions for real types}
 \usage{
 c_real(...)
@@ -15,14 +11,6 @@ c_real(...)
 c_shift(x, glist, ...)
 
 c_rstd(x, glist, w = NULL, ...)
-
-c_t.test.p(x, glist, ...)
-
-c_wilcox.p(x, glist, ...)
-
-c_kruskal.p(x, glist, ...)
-
-c_anova.p(x, glist, ...)
 }
 \arguments{
 \item{...}{this is to be able to tolerate unnecessary arguments}
@@ -42,15 +30,6 @@ various comparer functions for real types
 
 \item \code{c_rstd}: standardized difference (2 groups only) assuming
 independence
-
-\item \code{c_t.test.p}: t.test p-value, 2 groups only (could be made with weights
-but not implemented yet)
-
-\item \code{c_wilcox.p}: wilcoxon test p.value
-
-\item \code{c_kruskal.p}: kruskal-wallis p-value, any number of groups
-
-\item \code{c_anova.p}: ANOVA test p-value, any number of groups
 }}
 
 \references{

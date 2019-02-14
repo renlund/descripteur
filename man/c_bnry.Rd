@@ -5,8 +5,6 @@
 \alias{c_RR}
 \alias{c_OR}
 \alias{c_bstd}
-\alias{c_fisher.p}
-\alias{c_chisq.p}
 \title{various comparer functions for bnry types}
 \usage{
 c_bnry(...)
@@ -16,10 +14,6 @@ c_RR(x, glist, w = NULL, ...)
 c_OR(x, glist, w = NULL, ...)
 
 c_bstd(x, glist, w = NULL, ...)
-
-c_fisher.p(x, glist, ...)
-
-c_chisq.p(x, glist, ...)
 }
 \arguments{
 \item{...}{this is to be able to tolerate unnecessary arguments}
@@ -40,10 +34,6 @@ various comparer functions for bnry types
 \item \code{c_OR}: odds ratio, 2 groups only
 
 \item \code{c_bstd}: standardized differences for binary variables, 2 groups only
-
-\item \code{c_fisher.p}: fisher test p-value
-
-\item \code{c_chisq.p}: chisquare test p-value
 }}
 
 \references{

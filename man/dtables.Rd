@@ -5,7 +5,7 @@
 \title{dtable for multiple types}
 \usage{
 dtables(data, guide = NULL, ..., types = NULL, desc.flists = NULL,
-  comp.flists = NULL)
+  comp.flists = NULL, test.flists = NULL)
 }
 \arguments{
 \item{data}{the data set}
@@ -19,6 +19,8 @@ dtables(data, guide = NULL, ..., types = NULL, desc.flists = NULL,
 \item{desc.flists}{flists for description}
 
 \item{comp.flists}{flists for comparison}
+
+\item{test.flists}{flists for testing}
 }
 \description{
 concatenate dtables for multiple types into a single dtable

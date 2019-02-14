@@ -20,7 +20,7 @@ flists(real = FALSE, bnry = FALSE, catg = FALSE, date = FALSE,
 
 \item{names}{row names wanted}
 
-\item{thing}{character; 'desc' or 'comp'}
+\item{thing}{character; 'desc', 'comp' or 'test'}
 }
 \description{
 flists is a list of one or more flist, one for each type wanted (and named
