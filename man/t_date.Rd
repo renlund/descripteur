@@ -15,8 +15,6 @@ t_date_empty(x, glist, ...)
 \item{x}{vector}
 
 \item{glist}{a grouping list}
-
-\item{w}{weights}
 }
 \description{
 various testing functions for date types

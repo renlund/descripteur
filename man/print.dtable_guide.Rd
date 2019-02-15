@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{a \code{dtable_guide } object}
 
-\item{...}{arguments passed to \code{\link[base]{print.data.frame}}}
+\item{...}{arguments passed to \code{print.data.frame}}
 }
 \description{
 prints the data source attribute as well as the data frame

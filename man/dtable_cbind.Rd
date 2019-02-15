@@ -4,7 +4,7 @@
 \alias{dtable_cbind}
 \title{cbind for dtables}
 \usage{
-dtable_cbind(x = NULL, y = NULL, groups = NULL)
+dtable_cbind(x, y, groups = NULL)
 }
 \arguments{
 \item{x}{object 1}

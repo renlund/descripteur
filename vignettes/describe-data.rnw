@@ -32,6 +32,13 @@ if(FALSE){
 
 \newpage
 
+\setcounter{section}{-1}
+\section{Changes}
+The package has had a change in that there are now 3 aspects of data
+description, \emph{description}, \emph{comparison} and \emph{test}. Tests used
+to be thought of as part of comparisons, but in many cases it seems better to
+keep these separate. This vignette is not updated to reflect this change.
+
 \section{Data description approach}
 
 \subsection{Describing and comparing}
@@ -133,6 +140,9 @@ your own functions:
   \texttt{comp} to attribute \texttt{dattr} of the functions that describe and
   compare, respectively. If the function list supplied do not have this
   attribute it is set automatically.
+
+  \textbf{Update:} there is, as of version $\geq 2.0.1$ also a value
+  \texttt{test} to be able to separate comparison measures from tests.
 
   There is also a \texttt{meta} value that is mostly used internally but can be
   useful for things that should not be copied when a table is being put
@@ -347,10 +357,10 @@ misser <- function(x, m = length(x)){
 }
 df[c(2,4,7,10)] <- lapply(df[c(2,4,7,10)], misser)
 dtg <- dtable_guide(df, unit.id = "id")
-dtg$label <- c("binary 1", "bengt", "bio", "bam", "B before A",
-               "cats are fun", "cool",
-               "datum", "doey", "IdEnTiFiEr",
-               "roYe", "RandomNessy",
+dtg$label <- c("Binary 1", "Bengt", "Bio", "Bam", "B before A",
+               "Cats Are Fun", "Cool",
+               "Datum", "Doey", "IdEnTiFiEr",
+               "RoYe", "RandomNessy",
                "Slipp", "Slopp")
 gl <- descripteur:::make_glist("b1", ref = df)
 gl3 <- list(
@@ -369,6 +379,23 @@ dtg
 @
 
 The labels will be used in \LaTeX\, tables (provided the guide is specified).
+
+<<"test-after-updates", include = FALSE, eval = FALSE>>=
+dtable(df, type = "real")
+dtable(df, type = "real", glist = gl, describe = "each")
+dtable(df, type = "real", glist = gl, describe = "each", test = TRUE)
+(tmp1 <- dtable(df, type = "real", glist = gl, comp = FALSE))
+(tmp2 <- dtable(df, type = "real", glist = gl, desc = FALSE))
+(tmp3 <- dtable(df, type = "real", glist = gl, desc = FALSE,
+               comp = FALSE, test = TRUE))
+attr(tmp1, "dtable")
+attr(tmp2, "dtable")
+attr(tmp3, "dtable")
+dtable_cbind(tmp1, tmp2)
+dtable_cbind(tmp2, tmp3)
+dtable_cbind(tmp1, tmp2)
+@
+
 
 \clearpage
 \subsection{Type \texttt{real}}
@@ -564,7 +591,7 @@ labels of the variable names.
 <<results = 'asis', eval = TRUE>>=
 dlist <- flists(real = TRUE, bnry = TRUE, catg = TRUE) ## get defaults
 dt <- dtables(data = df, useNA = "ifany", desc.flists = dlist,
-              guide = dtg, glist = "b1")
+              guide = dtg, test = TRUE, glist = "b1")
 tmp1 <- dtable_prune(dt, rm = "variable", info = FALSE)
 tmp2 <- dtable_prune(tmp1, rm = "info", info = TRUE)
 tmp3 <- dtable_fnote(tmp2, info = "pinfo", fn.var = "p", format = TRUE)

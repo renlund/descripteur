@@ -165,7 +165,7 @@ attr(c_dstd, "dtable") <- "comp"
 ##' @param useNA display info for missing?
 ##' @param w weight
 ##' @param ... this is to be able to tolerate unnecessary arguments
-##' @seealso \code{\link{c_fisher.p}} and \code{\link{c_chisq.p}} which work for
+##' @seealso \code{\link{t_fisher.p}} and \code{\link{t_chisq.p}} which work for
 ##'     catg variables as well
 c_catg <- function(...) invisible(NULL)
 

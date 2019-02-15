@@ -22,7 +22,7 @@ dtables <- function(data, guide = NULL, ..., types = NULL,
                                                           thing = "desc")
     if(is.null(comp.flists)) comp.flists <- flists_default(types = types,
                                                           thing = "comp")
-    if(is.null(test.flists)) comp.flists <- flists_default(types = types,
+    if(is.null(test.flists)) test.flists <- flists_default(types = types,
                                                            thing = "test")
     if(!all(types %in% ok_types)){
         wot <- paste0(setdiff(types, ok_types), collapse = ", ")

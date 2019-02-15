@@ -227,7 +227,7 @@ get_class <- function(x){
 ##'
 ##' prints the data source attribute as well as the data frame
 ##' @param x a \code{dtable_guide } object
-##' @param ... arguments passed to \code{\link[base]{print.data.frame}}
+##' @param ... arguments passed to \code{print.data.frame}
 ##' @export
 print.dtable_guide <- function(x, ...){
     if(!is.null(ds <- attr(x, "data_source"))){

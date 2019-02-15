@@ -1,8 +1,3 @@
-## c_ -> t_
-## "comp" -> "test"
-## comparer -> testing
-## comparing -> testing
-
      ## +----------------------------------------+ ##
      ## | testing functions for real variables   | ##
      ## +----------------------------------------+ ##
@@ -11,7 +6,6 @@
 ##'
 ##' @param x vector
 ##' @param glist a grouping list
-##' @param w weight
 ##' @param ... this is to be able to tolerate unnecessary arguments
 t_real <- function(...) invisible(NULL)
 
@@ -66,7 +60,6 @@ attr(t_anova.p, "dtable") <- "test"
 ##'
 ##' @param x vector
 ##' @param glist a grouping list
-##' @param w weight
 ##' @param ... this is to be able to tolerate unnecessary arguments
 t_bnry <- function(...) invisible(NULL)
 
@@ -102,22 +95,6 @@ t_chisq.p <- function(x, glist, ...){
 }
 attr(t_chisq.p, "dtable") <- "test"
 
-     ## +----------------------------------------+ ##
-     ## | testing functions for date variables   | ##
-     ## +----------------------------------------+ ##
-
-##' various testing functions for date types
-##'
-##' @param x vector
-##' @param glist a grouping list
-##' @param w weights
-##' @param ... this is to be able to tolerate unnecessary arguments
-t_date <- function(...) invisible(NULL)
-
-##' @describeIn t_date empty test
-##' @export
-t_date_empty <- function(x, glist, ...) NA
-
 
      ## +----------------------------------------+ ##
      ## | testing functions for catg variables   | ##
@@ -127,8 +104,6 @@ t_date_empty <- function(x, glist, ...) NA
 ##'
 ##' @param x vector
 ##' @param glist a grouping list
-##' @param useNA display info for missing?
-##' @param w weight
 ##' @param ... this is to be able to tolerate unnecessary arguments
 ##' @seealso \code{\link{t_fisher.p}} and \code{\link{t_chisq.p}} which work for
 ##'     catg variables as well
@@ -151,6 +126,22 @@ if(FALSE){
 }
 
      ## +----------------------------------------+ ##
+     ## | testing functions for date variables   | ##
+     ## +----------------------------------------+ ##
+
+##' various testing functions for date types
+##'
+##' @param x vector
+##' @param glist a grouping list
+##' @param ... this is to be able to tolerate unnecessary arguments
+t_date <- function(...) invisible(NULL)
+
+##' @describeIn t_date empty test
+##' @export
+t_date_empty <- function(x, glist, ...) NA
+
+
+     ## +----------------------------------------+ ##
      ## | testing functions for surv variables   | ##
      ## +----------------------------------------+ ##
 
@@ -158,8 +149,6 @@ if(FALSE){
 ##'
 ##' @param x vector
 ##' @param glist a grouping list
-##' @param w weight
-##' @param cens.type type of censoring
 ##' @param ... this is to be able to tolerate unnecessary arguments
 t_surv <- function(...) invisible(NULL)
 

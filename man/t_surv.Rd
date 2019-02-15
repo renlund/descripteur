@@ -15,10 +15,6 @@ t_surv_empty(x, glist, ...)
 \item{x}{vector}
 
 \item{glist}{a grouping list}
-
-\item{w}{weight}
-
-\item{cens.type}{type of censoring}
 }
 \description{
 various testing functions for surv types

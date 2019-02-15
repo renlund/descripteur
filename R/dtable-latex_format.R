@@ -49,8 +49,9 @@ dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
         d <- A$dtable
         d1 <- gsub("(meta)|(desc:*)", "", d)
         d2 <- gsub("comp", "Comparison", d1)
-        r <- rle(d2)
-        if(all(d2 == "")){
+        d3 <- gsub("test", "Test", d2)
+        r <- rle(d3)
+        if(all(d3 == "")){
             r <- NULL ## nullify the cgroup and n.cgroup args of Hmisc::latex
         }
         text <- if(!no.below){

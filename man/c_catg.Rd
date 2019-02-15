@@ -51,6 +51,6 @@ various comparer functions for catg types
 \url{https://www.lerner.ccf.org/qhs/software/lib/stddiff.pdf}
 }
 \seealso{
-\code{\link{c_fisher.p}} and \code{\link{c_chisq.p}} which work for
+\code{\link{t_fisher.p}} and \code{\link{t_chisq.p}} which work for
     catg variables as well
 }

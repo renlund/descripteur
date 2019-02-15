@@ -18,8 +18,6 @@ t_chisq.p(x, glist, ...)
 \item{x}{vector}
 
 \item{glist}{a grouping list}
-
-\item{w}{weight}
 }
 \description{
 various testing functions for bnry types

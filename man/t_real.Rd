@@ -24,8 +24,6 @@ t_anova.p(x, glist, ...)
 \item{x}{vector}
 
 \item{glist}{a grouping list}
-
-\item{w}{weight}
 }
 \description{
 various testing functions for real types

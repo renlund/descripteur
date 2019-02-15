@@ -15,10 +15,6 @@ t_cchisq.p(x, glist, ...)
 \item{x}{vector}
 
 \item{glist}{a grouping list}
-
-\item{useNA}{display info for missing?}
-
-\item{w}{weight}
 }
 \description{
 various testing functions for catg types

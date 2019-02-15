@@ -219,7 +219,7 @@ dtable <- function(data, type = NULL, guide = NULL,
                 if(P$test.style == "overall"){
                     R0 <- apply_flist(x = x, flist = t_fnc, useNA = use_na,
                                       glist = glist, w = w, xname = lab, ...)
-                }
+                } else {R0 <- NULL} ## ?
                 ## ## THIS PART NOT IMPLEMENTED YET
                 ## else {
                 ##     R0 <- NULL
@@ -235,12 +235,13 @@ dtable <- function(data, type = NULL, guide = NULL,
                 ##                            groups = names(glist)[k])
                 ##     }
                 ## }
-                R2 <- dtable_rbind(R2, R0)
+                R3 <- dtable_rbind(R3, R0)
             }
         }
         ## combine results ----------------------------------------------------
-        dtable_cbind(R1, dtable_cbind(R2, R3))
-        ## ## dtable_cbind has been updated so the above line should work
+        ## R <- dtable_cbind(R1, dtable_cbind(R2, R3))
+        ## ## dtable_cbind has been updated so the above line should work -
+        ## [update] but id does not...
         ## ## old way of doing things below
         ## R <- dtable_order(
         ##     if(is.null(R1) & is.null(R2)){
@@ -250,7 +251,28 @@ dtable <- function(data, type = NULL, guide = NULL,
         ##     } else {
         ##         dtable_cbind(R1, R2)
         ##     })
-
+        sum.null <- is.null(R1) + is.null(R2) + is.null(R3)
+        R <- dtable_order(
+            if(sum.null == 3){
+                as.data.frame(NULL)
+            } else if(sum.null == 0){
+                dtable_cbind(R1, dtable_cbind(R2, R3))
+            } else if(sum.null == 1){
+                if(is.null(R1)) dtable_cbind(R2, R3)
+                if(is.null(R2)) dtable_cbind(R1, R3)
+                if(is.null(R3)) dtable_cbind(R1, R2)
+            } else if(sum.null == 2){
+                if(!is.null(R1)){
+                    R1
+                } else if(!is.null(R2)){
+                    R2
+                } else if(!is.null(R3)){
+                    R3
+                } else as.data.frame(NULL)
+            } else {
+                warning("Hopefully noone ever get this message.")
+                as.data.frame(NULL)
+            })
     }
     attr(R, "size") <- nrow(data)
     variables <- guide$variable[guide$type == type]
@@ -313,6 +335,8 @@ dc_param <- function(desc = NULL, comp = NULL, test = NULL, glist = NULL){
         }
         test.style <- test
         test <- TRUE
+    } else {
+        test.style <- NA_character_
     }
     if(comp){
         if(is.null(glist)){
