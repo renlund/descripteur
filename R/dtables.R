@@ -91,9 +91,15 @@ dtables2latex_ungrouped_helper <- function(dt, format = TRUE, ...){
 dtables2latex_grouped_helper <- function(dt, format = TRUE, ...){
     a1 <- dtable_prune(x = dt, rm = "variable")
     a2 <- dtable_prune(x = a1, rm = "info", info = TRUE)
-    a3 <- dtable_fnote(dt = a2, info = "pinfo", fn.var = "p", format = format)
+    a3 <- if("pinfo" %in% names(dt)){
+              dtable_fnote(dt = a2, info = "pinfo", fn.var = "p",
+                           format = format)
+          } else {
+              dtable_format(a2)
+          }
     dtable_latex(a3, ...)
 }
+
 ##' for exporting dtables (experimental)
 ##'
 ##' make a dtable ready to write to file
