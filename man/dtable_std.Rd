@@ -4,8 +4,8 @@
 \alias{dtable_std}
 \title{Standardized differences}
 \usage{
-dtable_std(data = NULL, v = NULL, guide = NULL, glist, comp = "across",
-  ...)
+dtable_std(data = NULL, v = NULL, guide = NULL, glist,
+  comp = "across", ...)
 }
 \arguments{
 \item{data}{data frame or similar}

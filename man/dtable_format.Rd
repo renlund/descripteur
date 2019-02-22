@@ -5,8 +5,8 @@
 \title{format a dtable}
 \usage{
 dtable_format(dt, b = 1, bh = 1, hfnc = base::round, bl = 2,
-  lfnc = NULL, br = 2, rfnc = base::signif, p_b = 1e-04, peq0 = TRUE,
-  tmax = 30, repus = TRUE, repwith = "\\\\_")
+  lfnc = NULL, br = 2, rfnc = base::signif, p_b = 1e-04,
+  peq0 = TRUE, tmax = 30, repus = TRUE, repwith = "\\\\_")
 }
 \arguments{
 \item{dt}{a dtable}

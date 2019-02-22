@@ -7,9 +7,9 @@
 \usage{
 dtable_list(data, types, ...)
 
-dtable(data, type = NULL, guide = NULL, desc = NULL, desc.flist = NULL,
-  comp = NULL, comp.flist = NULL, test = NULL, test.flist = NULL,
-  glist = NULL, w = NULL, useNA = "no", ...)
+dtable(data, type = NULL, guide = NULL, desc = NULL,
+  desc.flist = NULL, comp = NULL, comp.flist = NULL, test = NULL,
+  test.flist = NULL, glist = NULL, w = NULL, useNA = "no", ...)
 }
 \arguments{
 \item{data}{a \code{data.frame} or such object}

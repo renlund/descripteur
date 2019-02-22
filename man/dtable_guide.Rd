@@ -5,8 +5,8 @@
 \title{Description guide}
 \usage{
 dtable_guide(data, elim.set = NULL, catg.tol = 20, real.tol = 5,
-  as.is = FALSE, no.bnry = FALSE, reduce.levels = TRUE, row.id = NULL,
-  unit.id = NULL)
+  as.is = FALSE, no.bnry = FALSE, reduce.levels = TRUE,
+  row.id = NULL, unit.id = NULL)
 }
 \arguments{
 \item{data}{a data frame}

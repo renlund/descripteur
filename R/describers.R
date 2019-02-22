@@ -463,11 +463,12 @@ consurv <- function(x, cens.type = "right"){
     survcheck(x)
     if(cens.type == "right"){
         check_right(x)
-        n <- length(x)
-        data.frame(
-            time = as.numeric(x)[1:(n/2)],
-            event = as.numeric(x)[(n/2+1):n]
-        )
+        ## n <- length(x)
+        ## data.frame(
+        ##     time = as.numeric(x)[1:(n/2)],
+        ##     event = as.numeric(x)[(n/2+1):n]
+        ## )
+        data.frame(time = x[,1], event = x[,2])
     } else {
         stop("no cens.type but 'right' has been implemented")
     }
@@ -477,7 +478,7 @@ consurv <- function(x, cens.type = "right"){
 ##' @export
 d_tsum <- function(x, w = NULL, weight = "sample", cens.type = "right", ...){
     survcheck(x)
-    if(is.null(w)) w <- rep(1L, length(x)/2)
+    if(is.null(w)) w <- rep(1L, dim(x)[1])
     if(cens.type == "right"){
         check_right(x)
         d <- consurv(x, cens.type)
@@ -492,7 +493,7 @@ attr(d_tsum, "dtable") <- "desc"
 ##' @export
 d_esum <- function(x, w = NULL, weight = "sample", cens.type = "right", ...){
     survcheck(x)
-    if(is.null(w)) w <- rep(1L, length(x)/2)
+    if(is.null(w)) w <- rep(1L, dim(x)[1])
     if(cens.type == "right"){
         check_right(x)
         d <- consurv(x, cens.type)

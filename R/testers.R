@@ -118,6 +118,7 @@ t_cchisq.p <- function(x, glist, ...){
     ## if(n == 1) n <- 0
     c(t_chisq.p(x = x, glist = glist, ...), rep(NA, n))
 }
+attr(t_cchisq.p, "dtable") <- "test"
 
 if(FALSE){
     x = sample(letters[1:2], 100, TRUE)
@@ -139,7 +140,7 @@ t_date <- function(...) invisible(NULL)
 ##' @describeIn t_date empty test
 ##' @export
 t_date_empty <- function(x, glist, ...) NA
-
+attr(t_date_empty, "dtable") <- "test"
 
      ## +----------------------------------------+ ##
      ## | testing functions for surv variables   | ##
@@ -155,6 +156,7 @@ t_surv <- function(...) invisible(NULL)
 ##' @describeIn t_surv empty test
 ##' @export
 t_surv_empty <- function(x, glist, ...) NA
+attr(t_surv_empty, "dtable") <- "test"
 
     ## +----------------------------------+ ##
     ## | compact-type testing functions   | ##
