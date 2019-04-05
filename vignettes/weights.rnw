@@ -110,7 +110,7 @@ d_sum(x = x, w = w_norm, weight = "sample") ==
 \subsection{Real variables}
 
 \subsubsection{Mean}
-We saw in Section \label{sec:sw} that the mean value is the same under the two
+We saw in Section \ref{sec:sw} that the mean value is the same under the two
 different sampling schemes.
 
 \subsubsection{Standard deviation}

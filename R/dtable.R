@@ -138,6 +138,7 @@ dtable <- function(data, type = NULL, guide = NULL,
         R1 <- R2 <- R3 <- NULL
         has_na <- any(gvar$has_missing)
         use_na <- if(useNA != "ifany") useNA == "always" else has_na
+        dots = list(...) ## dots = as.list(NULL) # for testing
         ## apply describers ---------------------------------------------------
         if(P$desc){
             for(g in gvar$variable){ ## g <- gvar$variable[2]
@@ -150,15 +151,26 @@ dtable <- function(data, type = NULL, guide = NULL,
                 lab <- gvar$label[gvar$variable == g][1]
                 R0 <- NULL
                 if(is.null(glist)){
-                    R0 <- apply_flist(x = x, flist = d_fnc, w = w,
-                                      useNA = use_na, xname = lab, ...)
+                    ## R0 <- apply_flist(x = x, flist = d_fnc, w = w,
+                    ##                   useNA = use_na, xname = lab, ...)
+                    R0 <- do.call(apply_flist,
+                                  args = c(list('x' = x, 'flist' = d_fnc, 'w' = w,
+                                                'useNA' = use_na, 'xname' = lab),
+                                           dots))
                 } else {
                     for(k in seq_along(glist)){ ## k = 1
-                        tmp <- apply_flist(x = x[glist[[k]]],
-                                           flist = d_fnc,
-                                           useNA = use_na,
-                                           w = w[glist[[k]]],
-                                           xname = lab, ...)
+                        ## tmp <- apply_flist(x = x[glist[[k]]],
+                        ##                    flist = d_fnc,
+                        ##                    useNA = use_na,
+                        ##                    w = w[glist[[k]]],
+                        ##                    xname = lab, ...)
+                        tmp <- do.call(apply_flist,
+                                       args = c(list('x' = x[glist[[k]]],
+                                                     'flist' = d_fnc,
+                                                     'useNA' = use_na,
+                                                     'w' = w[glist[[k]]],
+                                                     'xname' = lab),
+                                                dots))
                         R0 <- dtable_cbind(x = R0, y = tmp,
                                            groups = names(glist)[k])
                         if(P$desc.style == "first") break
@@ -179,18 +191,31 @@ dtable <- function(data, type = NULL, guide = NULL,
                          data[[g]]
                      }
                 if(P$comp.style == "overall"){
-                    R0 <- apply_flist(x = x, flist = c_fnc, useNA = use_na,
-                                      glist = glist, w = w, xname = lab, ...)
+                    ## R0 <- apply_flist(x = x, flist = c_fnc, useNA = use_na,
+                    ##                   glist = glist, w = w, xname = lab, ...)
+                    R0 <- do.call(apply_flist,
+                                  args = c(list('x' = x, 'flist' = c_fnc,
+                                                'useNA' = use_na, 'glist' = glist,
+                                                'w' = w, 'xname' = lab),
+                                           dots))
                 } else {
                     R0 <- NULL
                     for(k in 2:length(glist)){ ## k = 2
                         ref.index <- if(P$comp.style == "across") 1 else k-1
-                        tmp <- apply_flist(x = x,
-                                           glist = glist[c(ref.index,k)],
-                                           flist = c_fnc,
-                                           w = w,
-                                           useNA = use_na,
-                                           xname = lab, ...)
+                        ## tmp <- apply_flist(x = x,
+                        ##                    glist = glist[c(ref.index,k)],
+                        ##                    flist = c_fnc,
+                        ##                    w = w,
+                        ##                    useNA = use_na,
+                        ##                    xname = lab, ...)
+                        tmp <- do.call(apply_flist,
+                                       args = c(list('x' = x,
+                                                     'glist' = glist[c(ref.index,k)],
+                                                     'flist' = c_fnc,
+                                                     'w' = w,
+                                                     'useNA' = use_na,
+                                                     'xname' = lab),
+                                                dots))
                         R0 <- dtable_cbind(R0, tmp,
                                            groups = names(glist)[k])
                     }
@@ -217,8 +242,14 @@ dtable <- function(data, type = NULL, guide = NULL,
                          data[[g]]
                      }
                 if(P$test.style == "overall"){
-                    R0 <- apply_flist(x = x, flist = t_fnc, useNA = use_na,
-                                      glist = glist, w = w, xname = lab, ...)
+                    ## R0 <- apply_flist(x = x, flist = t_fnc, useNA = use_na,
+                    ##                   glist = glist, w = w, xname = lab, ...)
+                    ## dots = list(...)
+                    R0 <- do.call(apply_flist,
+                                  args = c(list('x' = x, 'flist' = t_fnc,
+                                                'useNA' = use_na, 'glist' = glist,
+                                                'w' = w, 'xname' = lab),
+                                           dots))
                 } else {R0 <- NULL} ## ?
                 ## ## THIS PART NOT IMPLEMENTED YET
                 ## else {
@@ -258,9 +289,13 @@ dtable <- function(data, type = NULL, guide = NULL,
             } else if(sum.null == 0){
                 dtable_cbind(R1, dtable_cbind(R2, R3))
             } else if(sum.null == 1){
-                if(is.null(R1)) dtable_cbind(R2, R3)
-                if(is.null(R2)) dtable_cbind(R1, R3)
-                if(is.null(R3)) dtable_cbind(R1, R2)
+                if(is.null(R1)){
+                    dtable_cbind(R2, R3)
+                } else if(is.null(R2)){
+                    dtable_cbind(R1, R3)
+                } else if(is.null(R3)){
+                    dtable_cbind(R1, R2)
+                }
             } else if(sum.null == 2){
                 if(!is.null(R1)){
                     R1
