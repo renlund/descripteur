@@ -716,8 +716,9 @@ dt_Q_helper <- function(x, useNA, info, ...){
         Q2 <- d_median(x = x, ...)
         Q1 <- d_Q1(x = x, ...)
         Q3 <- d_Q3(x = x, ...)
-        paste0(roundisch(Q2), " (", roundisch(Q1),"-",
-               roundisch(Q3),")", NAtxt)
+        paste0(roundisch(Q2, t = 0),
+               " (", roundisch(Q1, t = 0), " - ",
+               roundisch(Q3, t = 0),")", NAtxt)
     }
 }
 

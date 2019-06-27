@@ -270,7 +270,7 @@ c_surv <- function(...) invisible(NULL)
 c_rr <- function(x, glist, w = NULL, cens.type = "right", ...){
     warn_if_wrong_glist_length(glist, 2)
     survcheck(x)
-    if(is.null(w)) w <- rep(1, length(x)/2)
+    if(is.null(w)) w <- rep(1, length(x))
     x1 <- x[glist[[1]]]
     x2 <- x[glist[[2]]]
     w1 <- w[glist[[1]]]
