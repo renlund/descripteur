@@ -2,9 +2,12 @@
 % Please edit documentation in R/dtables.R
 \name{dtables2file_helper}
 \alias{dtables2file_helper}
+\alias{peek}
 \title{for exporting dtables (experimental)}
 \usage{
-dtables2file_helper(dt, rm = NULL, reps = NULL)
+dtables2file_helper(dt, rm = NULL, reps = NULL, format = FALSE)
+
+peek(dt)
 }
 \arguments{
 \item{dt}{a dtables}
@@ -13,7 +16,14 @@ dtables2file_helper(dt, rm = NULL, reps = NULL)
 
 \item{reps}{vector of replacements, where the name replaces the entry,
 e.g. \code{c('foo' = 'bar')} will replace all 'bar' with 'foo'}
+
+\item{format}{use \code{dtable_format}?}
 }
 \description{
 make a dtable ready to write to file
 }
+\section{Functions}{
+\itemize{
+\item \code{peek}: quick peek at dtable (in particular dtables)
+}}
+

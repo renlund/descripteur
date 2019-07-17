@@ -107,15 +107,23 @@ dtables2latex_grouped_helper <- function(dt, format = TRUE, ...){
 ##' @param rm columns to remove
 ##' @param reps vector of replacements, where the name replaces the entry,
 ##'     e.g. \code{c('foo' = 'bar')} will replace all 'bar' with 'foo'
+##' @param format use \code{dtable_format}?
 ##' @export
-dtables2file_helper <- function(dt, rm = NULL, reps = NULL){
+dtables2file_helper <- function(dt, rm = NULL, reps = NULL, format = FALSE){
     if(is.null(reps)) reps <- c("   " = "\\quad:", "%" = "\\%")
     if(is.null(rm)) rm <- intersect(names(dt), c("variable", "pinfo", "p", "info"))
     a1 <- dtable_prune(dt, rm = rm)
+    if(format) a1 <- dtable_format(a1)
     for(i in seq_along(reps)){
         a1[] <- lapply(a1[], FUN = function(x) gsub(reps[i], names(reps)[i], x=x, fixed = TRUE))
     }
     ## a1[] <- lapply(a1[], FUN = function(x) gsub("\\quad:", "   ", x=x, fixed = TRUE))
     ## a1[] <- lapply(a1[], FUN = function(x) gsub("\\%", "%", x=x, fixed = TRUE))
     a1
+}
+
+##' @describeIn dtables2file_helper quick peek at dtable (in particular dtables)
+##' @export
+peek <- function(dt){
+    dtables2file_helper(dt, format = TRUE)
 }

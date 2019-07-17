@@ -147,8 +147,8 @@ test_that("d_tsum works", {
 
 test_that("dt_Q works", {
     x <- c(1:5, NA)
-    expect_equal(dt_Q(x, useNA = TRUE), "3 (2-4)[1]")
-    expect_equal(dt_Q(x, useNA = FALSE), "3 (2-4)")
+    expect_equal(dt_Q(x, useNA = TRUE), "3 (2 - 4)[1]")
+    expect_equal(dt_Q(x, useNA = FALSE), "3 (2 - 4)")
     expect_equal(dt_Q.info(x), "Numeric variables: median(Q1-Q3)")
     expect_equal(dt_msd(x, useNA = TRUE), "3 (1.6)[1]")
     expect_equal(dt_msd(x), "3 (1.6)")
@@ -169,4 +169,3 @@ test_that("dt_Q works", {
 })
 
 rm(x, w, y, v)
-

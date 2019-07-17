@@ -1,5 +1,5 @@
 %\VignetteEngine{knitr::knitr}
-%\VignetteIndexEntry{std}
+%\VignetteIndexEntry{weights}
 %\VignetteEncoding{UTF-8}
 \documentclass{article}
 \addtolength{\hoffset}{-1cm}
