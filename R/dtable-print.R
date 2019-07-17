@@ -30,5 +30,13 @@ print.dtable <- function(x, ...){
     cat(paste0(rep("-", min(co2.n, w)), collapse = ""), sep = "")
     cat("\n## selected attributes:\n")
     print(dtable_attr(x))
+    if(!is.null(oth <- attr(x, "other"))){
+        co3 <- utils::capture.output(print(dtable_attr(x)))
+        co3.n <- max(nchar(co3))
+        cat(paste0(rep("-", min(co3.n, w)), collapse = ""), sep = "")
+        cat("\n## other types:\n  ")
+        tmp <- lapply(oth, paste0, collapse = ", ")
+        cat(paste0(paste0(names(tmp), ": ", tmp), collapse = "\n  "), "\n")
+    }
     invisible(NULL)
 }

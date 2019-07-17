@@ -296,8 +296,20 @@ dtable <- function(data, type = NULL, guide = NULL,
     attr(R, "cc") <- sum(stats::complete.cases(data[,variables]))
     if(!is.null(w)) attr(R, "weight") <- sum(w)
     if(!is.null(row_id <- attr(guide, "row.id"))){
-        ## This currently does not do much
+        ## This currently does nothing
     }
+    ## test START ----
+    other <- NULL
+    g_other <- subset(guide, type %in% descripteur_other_types())
+    if(nrow(g_other) > 0){
+        other <- as.list(NULL)
+        for(k in descripteur_other_types()){
+            tmp <- subset(guide, type == k)
+            if(nrow(tmp)>0) other[[k]] = tmp$variable
+        }
+    }
+    attr(R, "other") <- other
+    ## test END ---
     if(!is.null(unit_id <- attr(guide, "unit.id"))){
         tmp_f <- function(x) length(unique(stats::na.omit(x)))
         attr(R, "units") <- tmp_f(data[[unit_id]])
