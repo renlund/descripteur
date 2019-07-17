@@ -72,7 +72,21 @@ dtable <- function(data, type = NULL, guide = NULL,
                                   stop(paste0("cannot make glist from this",
                                               " glist-argument")))
         }
-        if(length(glist) == 1) stop("only 1 subgroup defined by glist")
+        if(is.list(glist)){
+            if(length(glist) == 1) stop("only 1 subgroup defined by glist")
+            if(unique(unlist(lapply(glist, class))) != "logical"){
+                stop("glist (as a list) should only contain logical vectors")
+            }
+            if(!setequal(unlist(lapply(glist, length)), nrow(data))){
+                stop(paste0("the vectors in the glist (as list) should have ",
+                            "length equal to the number of rows in data"))
+            }
+            if(any(unlist(lapply(glist, sum)) == 0)){
+                stop("glist defines empty subgroup")
+            }
+        } else {
+            stop("glist should be a list, or name of variable")
+        }
     }
     ## examine w argument -----------------------------------------------------
     if(!is.null(w)){
