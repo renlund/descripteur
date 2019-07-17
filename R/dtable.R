@@ -156,7 +156,6 @@ dtable <- function(data, type = NULL, guide = NULL,
         ## apply describers ---------------------------------------------------
         if(P$desc){
             for(g in gvar$variable){ ## g <- gvar$variable[2]
-                ## x <- data[[g]]
                 x <- if(type %in% c("bnry", "catg")){
                          factor(data[[g]], levels = attr(guide, "levels")[[g]])
                      } else {
@@ -165,19 +164,12 @@ dtable <- function(data, type = NULL, guide = NULL,
                 lab <- gvar$label[gvar$variable == g][1]
                 R0 <- NULL
                 if(is.null(glist)){
-                    ## R0 <- apply_flist(x = x, flist = d_fnc, w = w,
-                    ##                   useNA = use_na, xname = lab, ...)
                     R0 <- do.call(apply_flist,
                                   args = c(list('x' = x, 'flist' = d_fnc, 'w' = w,
                                                 'useNA' = use_na, 'xname' = lab),
                                            dots))
                 } else {
                     for(k in seq_along(glist)){ ## k = 1
-                        ## tmp <- apply_flist(x = x[glist[[k]]],
-                        ##                    flist = d_fnc,
-                        ##                    useNA = use_na,
-                        ##                    w = w[glist[[k]]],
-                        ##                    xname = lab, ...)
                         tmp <- do.call(apply_flist,
                                        args = c(list('x' = x[glist[[k]]],
                                                      'flist' = d_fnc,
@@ -194,7 +186,6 @@ dtable <- function(data, type = NULL, guide = NULL,
             }
         }
         ## apply comparers ----------------------------------------------------
-        ## 20180709: added this tryCatch
         tryCatch(expr =
         if(P$comp){
             for(g in gvar$variable){ ## g = gvar$variable[1]
@@ -205,8 +196,6 @@ dtable <- function(data, type = NULL, guide = NULL,
                          data[[g]]
                      }
                 if(P$comp.style == "overall"){
-                    ## R0 <- apply_flist(x = x, flist = c_fnc, useNA = use_na,
-                    ##                   glist = glist, w = w, xname = lab, ...)
                     R0 <- do.call(apply_flist,
                                   args = c(list('x' = x, 'flist' = c_fnc,
                                                 'useNA' = use_na, 'glist' = glist,
@@ -216,12 +205,6 @@ dtable <- function(data, type = NULL, guide = NULL,
                     R0 <- NULL
                     for(k in 2:length(glist)){ ## k = 2
                         ref.index <- if(P$comp.style == "across") 1 else k-1
-                        ## tmp <- apply_flist(x = x,
-                        ##                    glist = glist[c(ref.index,k)],
-                        ##                    flist = c_fnc,
-                        ##                    w = w,
-                        ##                    useNA = use_na,
-                        ##                    xname = lab, ...)
                         tmp <- do.call(apply_flist,
                                        args = c(list('x' = x,
                                                      'glist' = glist[c(ref.index,k)],
@@ -256,9 +239,6 @@ dtable <- function(data, type = NULL, guide = NULL,
                          data[[g]]
                      }
                 if(P$test.style == "overall"){
-                    ## R0 <- apply_flist(x = x, flist = t_fnc, useNA = use_na,
-                    ##                   glist = glist, w = w, xname = lab, ...)
-                    ## dots = list(...)
                     R0 <- do.call(apply_flist,
                                   args = c(list('x' = x, 'flist' = t_fnc,
                                                 'useNA' = use_na, 'glist' = glist,
@@ -284,18 +264,6 @@ dtable <- function(data, type = NULL, guide = NULL,
             }
         }
         ## combine results ----------------------------------------------------
-        ## R <- dtable_cbind(R1, dtable_cbind(R2, R3))
-        ## ## dtable_cbind has been updated so the above line should work -
-        ## [update] but id does not...
-        ## ## old way of doing things below
-        ## R <- dtable_order(
-        ##     if(is.null(R1) & is.null(R2)){
-        ##         as.data.frame(NULL)
-        ##     } else if(is.null(R1)  | is.null(R2)){
-        ##         if(!is.null(R1)) R1 else R2
-        ##     } else {
-        ##         dtable_cbind(R1, R2)
-        ##     })
         sum.null <- is.null(R1) + is.null(R2) + is.null(R3)
         R <- dtable_order(
             if(sum.null == 3){
