@@ -11,7 +11,7 @@
 ##' @export
 dtables <- function(data, guide = NULL, ..., types = NULL,
                     desc.flists = NULL, comp.flists = NULL, test.flists = NULL){
-    ok_types <- c("real", "bnry", "catg", "date", "surv") ## descripteur_desc_types
+    ok_types <- descripteur_desc_types() ## c("real", "bnry", "catg", "date", "surv")
     if(is.null(guide)) guide <- dtable_guide(data)
     if(is.null(types)) types <- intersect_if_notnull(names(desc.flists),
                                 intersect_if_notnull(names(comp.flists),

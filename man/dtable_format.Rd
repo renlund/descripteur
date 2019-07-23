@@ -2,48 +2,15 @@
 % Please edit documentation in R/dtable-latex_format.R
 \name{dtable_format}
 \alias{dtable_format}
-\title{format a dtable}
+\title{formating}
 \usage{
-dtable_format(dt, b = 1, bh = 1, hfnc = base::round, bl = 2,
-  lfnc = NULL, br = 2, rfnc = base::signif, p_b = 1e-04,
-  peq0 = TRUE, tmax = 30, repus = TRUE, repwith = "\\\\_")
+dtable_format(dt, ...)
 }
 \arguments{
-\item{dt}{a dtable}
+\item{dt}{a dtable or such}
 
-\item{b}{boundary, if numbers are consistently higher they are handled by
-'bh' and 'hfnc', if consistently lower by 'bl' and 'lfnc', and otherwise
-by 'br' and 'rfnc'}
-
-\item{bh}{digits argument for \code{hfnc}}
-
-\item{hfnc}{format function for above boundary numbers}
-
-\item{bl}{digits argument for \code{lfnc}}
-
-\item{lfnc}{format function for below boundary numbers? But current
-implementation might override this, I can't figure out what is best here}
-
-\item{br}{digits argument for \code{rfnc}}
-
-\item{rfnc}{format function for other numbers}
-
-\item{p_b}{threshold for how small p values to show. Any variable which is
-between 0 and 1 is considered a 'p-value' here, which need not be the
-case.}
-
-\item{peq0}{even if we abbreviate small 'p-values' should we explicitly put
-= "0" if it is equal to zero?}
-
-\item{tmax}{how many characters to print for a character vector}
-
-\item{repus}{should we replace "_" with 'repwith' in character variables? (If not
-LaTeX might fail.)}
-
-\item{repwith}{that which to replace underscore with, default "\\_"}
+\item{...}{arguments passed to \code{dformat_num} and \code{dformat_text}}
 }
 \description{
-overall, low-precision formatting of dtable objects - quick and
-    dirty way of getting something ok (hopefully), fast. could be
-    developed...
+formatting of dtables and data.frames
 }

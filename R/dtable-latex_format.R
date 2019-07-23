@@ -36,7 +36,7 @@ dtable_latex <- function(dt, bling = TRUE, bling.param = as.list(NULL),
     ## if(format) dt <- dtable_format(dt, param = format.param)
     if(format){
         dt <- do.call(dtable_format,
-                      c('dt' = list(dt), format_fixer(format.param)))
+                      c('dt' = list(dt), format.param))
     }
     x <- as.data.frame.dtable(dt)
     if("variable" %in% names(x) & !is.null(guide)){
@@ -84,45 +84,6 @@ bling_fixer <- function(x = as.list(NULL)){
          attr = attr, sep = sep, vector = FALSE)
 }
 
-## - # this sets up the format defaults for dtable_latex
-format_fixer <- function(x = as.list(NULL)){
-    if(is.null(b    <- x$b))    b <- 1 ## boundary
-    ## for numbers all > boundary
-    if(is.null(bh   <- x$bh))   bh <- 1 ## digits arguments for hfnc
-    if(is.null(hfnc <- x$hfnc)) hfnc <- base::round ## format fnc
-    ## for numbers all < boundary
-    if(is.null(bl   <- x$bl))   bl <- 2 ## digits argument for lfnc
-    if(is.null(lfnc <- x$lfnc)) lfnc <- NULL ## base::signif ## format fnc
-    if(is.null(br   <- x$br))   br <- 2 ## digits argument for rfnc
-    if(is.null(rfnc <- x$rfnc)) rfnc <- base::round ## format fnc
-    if(is.null(p_b  <- x$p_b))  p_b <- 0.0001 ## threshold for p-values
-    if(is.null(peq0 <- x$peq0)) peq0 <- TRUE ## can p be zero?
-    if(is.null(tmax <- x$tmax)) tmax <- 30 ## max chars to print for text
-    if(is.null(repus <- x$repus)) repus <- TRUE ## replace '_' with '\\_'?
-    if(is.null(repwith <- x$repwith)) repwith <- "\\_"
-    list(b = b, bh = bh, hfnc = hfnc, bl = bl, lfnc = lfnc, br = br,
-         rfnc = rfnc, p_b = p_b, peq0 = peq0, tmax = tmax,
-         repus = repus, repwith = repwith)
-}
-
-## format_fixer2 <- function(x = as.list(NULL)){
-##     if(is.null(b    <- x$b))    b <- 1 ## boundary
-##     ## for numbers all > boundary
-##     if(is.null(dh   <- x$dh))   dh <- 1 ## digits arguments for h-values
-##     ## for numbers all < boundary
-##     if(is.null(dl   <- x$dl))   dl <- 2 ## digits argument for l-values
-##     if(is.null(dp   <- x$dp))   dp <- 2 ## digits argument for p-values
-##     if(is.null(dr   <- x$dr))   dr <- 2 ## digits argument for r-values
-##     if(is.null(p_b  <- x$p_b))  p_b <- 0.0001 ## threshold for p-values
-##     if(is.null(peq0 <- x$peq0)) peq0 <- TRUE ## can p be zero?
-##     if(is.null(tmax <- x$tmax)) tmax <- 30 ## max chars to print for text
-##     if(is.null(repus <- x$repus)) repus <- TRUE ## replace '_' with '\\_'?
-##     if(is.null(repwith <- x$repwith)) repwith <- "\\_"
-##     list(b = b, dh = dh, dl = dl, dr = dr,
-##          p_b = p_b, peq0 = peq0, tmax = tmax,
-##          repus = repus, repwith = repwith)
-## }
-
 ## - ##' determine sequence of colors
 get_grey <- function(grey = NULL, x = NULL){
     color_vec <- c("","rowcolor[gray]{.9}")
@@ -155,6 +116,202 @@ get_grey <- function(grey = NULL, x = NULL){
     }
 }
 
+##' numerical formating
+##'
+##' numerical formating (mainly for \code{dtable_format})
+##' @param x vector of numeric values
+##' @param dg rounding digits for 'great' (abs>1) numbers
+##' @param ds significance digits for 'small' numbers (abs<1)
+##' @param maybe.p logical; is x possibly p-values?
+##' @param p.bound numeric; if p-values, numbers below this will be '<p.bound'
+##' @param miss character string to replace missing values
+##' @param some.scientific logical; possibly write some numbers in scientific notation?
+##' @param low lower threshold for when to resort to scientific notation
+##' @param high upper threshold for when to resort to scientific notation
+##' @param ... to be able to tolerate argument spamming
+##' @param verbose logical; tell med things?
+##' @export
+dformat_num <- function(x, dg = 1, ds = 2,
+                           maybe.p = TRUE, p.bound = 0.0001,
+                           miss = "", some.scientific = TRUE,
+                        low = 1e-8, high = 1e8, ..., verbose = TRUE){
+    args <- list(...)
+    ## START for backwards compatability
+    ## --- these are arguments used previously
+    tmpf <- function(x) if(!is.null(x) & is.numeric(x)) x else FALSE
+    if(tmp <- tmpf(args$bh)) dg <- tmp
+    if(tmp <- tmpf(args$bl)) ds <- tmp
+    if(tmp <- tmpf(args$p_b)) p.bound <- tmp
+    old.args <- c("hfnc", "lfnc", "rfnc", "peq0", "b")
+    if(any(names(args) %in% old.args) & verbose){
+        w <- paste0("Some format arguments (", paste0(old.args, collapse = ", "),
+                    ") are out of use, and some are being recycled (dg, ds, p_b).",
+                    "(Set verbose = FALSE to hide this message)")
+        message(w)
+    }
+    if(ds < 1){
+        ds <- 1
+        if(verbose) message("ds found to be <1, changed to =1")
+    }
+    if(dg < 0){
+        dg <- 0
+        if(verbose) message("dg found to be <0, changed to =0")
+    }
+    ## END
+    org.x <- x
+    ret <- rep(NA_character_, length(x))
+    inf <- is.infinite(x)
+    x[is.infinite(x)] <- NA
+    absx <- abs(x)
+    ## if x is all integer set rounding parameter to 0
+    if(all(absx == as.integer(absx))) dg <- 0
+    ## initially assume we do not have p-values
+    is.p <- FALSE
+    ## but be willing to change your mind if maybe.p = TRUE
+    if(maybe.p){
+        a <- min(x, na.rm = TRUE)
+        b <- max(x, na.rm = TRUE)
+        if(a >= 0 & b <= 1) is.p <- TRUE
+    }
+    nas <- is.na(x)
+    ## index for 'great' numbers
+    g <- !nas & absx >= 1
+    ## index for 'tiny' numbers
+    t <- !nas & absx < 1e-3
+    ## index for 'small' numbers
+    s <- !nas & !g & !t
+    ## deal with these kinds of numbers in different ways
+    ret[g] <- if(dg == 0){
+                  as.character(x[g])
+              } else {
+                  sprintf(paste0("%#.", dg, "f"), x[g])
+              }
+    ret[s] <- sprintf(paste0("%#.", ds, "g"), x[s])
+    for(i in seq_along(x[t])){
+        u <- format(x[t][i], digits = ds, scientific = FALSE)
+        if(grepl(pattern = "\\.0*[1-9]$", x = u)){
+            u <- paste0(u, "0")
+        }
+        ret[t][i] <- u
+    }
+    if(some.scientific){
+        i <- !nas & absx != 0 & (absx >= high | absx <= low)
+        ret[i] <- format(x[i], digits = ds, scientific = TRUE)
+    }
+    if(is.p){
+        ret[x < p.bound] <- paste0("<", sprintf("%#.1g", p.bound))
+    }
+    ret[nas] <- miss
+    ret[inf] <- as.character(org.x[inf])
+    ret
+}
+
+##' text formating
+##'
+##' text formating (mainly for \code{dtable_format})
+##' @param x vector of character values
+##' @param tmax maximum number of chars
+##' @param rep.key key of replacements, i.e. named vector of the form
+##'       'new value' = 'old value'
+##' @param add.key logical; add given key.values to default ones?
+##' @param ... to be able to tolerate argument spamming
+##' @param verbose logical; tell me things?
+##' @export
+dformat_text <- function(x, tmax = 30,
+                         rep.key = NULL, add.key = TRUE,
+                         ..., verbose = TRUE){
+    args <- list(...)
+    key <- c("\\\\_" = "_",
+             "\\\\ldots" = "\\.\\.\\.",
+             "$\\\\geq$" = ">=",
+             "$\\\\leq$" = "<=")
+    if(is.null(rep.key)){
+        rep.key <- key
+    } else if(add.key){
+        rep.key <- c(rep.key, key)
+    }
+    ## START for backwards compatability
+    old.args <- c("repus", "repwidth")
+    if(any(names(args) %in% old.args) & verbose){
+        w <- paste0("Some format arguments (", paste0(old.args, collapse = ", "),
+                    ") are out of use.",
+                    "(Set verbose = FALSE to hide this message)")
+        message(w)
+    }
+    foo <- function(z){
+        ifelse(nchar(z)>tmax + 2,
+               paste0(substring(z, 1, tmax), "..."),
+               z)
+    }
+    ret <- unlist(lapply(x, foo))
+    for(i in seq_along(rep.key)){
+        ret <- gsub(pattern = rep.key[i],
+                    replacement = names(rep.key)[i],
+                    x = ret)
+    }
+    ret
+}
+
+##' formating
+##'
+##' formatting of dtables and data.frames
+##' @param dt a dtable or such
+##' @param ... arguments passed to \code{dformat_num} and \code{dformat_text}
+##' @export
+dtable_format <- function(dt, ...){
+    dots <- list(...) ## dots = as.list(NULL)
+    da <- dattr(dt)
+    DT <- as.data.frame(dt)
+    attr(DT, "dattr") <- NULL
+    ## things with dattr 'test' should be formatted as p-values
+    pi <- which(da %in% "test")
+    classy <- unlist(lapply(DT, class))
+    indx <- which(classy %in% c("numeric", "integer"))
+    ps <- intersect(pi, indx)
+    if(length(ps) > 0){
+        pdots <- dots
+        pdots[['maybe.p']] <- TRUE
+        Arg <- c(list("X" = DT[,ps, drop = FALSE],
+                      "FUN" = dformat_num),
+                 pdots)
+        DT[ps] <- do.call(what = lapply, args = Arg)
+        indx <- setdiff(indx, ps)
+    }
+    Arg <- c(list('X' = DT[, indx, drop = FALSE],
+                  'FUN' = dformat_num),
+             dots)
+    DT[indx] <- do.call(what = lapply, args = Arg)
+    ## now everything else can be formatted as text
+    Arg <- c(list('X' = DT,
+                  'FUN' = dformat_text),
+             dots)
+    DT[] <- do.call(what = lapply, args = Arg)
+    attributes(DT) <- attributes(dt)
+    DT
+}
+
+
+## - # this sets up the format defaults for dtable_latex
+format_fixer <- function(x = as.list(NULL)){
+    if(is.null(b    <- x$b))    b <- 1 ## boundary
+    ## for numbers all > boundary
+    if(is.null(bh   <- x$bh))   bh <- 1 ## digits arguments for hfnc
+    if(is.null(hfnc <- x$hfnc)) hfnc <- base::round ## format fnc
+    ## for numbers all < boundary
+    if(is.null(bl   <- x$bl))   bl <- 2 ## digits argument for lfnc
+    if(is.null(lfnc <- x$lfnc)) lfnc <- NULL ## base::signif ## format fnc
+    if(is.null(br   <- x$br))   br <- 2 ## digits argument for rfnc
+    if(is.null(rfnc <- x$rfnc)) rfnc <- base::round ## format fnc
+    if(is.null(p_b  <- x$p_b))  p_b <- 0.0001 ## threshold for p-values
+    if(is.null(peq0 <- x$peq0)) peq0 <- TRUE ## can p be zero?
+    if(is.null(tmax <- x$tmax)) tmax <- 30 ## max chars to print for text
+    if(is.null(repus <- x$repus)) repus <- TRUE ## replace '_' with '\\_'?
+    if(is.null(repwith <- x$repwith)) repwith <- "\\_"
+    list(b = b, bh = bh, hfnc = hfnc, bl = bl, lfnc = lfnc, br = br,
+         rfnc = rfnc, p_b = p_b, peq0 = peq0, tmax = tmax,
+         repus = repus, repwith = repwith)
+}
+
 ##' format a dtable
 ##'
 ##' overall, low-precision formatting of dtable objects - quick and
@@ -181,7 +338,7 @@ get_grey <- function(grey = NULL, x = NULL){
 ##'     LaTeX might fail.)
 ##' @param repwith that which to replace underscore with, default "\\_"
 ##' @export
-dtable_format <- function(dt, b = 1,
+dtable_format_old <- function(dt, b = 1,
                           bh = 1, hfnc = base::round,
                           bl = 2, lfnc = NULL, ##lfnc = base::signif,
                           br = 2, rfnc = base::signif,
@@ -250,195 +407,4 @@ dtable_format <- function(dt, b = 1,
     }
     attributes(R) <- attributes(dt)
     R
-}
-
-##' alternative formating
-##'
-##' alternative formating for numeric values, BUT IT DOES NOT SEEM TO DO WHAT I WANT
-##' @param x vector of numeric values
-##' @param dg rounding digits for 'great' (abs>1) numbers
-##' @param ds significance digits for 'small' numbers (abs<1)
-##' @param maybe.p is x possible p-values?
-##' @param p.bound if p-values, numbers below this will be '<p.bound'
-##' @param miss character string to replace missing values
-##' @param some.scientific possibly write some numbers in scientific notation
-##' @param low lower threshold for when to resort to scientific notation
-##' @param high upper threshold for when to resort to scientific notation
-##' @export
-alt_num_format <- function(x, dg = 1, ds = 2,
-                     maybe.p = TRUE, p.bound = 0.001,
-                     miss = "", some.scientific = TRUE,
-                     low = 1e-8, high = 1e8){
-    ret <- rep(NA_character_, length(x))
-    absx <- abs(x)
-    is.p <- FALSE
-    if(maybe.p){
-        a <- min(x, na.rm = TRUE)
-        b <- max(x, na.rm = TRUE)
-        if(a >= 0 & b <= 1) is.p <- TRUE
-    }
-    nas <- is.na(x)
-    g <- !nas & absx >= 1
-    t <- !nas & absx < 1e-3
-    s <- !nas & !g & !t
-    gf <- function(z, d) sprintf(paste0("%#.", d, "f"), z)
-    gs <- function(z, d) sprintf(paste0("%#.", d, "g"), z)
-    ## ret[g] <-  gf(round(x[g], dg), dg)
-    ## ret[s] <-  gs(signif(x[s], ds), ds)
-    ret[g] <-  sprintf(paste0("%#.", dg, "f"), round(x[g], dg))
-    ret[s] <-  sprintf(paste0("%#.", ds, "g"), round(x[s], dg))
-    for(i in seq_along(x[t])){
-        u <- format(x[t][i], digits = ds, scientific = FALSE)
-        if(!grepl(pattern = ".*[1-9][0-9]$", x = u)){
-            u <- paste0(u, "0")
-        }
-        ret[t][i] <- u
-    }
-    if(some.scientific){
-        i <- !nas & (absx >= high | absx <= low)
-        ret[i] <- format(x[i], digits = ds, scientific = TRUE)
-    }
-    if(is.p){
-        ret[x < p.bound] <- paste0("<", p.bound)
-    }
-    ret[nas] <- miss
-    ret
-}
-
-if(FALSE){
-
-    ## dt = data.frame(
-    ##     text1 = letters[1:3],
-    ##     big = c(2, 10.5, 100.2131),
-    ##     small = c(-0.555, 0.0101, 0.6788),
-    ##     ps = c(0.0111, 0.23, 0.00002342),
-    ##     mix = c(-.12345, .909, 1000.123),
-    ##     text2 = c("a_b", "X", "fskdjjfhsdjkfhksdjfhsdkjfhskdjfhsdkfhsdjkfhksd")
-    ## )
-    ## dt
-    ## dtable_format(dt)
-    ## b = 1
-    ## bh = 1
-    ## hfnc = base::round
-    ## bl = 2
-    ## ## lfnc = base::signif
-    ## lfnc = NULL
-    ## br = 2
-    ## rfnc = base::signif
-    ## p_b = 0.0001
-    ## peq0 = TRUE
-    ## tmax = 30
-    ## repus = TRUE
-    ## repwith = "\\_"
-
-
-
-}
-
-## dtable_format2 <- function(dt, b = 1, dh = 1, dl = 2, dr = 2, dp = 2,
-##                            p_b = 0.0001, peq0 = TRUE, tmax = 30,
-##                            repus = TRUE, repwith = "\\_"){
-##     ## format numeric part
-##     n <- ncol(dt)
-##     R <- as.data.frame(dt)
-##     classy <- unlist(lapply(R, function(x) class(x)[1]))
-##     datum <- which(classy %in% c("Date", "POSIXlt", "POSIXct"))
-##     R[datum] <- lapply(R[datum], as.character)
-##     num <- which(classy == "numeric")
-##     l <- unlist(lapply(R[num], function(x) min(abs(x[is.finite(x)]),
-##                                                na.rm = TRUE)))
-##     h <- unlist(lapply(R[num], function(x) max(abs(x[is.finite(x)]),
-##                                                na.rm = TRUE)))
-##     p0 <- unlist(lapply(R[num],
-##                         function(x) min(x[is.finite(x)], na.rm = TRUE) >= 0 &
-##                                     max(x[is.finite(x)], na.rm = TRUE) <= 1))
-##     p <- if(!is.null(p0)) which(p0) else NULL
-##     il <- num[which(l>b)]
-##     hfnc <- function(x, digits) sprintf(paste0("%#.", digits, "f"), x)
-##     R[il] <- lapply(R[il], hfnc, digits = dh)
-##     ih <- setdiff(num[which(h<=b)], p)
-##     lfnc <- function(x, digits) sprintf(paste0("%#.", digits, "g"), x)
-##     R[ih] <- lapply(R[ih], lfnc, digits = dl)
-##     p.fixer <- function(x, digits){
-##         izero  <- which(x == 0)
-##         ismall <- which(x < p_b)
-##         y <- lfnc(x, digits = digits)
-##         y[ismall] <- paste0("<", p_b)
-##         if(peq0) y[izero] <- "0"
-##         y
-##     }
-##     R[num[p]] <- lapply(R[num[p]], p.fixer, digits = dp)
-##     i_rest <- setdiff(num, c(il, ih, p))
-##     R[i_rest] <- lapply(R[i_rest], lfnc, digits = dr)
-##     ## format character
-##     chr <- which(classy %in% c("character", "factor"))
-##     foo <- function(x){
-##         y <- as.character(x)
-##         ifelse(nchar(y)>tmax + 2,
-##                paste0(substring(y, 1, tmax), "..."),
-##                y)
-##     }
-##     R[chr] <- lapply(R[chr], foo)
-##     if(repus){
-##         bar <- function(x) gsub("_", repwith, x, fixed = TRUE)
-##         R[chr] <- lapply(R[chr], bar)
-##     }
-##     attributes(R) <- attributes(dt)
-##     R
-## }
-
-if(FALSE){
-
-    df <- data.frame(
-        p = c(0,  0.1, 0.99,  0.029, 0.0000345),
-        h = c(1.01,  2.1, 130,   3.456, 1000),
-        l = c(0, -.21, 0.1,  -.99,   -.000456),
-        m = c(0, -2.1, 0.1,   1.3,   456),
-        d = as.Date("2012-01-01") + floor(seq(0,10000,len = 5)),
-        t = proh::mumbo(5, 4)
-    )
-
-    dtable_format(df, peq0 = TRUE)
-    dtable_format(df, peq0 = FALSE)
-
-    ## dt = df
-    ## b = 1
-    ## hfnc = base::round
-    ## lfnc = base::signif
-    ## rfnc = base::round
-    ## bh = 1
-    ## bl = 2
-    ## br = 2
-    ## bp = 2
-    ## p_b = 0.0001
-    ## peq0 = TRUE
-    ## tmax = 30
-    ## repus = TRUE
-    ## repwith = "\\_"
-
-    dtable_format2(df, peq0 = TRUE)
-    dtable_format2(df, peq0 = FALSE)
-
-
-    ## test <- c(100.1, 10, 1.123, 0, 0.1, 0.11, 0.0001234)
-
-    sprintf("%.2g", test)
-    sprintf("%#.2g", test)
-    sprintf("%#5.2g", test)
-
-    sprintf("%.2f", test)
-    sprintf("%#.2f", test)
-    sprintf("%#5.2f", test)
-
-    sprintf("%.2g", df$l)
-    sprintf("%#.2g", df$l)
-    sprintf("%#5.2g", df$l)
-
-    sprintf("%.2f", df$l)
-    sprintf("%#.2f", df$l)
-    sprintf("%#5.2f", df$l)
-
-    sprintf("%#.2e", df$l)
-    sprintf("%.2e", df$l)
-
 }

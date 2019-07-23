@@ -28,7 +28,7 @@ dtable_fnote <- function(dt, info, fn.var,
     if(length(format.param)>0) format <- TRUE
     if(format){
         dt <- do.call(dtable_format,
-                      c('dt' = list(dt), format_fixer(format.param)))
+                      c('dt' = list(dt), format.param))
     }
     infot   <- unique(as.character(stats::na.omit(unlist(dt[[info]]))))
     i.infot <- as.numeric(factor(dt[[info]], levels = infot))
@@ -66,4 +66,3 @@ latex_symbols <- function(n, pre = "\\", suff  = "", start = 1){
     if( (start-1+n) > N) stop("there are not enough latex symbols")
     paste0(pre, S[(start):(start - 1 + n)], suff)
 }
-

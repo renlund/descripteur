@@ -81,6 +81,9 @@ dtable <- function(data, type = NULL, guide = NULL,
                 stop(paste0("the vectors in the glist (as list) should have ",
                             "length equal to the number of rows in data"))
             }
+            if(any(unlist(lapply(glist, function(x) sum(is.na(x)))) > 0)){
+                stop("glist has NA elements")
+            }
             if(any(unlist(lapply(glist, sum)) == 0)){
                 stop("glist defines empty subgroup")
             }

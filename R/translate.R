@@ -10,6 +10,7 @@
 ##' @param s vector to translate
 ##' @param key translation key
 ##' @param flexible allow a key to be inversed if that seems more plausible?
+##' @importFrom stats setNames
 ##' @return vector
 ##' @export
 translate <- function(s, key, flexible = TRUE){

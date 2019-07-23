@@ -402,13 +402,15 @@ dtable_cbind(tmp1, tmp2)
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "real", glist = gl), format = TRUE,
              caption = paste("Two groups described and compared",
-                             "for type \\texttt{real}."))
+                             "for type \\texttt{real}."),
+             label = "ex:real1")
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "real", glist = gl3, w = vikt,
              comp = "across"), format = T, guide = dtg,
              caption = paste("Three weighted groups described and",
-                             "compared 'across' for type \\texttt{real}."))
+                             "compared 'across' for type \\texttt{real}."),
+             label = "ex:real2")
 @
 
 \clearpage
@@ -416,13 +418,15 @@ dtable_latex(dtable(df, type = "real", glist = gl3, w = vikt,
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "bnry", glist = gl), format = T,
              caption = paste("Two groups described and compared",
-                             "for type \\texttt{bnry}."))
+                             "for type \\texttt{bnry}."),
+             label = "ex:bnry1")
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "bnry", glist = gl3, w = vikt,
              comp = "across"), format = T, guide = dtg,
              caption = paste("Three weighted groups described and",
-                             "compared 'across' for type \\texttt{bnry}."))
+                             "compared 'across' for type \\texttt{bnry}."),
+             label = "ex:bnry2")
 @
 
 <<eval = FALSE, include = FALSE, echo = FALSE>>=
@@ -443,14 +447,16 @@ dtable_latex(dtable(df, type = "bnry", glist = gl3, w = vikt,
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "catg", glist = gl), format = TRUE,
              caption = paste("Two groups described and compared",
-                             "for type \\texttt{catg}."))
+                             "for type \\texttt{catg}."),
+             label = "ex:catg1")
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "catg", glist = gl3, w = vikt,
              comp = "across"), format = T, guide = dtg, grey = TRUE,
              caption = paste("Three weighted groups described and",
                              "compared 'across' for type \\texttt{catg}.",
-                             "(Every other line grey.)"))
+                             "(Every other line grey.)"),
+             label = "ex:catg2")
 @
 
 \subsubsection{Is the distinction between \texttt{catg} and \texttt{bnry} annoying?}
@@ -463,7 +469,8 @@ dtable_latex(dtable(df, type = "catg", glist = gl, guide = nobnry),
              format = TRUE, grey = "variable",
              caption = paste("Two groups described and compared for type ",
                              " \\texttt{catg} (including binary variables). ",
-                             "(Grey lines according to column 'variable'.)"))
+                             "(Grey lines according to column 'variable'.)"),
+             label = "ex:distinction")
 @
 
 \clearpage
@@ -481,7 +488,8 @@ opts_desc$set("describe_catg" = flist(c(
                   "proportion" = "d_cp")))
 dtable_latex(dtable(df, type = "catg", glist = gl, useNA = "ifany"), format = T,
              caption = paste("Two groups described and compared",
-                             "for type \\texttt{catg}."))
+                             "for type \\texttt{catg}."),
+             label = "ex:useNA")
 @
 
 Now, lets restore the default values.
@@ -494,13 +502,15 @@ opts_desc$restore()
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "date", glist = gl), format = T,
              caption = paste0("Two groups described and compared for",
-                              " type \\texttt{date}."))
+                              " type \\texttt{date}."),
+             label = "ex:date1")
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "date", glist = gl3, w = vikt, comp = "across"),
              format = T,  guide = dtg,
              caption = paste("Three 'weighted' groups described and compared",
-                             "'across' for type \\texttt{date}."))
+                             "'across' for type \\texttt{date}."),
+             label = "ex:date2")
 @
 
 \clearpage
@@ -508,13 +518,15 @@ dtable_latex(dtable(df, type = "date", glist = gl3, w = vikt, comp = "across"),
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "surv", glist = gl), format = T,
              caption = paste0("Two groups described and compared for",
-                              " type \\texttt{surv}."))
+                              " type \\texttt{surv}."),
+             label = "ex:surv1")
 @
 <<results = 'asis'>>=
 dtable_latex(dtable(df, type = "surv", glist = gl3, w = vikt, comp = "across"),
              format = T,  guide = dtg,
              caption = paste("Three weighted groups described and compared",
-                             "'across' for type \\texttt{surv}."))
+                             "'across' for type \\texttt{surv}."),
+             label = "ex:surv2")
 @
 
 \clearpage
@@ -595,7 +607,7 @@ dt <- dtables(data = df, useNA = "ifany", desc.flists = dlist,
 tmp1 <- dtable_prune(dt, rm = "variable", info = FALSE)
 tmp2 <- dtable_prune(tmp1, rm = "info", info = TRUE)
 tmp3 <- dtable_fnote(tmp2, info = "pinfo", fn.var = "p", format = TRUE)
-dtable_latex(tmp3, label = "tab:info", grey = dt$variable,
+dtable_latex(tmp3, label = "tab:info2", grey = dt$variable,
              caption = paste("Compact table with continuous and",
                              "categorical types."))
 @
