@@ -2,9 +2,12 @@
 % Please edit documentation in R/translate.R
 \name{translate}
 \alias{translate}
+\alias{decipher}
 \title{translate}
 \usage{
 translate(s, key, flexible = TRUE)
+
+decipher(s, key, flexible = TRUE)
 }
 \arguments{
 \item{s}{vector to translate}
@@ -26,4 +29,12 @@ if you  have a key \code{key <- c('a'  = 'A', 'b' = 'B')} you  can use it to
     \code{key[s]} is  \code{c('A', 'B', NA)}. The  function \code{translate}
     will  make sure  that translations  occur whenever  a corresponding  key
     entry exists, else keep the orginal value.
+}
+\examples{
+kEy = c("foo" = "Foo la la", "bar" = "Bar di da",
+        "baz" = "baz", "quz" = "Quz")
+sset = c("foo", "bar", "baz", "quz")[c(2,1,1,4,1,2,2,3,2,3)]
+table(new = translate(s = sset, key = kEy), old = sset, useNA = "ifany")
+sset = c("Foo la la", "baz", "Quz")
+table(new = translate(s = sset, key = kEy), old = sset, useNA = "ifany")
 }

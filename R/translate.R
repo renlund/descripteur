@@ -12,6 +12,13 @@
 ##' @param flexible allow a key to be inversed if that seems more plausible?
 ##' @importFrom stats setNames
 ##' @return vector
+##' @examples
+##' kEy = c("foo" = "Foo la la", "bar" = "Bar di da",
+##'         "baz" = "baz", "quz" = "Quz")
+##' sset = c("foo", "bar", "baz", "quz")[c(2,1,1,4,1,2,2,3,2,3)]
+##' table(new = translate(s = sset, key = kEy), old = sset, useNA = "ifany")
+##' sset = c("Foo la la", "baz", "Quz")
+##' table(new = translate(s = sset, key = kEy), old = sset, useNA = "ifany")
 ##' @export
 translate <- function(s, key, flexible = TRUE){
     if(flexible){
@@ -27,14 +34,6 @@ translate <- function(s, key, flexible = TRUE){
     r
 }
 
-if(FALSE){
-
-    nyck = c("foo" = "Foo la la", "bar" = "Bar di da",
-             "baz" = "baz", "quz" = "Quz")
-    sset = c("foo", "bar", "baz", "quz")[c(2,1,1,4,1,2,2,3,2,3)]
-    table(new = translate(s = sset, key = nyck), old = sset, useNA = "ifany")
-
-    sset = c("Foo la la", "baz", "Quz")
-    table(new = translate(s = sset, key = nyck), old = sset, useNA = "ifany")
-
-}
+#' @rdname translate
+#' @export
+decipher <- translate
