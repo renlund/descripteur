@@ -165,7 +165,7 @@ dformat_num <- function(x, dg = 1, ds = 2,
     absx <- abs(x)
     ## if x is all integer set rounding parameter to 0
     ## if(all(absx == as.integer(absx))) dg <- 0
-    if(abs(sum(absx-round(absx))) < 1e-12) dg <- 0
+    if(abs(sum(absx-round(absx), na.rm = TRUE)) < 1e-12) dg <- 0
     ## initially assume we do not have p-values
     is.p <- FALSE
     ## but be willing to change your mind if maybe.p = TRUE
