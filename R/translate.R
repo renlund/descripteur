@@ -9,7 +9,10 @@
 ##' @title translate
 ##' @param s vector to translate
 ##' @param key translation key
-##' @param flexible allow a key to be inversed if that seems more plausible?
+##' @param flexible allow the key to be inversed if that seems more plausible?
+##' @param within logical; use \code{gsub} to translate within strings?
+##' @param rep1w logical; if \code{within = TRUE}, should replacement within
+##'     particular entry occur only once?
 ##' @importFrom stats setNames
 ##' @return vector
 ##' @examples
@@ -19,19 +22,47 @@
 ##' table(new = translate(s = sset, key = kEy), old = sset, useNA = "ifany")
 ##' sset = c("Foo la la", "baz", "Quz")
 ##' table(new = translate(s = sset, key = kEy), old = sset, useNA = "ifany")
+##' ## 'within = TRUE' uses gsub to look WITHIN strings
+##' KeY <- c("foo" = "The Foo", "bar" = "The Bar", "a" = "A")
+##' sset <- c("I have foo", "no bar today", "i got an a", "foo", "a bar")
+##' translate(s = sset, key = KeY, within = TRUE, rep1w = TRUE)
+##' translate(s = sset, key = KeY, within = TRUE, rep1w = FALSE)
+##' translate(s = sset, key = KeY, within = FALSE, rep1w = TRUE)
 ##' @export
-translate <- function(s, key, flexible = TRUE){
-    if(flexible){
-        n <- names(key)
-        us <- unique(s)
-        if(sum(us %in% key) > sum(us %in% n)){
-            key <- setNames(object = n, nm = key)
+translate <- function(s, key, flexible = TRUE, within = FALSE, rep1w = TRUE){
+    n <- names(key)
+    us <- unique(s)
+    if(within){
+        if(flexible){
+            tmp <- function(z, u) grepl(pattern = z, x = u)
+            g1 <- sum(unlist(lapply(key, tmp, u = us)))
+            g2 <- sum(unlist(lapply(n, tmp, u = us)))
+            if(g1 > g2){
+                key <- setNames(object = n, nm = key)
+            }
+            r1 <- r2 <- s
+            indx.cum <- rep(FALSE, length(s))
+            for(i in seq_along(key)){ ## i = 1
+                indx <- grepl(pattern = names(key)[i], x = s)
+                r1[indx] <- gsub(pattern = names(key)[i], replacement = key[i],
+                                 x = r1)[indx]
+                r2[indx & !indx.cum] <- gsub(pattern = names(key)[i], replacement = key[i],
+                                             x = r1)[indx & !indx.cum]
+                indx.cum <- indx.cum | indx
+            }
+            if(rep1w) r2 else r1
         }
+    } else {
+        if(flexible){
+            if(sum(us %in% key) > sum(us %in% n)){
+                key <- setNames(object = n, nm = key)
+            }
+        }
+        r = s
+        i = s %in% names(key)
+        r[i] <- key[s[i]]
+        r
     }
-    r = s
-    i = s %in% names(key)
-    r[i] <- key[s[i]]
-    r
 }
 
 #' @rdname translate

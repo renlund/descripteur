@@ -5,16 +5,21 @@
 \alias{decipher}
 \title{translate}
 \usage{
-translate(s, key, flexible = TRUE)
+translate(s, key, flexible = TRUE, within = FALSE, rep1w = TRUE)
 
-decipher(s, key, flexible = TRUE)
+decipher(s, key, flexible = TRUE, within = FALSE, rep1w = TRUE)
 }
 \arguments{
 \item{s}{vector to translate}
 
 \item{key}{translation key}
 
-\item{flexible}{allow a key to be inversed if that seems more plausible?}
+\item{flexible}{allow the key to be inversed if that seems more plausible?}
+
+\item{within}{logical; use \code{gsub} to translate within strings?}
+
+\item{rep1w}{logical; if \code{within = TRUE}, should replacement within
+particular entry occur only once?}
 }
 \value{
 vector
@@ -37,4 +42,10 @@ sset = c("foo", "bar", "baz", "quz")[c(2,1,1,4,1,2,2,3,2,3)]
 table(new = translate(s = sset, key = kEy), old = sset, useNA = "ifany")
 sset = c("Foo la la", "baz", "Quz")
 table(new = translate(s = sset, key = kEy), old = sset, useNA = "ifany")
+## 'within = TRUE' uses gsub to look WITHIN strings
+KeY <- c("foo" = "The Foo", "bar" = "The Bar", "a" = "A")
+sset <- c("I have foo", "no bar today", "i got an a", "foo", "a bar")
+translate(s = sset, key = KeY, within = TRUE, rep1w = TRUE)
+translate(s = sset, key = KeY, within = TRUE, rep1w = FALSE)
+translate(s = sset, key = KeY, within = FALSE, rep1w = TRUE)
 }
