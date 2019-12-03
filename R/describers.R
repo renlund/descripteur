@@ -63,6 +63,7 @@ attr(d_missing.perc, "dtable") <- "desc"
 ##' @export
 d_sum <- function(x, w = NULL, weight = "sample", ...){
     check_weight_style(weight)
+    if(all(is.na(x))) return(NA_real_)
     if(is.null(w)){
         d_n(x) * mean(x, na.rm = TRUE)
     } else if(weight == "sample"){
@@ -300,6 +301,7 @@ attr(d_bn, "dtable") <- "desc"
 ##' @describeIn d_bnry proportion of occurrences of the reference value
 ##' @export
 d_bp <- function(x, w = NULL, ...){
+    if(all(is.na(x))) return(NA_real_)
     y <- make_bnry(x)
     if(is.null(w)) w <- rep(1, length(x))
     z <- ifelse(y==d_ref_level(y), 1L, 0L)
@@ -634,8 +636,12 @@ dt_empty_desc <- function(x, ...) NA
 attr(dt_empty_desc, "dtable") <- "desc"
 
 abbrev <- function(s, n = 31){
-    if(n<3) stop("don't")
-    foo <- function(x, n) paste0(substring(x, 1, n-3))
+    if(is.na(n)) n <- 31
+    if(n<3){
+        message("[descripteur::abbrev] overiding n<3 by n=3\n")
+        n = 3
+    }
+    ## foo <- function(x, n) paste0(substring(x, 1, n-3))
     s_copy <- s
     for(k in seq_along(s)){
         s_copy[k] <- if(nchar(s[k])>n){
@@ -773,10 +779,14 @@ dt_bcp_helper <- function(x, useNA, info, perc.sign = NULL, ...){
         NAtxt <- if(useNA) NA_txt(x) else NULL
         z <- make_bnry(x)
         n <- d_bn(x = z, ...)
-        p <- d_bp(x = z, ...)
-        paste0(if(all(n == as.integer(n))) n else round(n, 1), " (",
-               roundisch(100*p, t = 0.001, scientific = TRUE, digit2 = 2),
-               perc.sign, ")", NAtxt)
+        if(is.na(n)){
+            paste0("0 (0", perc.sign, ")", NAtxt)
+        } else {
+            p <- d_bp(x = z, ...)
+            paste0(if(all(n == as.integer(n))) n else round(n, 1), " (",
+                   roundisch(100*p, t = 0.001, scientific = TRUE, digit2 = 2),
+                   perc.sign, ")", NAtxt)
+        }
     }
 }
 

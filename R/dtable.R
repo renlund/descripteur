@@ -160,7 +160,11 @@ dtable <- function(data, type = NULL, guide = NULL,
         if(P$desc){
             for(g in gvar$variable){ ## g <- gvar$variable[2]
                 x <- if(type %in% c("bnry", "catg")){
-                         factor(data[[g]], levels = attr(guide, "levels")[[g]])
+                         if(is.null(lev <- attr(guide, "levels")[[g]])){
+                             lev <- as.character(unique(na.omit(x)))
+                         }
+                         ## factor(data[[g]], levels = attr(guide, "levels")[[g]])
+                         factor(data[[g]], levels = lev)
                      } else {
                          data[[g]]
                      }
