@@ -13,6 +13,7 @@
 ##' @param within logical; use \code{gsub} to translate within strings?
 ##' @param rep1w logical; if \code{within = TRUE}, should replacement within
 ##'     particular entry occur only once?
+##' @param f2c should factors be as character? (default \code{TRUE})
 ##' @importFrom stats setNames
 ##' @return vector
 ##' @examples
@@ -29,8 +30,10 @@
 ##' translate(s = sset, key = KeY, within = TRUE, rep1w = FALSE)
 ##' translate(s = sset, key = KeY, within = FALSE, rep1w = TRUE)
 ##' @export
-translate <- function(s, key, flexible = TRUE, within = FALSE, rep1w = TRUE){
+translate <- function(s, key, flexible = TRUE, within = FALSE,
+                      rep1w = TRUE, f2c = TRUE){
     n <- names(key)
+    if(is.factor(s) & f2c) s <- as.character(s)
     us <- unique(s)
     if(within){
         if(flexible){

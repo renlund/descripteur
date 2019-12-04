@@ -5,9 +5,11 @@
 \alias{decipher}
 \title{translate}
 \usage{
-translate(s, key, flexible = TRUE, within = FALSE, rep1w = TRUE)
+translate(s, key, flexible = TRUE, within = FALSE, rep1w = TRUE,
+  f2c = TRUE)
 
-decipher(s, key, flexible = TRUE, within = FALSE, rep1w = TRUE)
+decipher(s, key, flexible = TRUE, within = FALSE, rep1w = TRUE,
+  f2c = TRUE)
 }
 \arguments{
 \item{s}{vector to translate}
@@ -20,6 +22,8 @@ decipher(s, key, flexible = TRUE, within = FALSE, rep1w = TRUE)
 
 \item{rep1w}{logical; if \code{within = TRUE}, should replacement within
 particular entry occur only once?}
+
+\item{f2c}{should factors be as character? (default \code{TRUE})}
 }
 \value{
 vector
