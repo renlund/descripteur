@@ -20,3 +20,9 @@ an index vector
 order a given vector, which may contain duplicates, according to the
   wanted order given by some other vector
 }
+\examples{
+g <- c("b", "d", "b", "f", "c", "c", "a")
+order_as(given = g, wanted = letters[1:4])
+g[order_as(given = g, wanted = letters[1:4])]
+g[order_as(given = g, wanted = letters[1:4], incl.unordered = FALSE)]
+}
