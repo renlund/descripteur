@@ -158,10 +158,10 @@ dtable <- function(data, type = NULL, guide = NULL,
         dots = list(...) ## dots = as.list(NULL) # for testing
         ## apply describers ---------------------------------------------------
         if(P$desc){
-            for(g in gvar$variable){ ## g <- gvar$variable[2]
+            for(g in gvar$variable){ ## g <- gvar$variable[1]
                 x <- if(type %in% c("bnry", "catg")){
                          if(is.null(lev <- attr(guide, "levels")[[g]])){
-                             lev <- as.character(unique(na.omit(x)))
+                             lev <- as.character(unique(na.omit(data[[g]])))
                          }
                          ## factor(data[[g]], levels = attr(guide, "levels")[[g]])
                          factor(data[[g]], levels = lev)
@@ -413,4 +413,15 @@ dc_param <- function(desc = NULL, comp = NULL, test = NULL, glist = NULL){
          "comp.style" = comp.style,
          "test" = test,
          "test.style" = test.style)
+}
+
+if(FALSE){
+    ## data <- data.frame(x = 1:2, y = c(1,1), z = rep(LETTERS[1:2], 1),
+    ##                    stringsAsFactors = FALSE)
+    data <- data.frame(x = 1:4, y = c(1,1,1,1), z = rep(LETTERS[1:2], 2),
+                       stringsAsFactors = FALSE)
+    guide = dtable_guide(data)
+    guide$type[2] <- "bnry"
+    dtable(data, type = "bnry", guide = guide)
+    dtable(data, type = "bnry", guide = guide, glist = "z")
 }

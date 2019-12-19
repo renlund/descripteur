@@ -76,6 +76,9 @@ order_by_list <- function(given, wanted, incl.unordered = TRUE,
                    "be a name in 'wanted'\n")
     if(unordered.label %in% names(wanted)) stop(stxt)
     w <- unlist(wanted)
+    if(any(duplicated(w))){
+        stop("cannot have duplicated elements in 'wanted'")
+    }
     if(incl.unordered){
         rest <- unique(setdiff(given, w))
         if(length(rest) > 0){
@@ -95,6 +98,11 @@ order_by_list <- function(given, wanted, incl.unordered = TRUE,
     lab <- repeat_listnames_by_entry(lapply(wanted, how_many_in))
     list(
         order = indx,
-        sorted = data.frame(given = g, list.name = lab)
+        sorted = data.frame(given = g, list.name = lab,
+                            stringsAsFactors = FALSE)
     )
 }
+
+##' @rdname order_by_list
+##' @export
+order_as_list <- order_by_list

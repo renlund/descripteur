@@ -2,9 +2,13 @@
 % Please edit documentation in R/order-as.R
 \name{order_by_list}
 \alias{order_by_list}
+\alias{order_as_list}
 \title{ordering of vector by list}
 \usage{
 order_by_list(given, wanted, incl.unordered = TRUE,
+  unordered.label = "Unlabelled")
+
+order_as_list(given, wanted, incl.unordered = TRUE,
   unordered.label = "Unlabelled")
 }
 \arguments{
