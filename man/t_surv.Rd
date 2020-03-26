@@ -3,7 +3,7 @@
 \name{t_surv}
 \alias{t_surv}
 \alias{t_surv_empty}
-\alias{t_cph.p}
+\alias{t_HR.p}
 \alias{t_lr.p}
 \title{various testing functions for surv types}
 \usage{
@@ -11,7 +11,7 @@ t_surv(...)
 
 t_surv_empty(x, glist, ...)
 
-t_cph.p(x, glist, w = NULL, cens.type = "right", ...)
+t_HR.p(x, glist, w = NULL, cens.type = "right", ...)
 
 t_lr.p(x, glist, w = NULL, cens.type = "right", ...)
 }
@@ -29,7 +29,7 @@ various testing functions for surv types
 \itemize{
 \item \code{t_surv_empty}: empty test
 
-\item \code{t_cph.p}: p-value from Cox model
+\item \code{t_HR.p}: p-value from Cox model
 
 \item \code{t_lr.p}: p-value from log-rank test
 }}

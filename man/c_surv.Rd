@@ -4,7 +4,7 @@
 \alias{c_surv}
 \alias{c_rr}
 \alias{c_sstd}
-\alias{c_cph}
+\alias{c_HR}
 \title{various comparer functions for surv types}
 \usage{
 c_surv(...)
@@ -13,7 +13,7 @@ c_rr(x, glist, w = NULL, cens.type = "right", ...)
 
 c_sstd(x, glist, w = NULL, cens.type = "right", ...)
 
-c_cph(x, glist, w = NULL, cens.type = "right", ...)
+c_HR(x, glist, w = NULL, cens.type = "right", ...)
 }
 \arguments{
 \item{...}{this is to be able to tolerate unnecessary arguments}
@@ -36,6 +36,6 @@ various comparer functions for surv types
 \item \code{c_sstd}: standardized difference between the rates of two surv
 variables (difference in mean divided by 'average sd'-isch)
 
-\item \code{c_cph}: Hazard Ratio from Cox model
+\item \code{c_HR}: Hazard Ratio from Cox model
 }}
 

@@ -160,7 +160,7 @@ attr(t_surv_empty, "dtable") <- "test"
 
 ##' @describeIn t_surv p-value from Cox model
 ##' @export
-t_cph.p <- function(x, glist, w = NULL, cens.type = "right", ...){
+t_HR.p <- function(x, glist, w = NULL, cens.type = "right", ...){
     warn_if_wrong_glist_length(glist, 2)
     survcheck(x)
     if(is.null(w)) w <- rep(1, length(x))
@@ -169,6 +169,7 @@ t_cph.p <- function(x, glist, w = NULL, cens.type = "right", ...){
     se <- sqrt(diag(mod$var))
     as.numeric(pchisq((beta/se)^2, 1, lower.tail = FALSE)[1])
 }
+attr(t_HR.p, "dtable") <- "test"
 
 ##' @describeIn t_surv p-value from log-rank test
 ##' @export
@@ -180,6 +181,7 @@ t_lr.p <- function(x, glist, w = NULL, cens.type = "right", ...){
     mod <- survival::survdiff(x ~ factorize_glist(glist))
     as.numeric(pchisq(mod$chisq, df = 1, lower.tail = FALSE)[1])
 }
+attr(t_lr.p, "dtable") <- "test"
 
     ## +----------------------------------+ ##
     ## | compact-type testing functions   | ##

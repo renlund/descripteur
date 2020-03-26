@@ -313,13 +313,14 @@ cph_model <- function(x, glist, w = NULL){
 
 ##' @describeIn c_surv Hazard Ratio from Cox model
 ##' @export
-c_cph <- function(x, glist, w = NULL, cens.type = "right", ...){
+c_HR <- function(x, glist, w = NULL, cens.type = "right", ...){
     warn_if_wrong_glist_length(glist, 2)
     survcheck(x)
     if(is.null(w)) w <- rep(1, length(x))
     mod <- cph_model(x = x, glist = glist, w = w)
     as.numeric(exp(mod$coefficients)[1])
 }
+attr(c_HR, "dtable") <- "comp"
 
 if(FALSE){
     n <- 1000
