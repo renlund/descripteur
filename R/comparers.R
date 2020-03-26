@@ -303,3 +303,29 @@ c_sstd <- function(x, glist, w = NULL, cens.type = "right", ...){
     (n1 / t1 - n2 / t2) / sqrt((n1 / t1 + n2 / t2) / 2)
 }
 attr(c_sstd, "dtable") <- "comp"
+
+cph_model <- function(x, glist, w = NULL){
+    if(is.null(w)) w <- rep(1, length(x))
+    survival::coxph(x ~ factorize_glist(glist), weights = w)
+}
+
+##' @describeIn c_surv Hazard Ratio from Cox model
+##' @export
+c_cph <- function(x, glist, w = NULL, cens.type = "right", ...){
+    warn_if_wrong_glist_length(glist, 2)
+    survcheck(x)
+    if(is.null(w)) w <- rep(1, length(x))
+    mod <- cph_model(x = x, glist = glist, w = w)
+    as.numeric(exp(mod$coefficients)[1])
+}
+
+if(FALSE){
+    n <- 1000
+    x <- survival::Surv(time = rexp(n, 1/100), event = rbinom(n, 1, 0.2))
+    a <- sample(c(TRUE, FALSE), n, replace = TRUE)
+    glist <- list("A" = a, "B" = !a)
+    c_cph(x, glist)
+    t_cph.p(x, glist)
+    t_lr.p(x, glist)
+    summary(cph_model(x, glist))
+}
