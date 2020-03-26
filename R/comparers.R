@@ -306,7 +306,9 @@ attr(c_sstd, "dtable") <- "comp"
 
 cph_model <- function(x, glist, w = NULL){
     if(is.null(w)) w <- rep(1, length(x))
-    survival::coxph(x ~ factorize_glist(glist), weights = w)
+    survival::coxph(x ~ factorize_glist(glist, as.factor = TRUE,
+                                        reverse.levels = TRUE),
+                    weights = w)
 }
 
 ##' @describeIn c_surv Hazard Ratio from Cox model

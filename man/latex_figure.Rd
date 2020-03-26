@@ -10,7 +10,8 @@ latex_figure(
   label = NULL,
   cat = TRUE,
   lab.prefix = "fig:",
-  where = "htb"
+  where = "htb",
+  caption.lof = NULL
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ latex_figure(
 \item{lab.prefix}{prefix for label}
 
 \item{where}{argument for placement of figure}
+
+\item{caption.lof}{argument for caption for list of figures}
 }
 \value{
 printed coded or character

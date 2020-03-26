@@ -8,10 +8,12 @@
 ##' @param cat concatenate and print the code, else return as character
 ##' @param lab.prefix prefix for label
 ##' @param where argument for placement of figure
+##' @param caption.lof argument for caption for list of figures
 ##' @return printed coded or character
 ##' @export
 latex_figure <- function(path, caption = NULL, label = NULL,
-                        cat = TRUE, lab.prefix = "fig:", where = "htb"){
+                         cat = TRUE, lab.prefix = "fig:",
+                         where = "htb", caption.lof = NULL){
     if(is.null(label)){
         label <- paste0(sample(x = c(letters, LETTERS), size = 6),
                         collapse = "")
@@ -22,10 +24,11 @@ latex_figure <- function(path, caption = NULL, label = NULL,
         item <- gsub(pattern = "_", replacement = "\\_", item, fixed = TRUE)
         caption <- paste0("Plot of: ", item)
     }
+    if(is.null(caption.lof)) caption.lof <- caption
     label <- if(!is.null(lab.prefix)) paste0(lab.prefix, label)
     r <- paste0("\n\\begin{center}\\begin{figure}[", where, "]\n",
                 "\\includegraphics{", path, "}\n",
-                "\\caption{", caption, "}\n",
+                "\\caption[", caption.lof,"]{", caption, "}\n",
                 "\\label{", label, "}\n",
                 "\\end{figure}\\end{center}\n")
     if(cat) cat(r) else r
