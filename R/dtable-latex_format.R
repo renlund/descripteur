@@ -101,11 +101,13 @@ get_grey <- function(grey = NULL, x = NULL){
                            "recognised as a column"))
             NULL
         } else {
+            if(class(grey_var) == "factor") grey_var <- as.character(grey_var)
             ns <- rle(grey_var)$lengths
             rep(rep(color_vec, length.out = length(ns)), ns)
         }
     } else {
         if(length(grey) == nrow(x)){
+            if(class(grey) == "factor") grey <- as.character(grey)
             ns <- rle(grey)$lengths
             rep(rep(color_vec, length.out = length(ns)), ns)
         } else {
