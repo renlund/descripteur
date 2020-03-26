@@ -4,9 +4,19 @@
 \alias{dformat_num}
 \title{numerical formating}
 \usage{
-dformat_num(x, dg = 1, ds = 2, maybe.p = TRUE, p.bound = 1e-04,
-  miss = "", some.scientific = TRUE, low = 1e-08, high = 1e+08,
-  ..., verbose = TRUE)
+dformat_num(
+  x,
+  dg = 1,
+  ds = 2,
+  maybe.p = TRUE,
+  p.bound = 1e-04,
+  miss = "",
+  some.scientific = TRUE,
+  low = 1e-08,
+  high = 1e+08,
+  ...,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{x}{vector of numeric values}

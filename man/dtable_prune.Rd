@@ -4,8 +4,15 @@
 \alias{dtable_prune}
 \title{prune dtable}
 \usage{
-dtable_prune(x, rm = NULL, keep = NULL, info = FALSE,
-  info.attr = "info", info.unique = TRUE, split.unique = TRUE)
+dtable_prune(
+  x,
+  rm = NULL,
+  keep = NULL,
+  info = FALSE,
+  info.attr = "info",
+  info.unique = TRUE,
+  split.unique = TRUE
+)
 }
 \arguments{
 \item{x}{object}

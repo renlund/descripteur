@@ -4,8 +4,7 @@
 \alias{dformat_text}
 \title{text formating}
 \usage{
-dformat_text(x, tmax = 30, rep.key = NULL, add.key = TRUE, ...,
-  verbose = TRUE)
+dformat_text(x, tmax = 30, rep.key = NULL, add.key = TRUE, ..., verbose = TRUE)
 }
 \arguments{
 \item{x}{vector of character values}

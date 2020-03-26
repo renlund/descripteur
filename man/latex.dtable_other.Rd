@@ -4,8 +4,14 @@
 \alias{latex.dtable_other}
 \title{latex method for dtable_other objects}
 \usage{
-latex.dtable_other(x, file = "", where = "htb", rowname = NULL,
-  sep = "\\\\\\\\", ...)
+latex.dtable_other(
+  x,
+  file = "",
+  where = "htb",
+  rowname = NULL,
+  sep = "\\\\\\\\",
+  ...
+)
 }
 \arguments{
 \item{x}{object}

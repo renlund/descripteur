@@ -57,7 +57,8 @@ order_as <- function(given, wanted, incl.unordered = TRUE){
 ##' @param incl.unordered should given elements not in wanted be kept?
 ##' @param unordered.label label for the not-in-wanted elements
 ##' @return list consisting of an index vector and a dataframe that connects the
-##'   sorted elements with the corresponding list names
+##'   sorted elements with the corresponding list names. Also, the elements of
+##'   \code{rle} applied to list.names entry of the dataframe
 ##' @examples
 ##' g <- c("b", "d", "b", "f", "c", "c", "a")
 ##' w <- list(
@@ -96,10 +97,13 @@ order_by_list <- function(given, wanted, incl.unordered = TRUE,
         r
     }
     lab <- repeat_listnames_by_entry(lapply(wanted, how_many_in))
+    Rle <- rle(lab)
     list(
         order = indx,
         sorted = data.frame(given = g, list.name = lab,
-                            stringsAsFactors = FALSE)
+                            stringsAsFactors = FALSE),
+        list.name.lengths = Rle$lengths,
+        list.name.values = Rle$values
     )
 }
 

@@ -4,9 +4,16 @@
 \alias{attr2text}
 \title{get attributes as text}
 \usage{
-attr2text(dt, perc = FALSE, perc.sign = "\%", lessthan = "<",
-  attr = c("size", "cc", "weight", "units", "info"), sep = ". ",
-  vector = FALSE, rm.if.all = FALSE)
+attr2text(
+  dt,
+  perc = FALSE,
+  perc.sign = "\%",
+  lessthan = "<",
+  attr = c("size", "cc", "weight", "units", "info"),
+  sep = ". ",
+  vector = FALSE,
+  rm.if.all = FALSE
+)
 }
 \arguments{
 \item{dt}{a dtable}

@@ -4,8 +4,14 @@
 \alias{dtable_fnote}
 \title{create (latex) footnotes from table variables}
 \usage{
-dtable_fnote(dt, info, fn.var, info.attr = "info", format = FALSE,
-  format.param = as.list(NULL))
+dtable_fnote(
+  dt,
+  info,
+  fn.var,
+  info.attr = "info",
+  format = FALSE,
+  format.param = as.list(NULL)
+)
 }
 \arguments{
 \item{dt}{a dtable}

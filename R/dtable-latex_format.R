@@ -253,6 +253,7 @@ dformat_text <- function(x, tmax = 30,
     ret
 }
 
+
 ##' formating
 ##'
 ##' formatting of dtables and data.frames

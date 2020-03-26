@@ -5,11 +5,19 @@
 \alias{order_as_list}
 \title{ordering of vector by list}
 \usage{
-order_by_list(given, wanted, incl.unordered = TRUE,
-  unordered.label = "Unlabelled")
+order_by_list(
+  given,
+  wanted,
+  incl.unordered = TRUE,
+  unordered.label = "Unlabelled"
+)
 
-order_as_list(given, wanted, incl.unordered = TRUE,
-  unordered.label = "Unlabelled")
+order_as_list(
+  given,
+  wanted,
+  incl.unordered = TRUE,
+  unordered.label = "Unlabelled"
+)
 }
 \arguments{
 \item{given}{the vector that needs ordering}
@@ -22,7 +30,8 @@ order_as_list(given, wanted, incl.unordered = TRUE,
 }
 \value{
 list consisting of an index vector and a dataframe that connects the
-  sorted elements with the corresponding list names
+  sorted elements with the corresponding list names. Also, the elements of
+  \code{rle} applied to list.names entry of the dataframe
 }
 \description{
 order a given vector, which may contain duplicates, according to the

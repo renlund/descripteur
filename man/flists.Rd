@@ -4,8 +4,15 @@
 \alias{flists}
 \title{create flists}
 \usage{
-flists(real = FALSE, bnry = FALSE, catg = FALSE, date = FALSE,
-  surv = FALSE, names = NULL, thing = "desc")
+flists(
+  real = FALSE,
+  bnry = FALSE,
+  catg = FALSE,
+  date = FALSE,
+  surv = FALSE,
+  names = NULL,
+  thing = "desc"
+)
 }
 \arguments{
 \item{real}{logical or an flist}

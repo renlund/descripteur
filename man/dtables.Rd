@@ -4,8 +4,15 @@
 \alias{dtables}
 \title{dtable for multiple types}
 \usage{
-dtables(data, guide = NULL, ..., types = NULL, desc.flists = NULL,
-  comp.flists = NULL, test.flists = NULL)
+dtables(
+  data,
+  guide = NULL,
+  ...,
+  types = NULL,
+  desc.flists = NULL,
+  comp.flists = NULL,
+  test.flists = NULL
+)
 }
 \arguments{
 \item{data}{the data set}

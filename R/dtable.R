@@ -418,7 +418,9 @@ dc_param <- function(desc = NULL, comp = NULL, test = NULL, glist = NULL){
 if(FALSE){
     ## data <- data.frame(x = 1:2, y = c(1,1), z = rep(LETTERS[1:2], 1),
     ##                    stringsAsFactors = FALSE)
-    data <- data.frame(x = 1:4, y = c(1,1,1,1), z = rep(LETTERS[1:2], 2),
+    data <- data.frame(x = 1:4,
+                       y = factor(c(1,1,1,1), levels = 0:1),
+                       z = rep(LETTERS[1:2], 2),
                        stringsAsFactors = FALSE)
     guide = dtable_guide(data)
     guide$type[2] <- "bnry"
