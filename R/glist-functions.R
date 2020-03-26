@@ -42,8 +42,10 @@ make_glist <- function(x, ref = NULL, max.levels = 25){
 #'
 #' reverse-engineer a categorical variable from glist, if possible
 #' @param glist a list of indices
+#' @param as.factor return a factor object?
+#' @param reverse.levels levels in order of glist?
 #' @export
-factorize_glist <- function(glist){
+factorize_glist <- function(glist, as.factor = FALSE, reverse.levels = FALSE){
     g <- as.data.frame(glist)
     rS <- rowSums(g)
     if(any(is.na(rS)) | any(stats::na.omit(rS) != 1)){
@@ -51,7 +53,7 @@ factorize_glist <- function(glist){
                         " is not equivalent to a categorical variable")
         ss <- all(rowSums(g, na.rm = TRUE) <= 1)
         text2 <- if(ss){
-                     "\n -- But there may be a natural subset that is!"
+                     "\n -- But there may be a natural subset that is!\n"
                  } else NULL
         stop(paste0(text1, text2))
     } else {
@@ -59,7 +61,12 @@ factorize_glist <- function(glist){
         for(k in seq_along(g)){
             r[[k]] <- ifelse(g[[k]], names(g)[k], "")
         }
-        apply(r, 1, paste0, collapse = "")
+        ret <- apply(X = r, MARGIN = 1, FUN = paste0, collapse = "")
+        if(as.factor){
+            lev <- if(reverse.levels) rev(names(g)) else names(g)
+            factor(ret, levels = lev)
+        } else {
+            ret
+        }
     }
 }
-

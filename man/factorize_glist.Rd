@@ -4,10 +4,14 @@
 \alias{factorize_glist}
 \title{factorize a glist}
 \usage{
-factorize_glist(glist)
+factorize_glist(glist, as.factor = FALSE, reverse.levels = FALSE)
 }
 \arguments{
 \item{glist}{a list of indices}
+
+\item{as.factor}{return a factor object?}
+
+\item{reverse.levels}{levels in order of glist?}
 }
 \description{
 reverse-engineer a categorical variable from glist, if possible
