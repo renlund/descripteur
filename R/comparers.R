@@ -322,6 +322,22 @@ c_HR <- function(x, glist, w = NULL, cens.type = "right", ...){
 }
 attr(c_HR, "dtable") <- "comp"
 
+##' @describeIn c_surv Hazard Ratio and confidence interval (as character) from
+##'     Cox model
+##' @param d.hrci digits argument for HR and confidence interval
+##' @export
+c_HRCI <- function(x, glist, w = NULL, cens.type = "right", d.hrci = 2, ...){
+    warn_if_wrong_glist_length(glist, 2)
+    survcheck(x)
+    if(is.null(w)) w <- rep(1, length(x))
+    mod <- cph_model(x = x, glist = glist, w = w)
+    v <- exp(as.numeric(c(mod$coefficients[1], stats::confint(mod))))
+    s <- paste0("%.", d.hrci, "f (%.", d.hrci, "f - %.", d.hrci, "f)")
+    sprintf(s, v[1], v[2], v[3])
+}
+attr(c_HRCI, "dtable") <- "comp"
+
+
 if(FALSE){
     n <- 1000
     x <- survival::Surv(time = rexp(n, 1/100), event = rbinom(n, 1, 0.2))
@@ -331,4 +347,6 @@ if(FALSE){
     t_cph.p(x, glist)
     t_lr.p(x, glist)
     summary(cph_model(x, glist))
+    c_HR(x, glist)
+    c_HRCI(x, glist)
 }

@@ -5,6 +5,7 @@
 \alias{c_rr}
 \alias{c_sstd}
 \alias{c_HR}
+\alias{c_HRCI}
 \title{various comparer functions for surv types}
 \usage{
 c_surv(...)
@@ -14,6 +15,8 @@ c_rr(x, glist, w = NULL, cens.type = "right", ...)
 c_sstd(x, glist, w = NULL, cens.type = "right", ...)
 
 c_HR(x, glist, w = NULL, cens.type = "right", ...)
+
+c_HRCI(x, glist, w = NULL, cens.type = "right", d.hrci = 2, ...)
 }
 \arguments{
 \item{...}{this is to be able to tolerate unnecessary arguments}
@@ -25,6 +28,8 @@ c_HR(x, glist, w = NULL, cens.type = "right", ...)
 \item{w}{weight}
 
 \item{cens.type}{type of censoring}
+
+\item{d.hrci}{digits argument for HR and confidence interval}
 }
 \description{
 various comparer functions for surv types
@@ -37,5 +42,8 @@ various comparer functions for surv types
 variables (difference in mean divided by 'average sd'-isch)
 
 \item \code{c_HR}: Hazard Ratio from Cox model
+
+\item \code{c_HRCI}: Hazard Ratio and confidence interval (as character) from
+Cox model
 }}
 
