@@ -46,10 +46,25 @@ dtable_guide <- function(data, elim.set = NULL,
     }
     const <- names(data)[unlist(lapply(data, n_is_1))] ## MOVED down
     val <- setdiff(names(org_data), c(elim.set, row.id, unit.id, const))
-    ## data <- subset(org_data, subset = TRUE, select = val)
     data <- org_data[, val, drop = FALSE]
-    ## class2 <- function(x) class(x)[1]
     classy <- lapply(data, get_class)
+    ## ## --- START: COULD we identify 'surv' by prefixes?
+    ## ##     this would probably require lots of changes
+    ## ##     but could be worth some
+    ## surv.parts = TRUE,
+    ## surv.prefix = c("time" = "t.", "event" = "ev.")
+    ## if(surv.parts){
+    ##     ti <- surv.prefix['time']
+    ##     ev <- surv.prefix['event']
+    ##     it <- grepl(ti, names(data))
+    ##     ie <- grepl(ev, names(data))
+    ##     tcan <- gsub(ti, "", names(data)[it], fixed = TRUE)
+    ##     ecan <- gsub(ev, "", names(data)[ie], fixed = TRUE)
+    ##     can <- intersect(tcan, ecan)
+    ##     tvar <- paste0(ti, can)
+    ##     evar <- paste0(ev, can)
+    ## }
+    ## ## --- END
     any_na <- function(x) any(is.na(x))
     real <- classy %in% c("numeric", "integer")
     char <- classy %in% c("character")
@@ -246,21 +261,36 @@ if(FALSE){
     ##  ... should/could dtable_guide imply an ordering of variables in
     ##      e.g. dtable_latex
 
-    ## n <- 100
-    ## df  <- data.frame(
-    ##     c_var = round(rnorm(10), 1),
-    ##     a_var = sample(letters[1:3], size = n, replace = TRUE),
-    ##     rid = as.character(1:n),
-    ##     f_var = as.Date("2010-01-01") + rpois(n, 365),
-    ##     b_var = factor(rpois(n, 50)),
-    ##     d_var = sample(c(TRUE, FALSE), size = n, replace = TRUE),
-    ##     g_var = rep(NA, n),
-    ##     id = paste0(letters, 1:n),
-    ##     h_var = rep(1:2, n/2),
-    ##     e_var = round(runif(n, 10, 20), 1)
-    ## )
-    ## g <- dtable_guide(df, elim.set = "h_var", row.id = "rid",
-    ##                   unit.id = "id", no.bnry = TRUE)
+    n <- 100
+    df  <- data.frame(
+        c_var = round(rnorm(10), 1),
+        a_var = sample(letters[1:3], size = n, replace = TRUE),
+        rid = as.character(1:n),
+        f_var = as.Date("2010-01-01") + rpois(n, 365),
+        b_var = factor(rpois(n, 50)),
+        d_var = sample(c(TRUE, FALSE), size = n, replace = TRUE),
+        g_var = rep("foo", n),
+        id = paste0(letters, 1:n),
+        h_var = rep(1:2, n/2),
+        e_var = round(runif(n, 10, 20), 1),
+        t.BAR = rexp(n, 1/10),
+        t.FOO = rexp(n, 1/50),
+        ev.FOO = rbinom(n, 1, .3),
+        stringsAsFactors = FALSE
+    )
+    (g <- dtable_guide(
+        data = df,
+        elim.set = "h_var",
+        catg.tol = 20,
+        real.tol = 5,
+        as.is = FALSE,
+        no.bnry = FALSE,
+        reduce.levels = TRUE,
+        row.id = "rid",
+        unit.id = "id",
+        surv.parts = TRUE,
+        surv.prefix = c("time" = "t.", "event" = "ev.")
+     ))
 
     ## names(df)
     ## g$variable
