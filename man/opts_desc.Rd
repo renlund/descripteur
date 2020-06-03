@@ -4,7 +4,9 @@
 \name{opts_desc}
 \alias{opts_desc}
 \title{desc options}
-\format{An object of class \code{list} of length 4.}
+\format{
+An object of class \code{list} of length 4.
+}
 \usage{
 opts_desc
 }
