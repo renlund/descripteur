@@ -4,7 +4,7 @@
 \documentclass{article}
 \addtolength{\hoffset}{-1cm}
 \addtolength{\textwidth}{2cm}
-\usepackage[table]{xcolor}
+% \usepackage[table]{xcolor}
 % \addtolength{\voffset}{-1.5cm}
 % \addtolength{\textheight}{3cm}
 
@@ -18,6 +18,11 @@ library(descripteur)
 opts_chunk$set(include = TRUE,
                echo = TRUE,
                cache = FALSE)
+knit_hooks$set(document = function(x) {
+    sub(pattern = '\\usepackage[]{color}',
+        replacement = '\\usepackage[table]{xcolor}',
+        x, fixed = TRUE)
+})
 if(FALSE){
     knitr::knit2pdf("describe-data.rnw", clean = TRUE)
     shell.exec("describe-data.pdf")
