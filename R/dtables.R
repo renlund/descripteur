@@ -94,9 +94,9 @@ dtables2latex_grouped_helper <- function(dt, format = TRUE, ...){
     a3 <- if("pinfo" %in% names(dt)){
               dtable_fnote(dt = a2, info = "pinfo", fn.var = "p",
                            format = format)
-          } else {
-              dtable_format(a2)
-          }
+          } else if(format){
+              dtable_format(a2, ...)
+          } else a2
     dtable_latex(a3, ...)
 }
 
