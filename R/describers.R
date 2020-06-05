@@ -635,17 +635,17 @@ NA_text_string <- function() "[n] is missing count"
 dt_empty_desc <- function(x, ...) NA
 attr(dt_empty_desc, "dtable") <- "desc"
 
-abbrev <- function(s, n = 31){
-    if(is.na(n)) n <- 31
-    if(n<3){
-        message("[descripteur::abbrev] overiding n<3 by n=3\n")
-        n = 3
+abbrev <- function(s, tmax = 31){
+    if(is.na(tmax)) tmax <- 31
+    if(tmax<3){
+        message("[descripteur::abbrev] overiding tmax<3 by tmax=3\n")
+        tmax = 3
     }
-    ## foo <- function(x, n) paste0(substring(x, 1, n-3))
+    ## foo <- function(x, n) paste0(substring(x, 1, tmax-3))
     s_copy <- s
     for(k in seq_along(s)){
-        s_copy[k] <- if(nchar(s[k])>n){
-                         paste0(substring(s[k], 1, n-3),"...")
+        s_copy[k] <- if(nchar(s[k])>tmax){
+                         paste0(substring(s[k], 1, tmax-3),"...")
                      } else {
                          s[k]
                      }
@@ -653,13 +653,13 @@ abbrev <- function(s, n = 31){
     s_copy
 }
 
-abbrev2 <- function(a, b, n = 31, sep = ":"){
-    n2 <- floor(n/2)
+abbrev2 <- function(a, b, tmax = 31, sep = ":", ...){
+    n2 <- floor(tmax/2)
     an <- nchar(a)
     bn <- nchar(b)
-    paste0(abbrev(a, max(n2, n-bn)),
+    paste0(abbrev(a, max(n2, tmax-bn)),
            sep,
-           abbrev(b, max(n2, n-an)))
+           abbrev(b, max(n2, tmax-an)))
 }
 
 latex_fix <- function(s){
@@ -694,7 +694,7 @@ dt_bname <- function(x, xname = NULL, ...){
     rl <- d_ref_level(x)
     if(is.null(xname)) xname <- as.character(substitute(x))
     ## xname <- latex_fix(xname) ## XK removed 2018-01-11
-    abbrev2(xname, rl, sep = ": ")
+    abbrev2(xname, rl, sep = ": ", ...)
 }
 attr(dt_bname, "dtable") <- "meta"
 
@@ -706,7 +706,7 @@ dt_cname <- function(x, xname = NULL, ...){
     n <- length(rl)
     if(is.null(xname)) xname <- as.character(substitute(x))
     ## xname <- latex_fix(xname) ## XK removed 2018-01-11
-    a <- abbrev2(xname, rl[1], sep = ": ")
+    a <- abbrev2(xname, rl[1], sep = ": ", ...)
     b <- paste0("\\quad: ", abbrev(rl[-1], 25))
     c(a, b)
 }
