@@ -128,7 +128,11 @@ weighted.quantile <- function(x, probs = seq(0, 1, 0.25), w = NULL){
     } else {
         w1 <- w[!is.na(x)]
         x1 <- x[!is.na(x)]
-        if(length(x1) == 0) stop("x is a missing-fest")
+        if(length(x1) == 0){
+            ## stop("x is a missing-fest")
+            warning("[descripteur:::weighted.quantile] x is a missing-fest")
+            return(rep(NA_real_, length(probs)))
+        }
         w2 <- w1[order(x1)]
         x2 <- x1[order(x1)]
         s  <- sum(w2)
