@@ -13,6 +13,15 @@
 ##' g[order_as(given = g, wanted = letters[1:4], incl.unordered = FALSE)]
 ##' @export
 order_as <- function(given, wanted, incl.unordered = TRUE){
+    .s <- "_." ## necessary feature (?) text below explains why
+    if(any(grepl(paste0("_\\.[0-9]_\\.$"), given))){
+        mess <- paste0("'order_as' uses suffix '", .s, "<number>", .s, "' ",
+                       "intervally hoping noone would ever use such a ",
+                       "strange variable name, but if so then this might ",
+                       "cause the ordering to fail. Please check the results ",
+                       "(or rename your variables)")
+        warning(mess)
+    }
     want <- wanted[wanted %in% given]
     if(any(duplicated(want))){
         warning("duplicated entries in 'wanted'")
@@ -21,8 +30,9 @@ order_as <- function(given, wanted, incl.unordered = TRUE){
     foo <- function(X) {
         n <- nrow(X)
         X$nr <- if(n==1) "" else 1:n
+        NR <- if(n==1) "" else paste0(.s, 1:n, .s)
         X$attention  <- if(n==1) 0 else c(rep(0, n-1), 1)
-        X$edited <- paste0(X$given, X$nr)
+        X$edited <- paste0(X$given, NR)
         X
     }
     df <- data.frame(given = given, stringsAsFactors = FALSE)
@@ -36,7 +46,7 @@ order_as <- function(given, wanted, incl.unordered = TRUE){
         K <- as.character(sdc$given[k])
         if(!K %in% names(lw)) next
         n <- sdc$nr[k]
-        lw[[K]] <- sprintf(paste0(lw[[K]], "%s"), 1:n)
+        lw[[K]] <- sprintf(paste0(lw[[K]], .s, "%s", .s), 1:n)
     }
     W <- unlist(lw)
     G <- dc$edited
