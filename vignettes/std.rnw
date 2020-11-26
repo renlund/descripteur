@@ -15,6 +15,11 @@
 \title{Standardized differences}
 \author{Henrik Renlund}
 
+%% An explicit reference should be made to
+%%     https://support.sas.com/resources/papers/proceedings12/335-2012.pdf
+%% from which, in particular, the definition of std for non-binary categorical
+%% variables has been taken.
+
 <<"setup", cache = FALSE, echo = FALSE, include = FALSE>>=
 library(knitr)
 library(descripteur)
