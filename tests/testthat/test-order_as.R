@@ -15,4 +15,8 @@ test_that("'order_as' works", {
     ## manual check
     df[order_as(given = df$x, wanted = w, incl.unordered = TRUE), ]
     df[order_as(given = df$x, wanted = w, incl.unordered = FALSE), ]
+    ## check warning for strange suffix '_.n_.'
+    expect_warning(
+        order_as(given = c("Foo", "Bar_.7_."), wanted = "Foo")
+    )
 })

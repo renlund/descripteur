@@ -58,20 +58,22 @@ test_that("dtable_cbind", {
     dattr(df2) <- c("meta", "meta", "HY")
     expect_equal(
         dtable_cbind(x = df1, y = df2, groups = letters[1:2]),
-        structure(list(variable = structure(c(1L, 1L), .Label = "x",
-                       class = "factor"),  level = 1:2, Foo = 3:4,
-                       Foo = c(5, NA)), .Names = c("variable",
-                                                   "level", "Foo", "Foo"),
-                  class = c("dtable", "data.frame"), row.names = c(NA, -2L),
+        structure(list(variable = c("x", "x"),
+                       levels = 1:2,
+                       Foo = 3:4,
+                       Foo = c(5, NA)),
+                  .Names = c("variable", "level", "Foo", "Foo"),
+                  class = c("dtable", "data.frame"),
+                  row.names = c(NA, -2L),
                   dtable = c("meta", "meta", "HY:a", "HY:b"))
     )
     expect_equal(
         dtable_cbind(x = df2, y = df1, groups = letters[1:2]),
-        structure(list(variable = structure(c(1L, 1L), .Label = "x",
-                                            class = "factor"),
-                       level = c(1, 2), Foo = c(5, NA), Foo = 3:4),
-                  .Names = c("variable",
-                             "level", "Foo", "Foo"),
+        structure(list(variable = c("x", "x"),
+                       level = c(1, 2),
+                       Foo = c(5, NA),
+                       Foo = 3:4),
+                  .Names = c("variable", "level", "Foo", "Foo"),
                   class = c("dtable", "data.frame"),
                   row.names = c(NA, -2L),
                   dtable = c("meta", "meta", "HY:a", "HY:b"))
