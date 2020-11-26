@@ -229,7 +229,7 @@ dtable <- function(data, type = NULL, guide = NULL,
         }, error = function(e){
             txt <- paste0("\n-----------------------------------------------\n",
                           "The comparison part of dtable does not compute,",
-                          " set if to FALSE or make sure that the comparing",
+                          " set it to FALSE or make sure that the comparing",
                           " functions are appropriate. The error message was:\n")
             message(txt)
             print(e)
