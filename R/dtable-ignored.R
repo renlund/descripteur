@@ -10,7 +10,7 @@ dtable_ignored <- function(data, guide = NULL){
     cdata <- data[, cguide$variable, drop = FALSE]
     if(ncol(cdata) == 0) {
         message("There are no ignored variables in data")
-        return(as.data.frame(NULL))
+        return(invisible(as.data.frame(NULL)))
     }
     foo <- function(x) length(unique(stats::na.omit(x)))
     data.frame(

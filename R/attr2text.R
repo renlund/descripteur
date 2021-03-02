@@ -49,3 +49,30 @@ attr2text <- function(dt, perc = FALSE, perc.sign = "%", lessthan = "<",
     R <- paste(r, s, sep = "", collapse = "")
     if(R == "") NULL else R
 }
+
+
+other2text <- function(dt, constant = TRUE, ignored = FALSE,
+                       unknown = FALSE, rmus = TRUE){
+    RU <- function(x, L) if(L) gsub("_", "\\_", x, fixed = TRUE) else x
+    oth <- attributes(dt)$other
+    R <- NULL
+    if(!is.null(co <- oth$constant) & constant){
+        x <- paste0("Constant variables: ",
+                    paste0(RU(co, rmus), collapse = ", "),
+                    ".")
+        R <- c(R, x)
+    }
+    if(!is.null(ig <- oth$ignored) & ignored){
+        x <- paste0("Ignored variables: ",
+                    paste0(RU(ig, rmus), collapse = ", "),
+                    ".")
+        R <- c(R, x)
+    }
+    if(!is.null(un <- oth$unknown) & unknown){
+        x <- paste0("Unknown variables: ",
+                    paste0(RU(un, rmus), collapse = ", "),
+                    ".")
+        R <- c(R, x)
+    }
+    R
+}

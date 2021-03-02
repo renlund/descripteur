@@ -8,5 +8,8 @@ dtable_unknown <- function(data, guide = NULL){
     if(is.null(guide)) guide <- dtable_guide(data)
     uguide <- guide[guide$type == "unknown", c("variable", "original_class")]
     names(uguide) <- c("variable", "original.class")
-    uguide
+    if(nrow(uguide) == 0){
+        message("There are no unknown variables in data")
+        return(invisible(as.data.frame(NULL)))
+    } else uguide
 }
