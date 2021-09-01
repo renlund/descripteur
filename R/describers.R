@@ -361,7 +361,9 @@ d_catg <- function(...) invisible(NULL)
 ## make a catg variable
 make_catg <- function(x){
     if(is.factor(x)){
-        x
+        if(is.ordered(x)){
+           factor(x, ordered = FALSE)
+        } else x
     } else {
         factor(x)
     }
@@ -639,7 +641,7 @@ NA_text_string <- function() "[n] is missing count"
 dt_empty_desc <- function(x, ...) NA
 attr(dt_empty_desc, "dtable") <- "desc"
 
-abbrev <- function(s, tmax = 31){
+abbrev <- function(s, tmax = 31, ...){
     if(is.na(tmax)) tmax <- 31
     if(tmax<3){
         message("[descripteur::abbrev] overiding tmax<3 by tmax=3\n")
@@ -688,7 +690,7 @@ if(FALSE){
 dt_name <- function(x, xname = NULL, ...){
     if(is.null(xname)) xname <- as.character(substitute(x))
     ## xname <- latex_fix(xname) ## XK removed 2018-01-11
-    abbrev(xname)
+    abbrev(xname, ...)
 }
 attr(dt_name, "dtable") <- "meta"
 

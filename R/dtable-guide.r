@@ -45,6 +45,10 @@ dtable_guide <- function(data, elim.set = NULL,
         }
     }
     const <- names(data)[unlist(lapply(data, n_is_1))] ## MOVED down
+    ## ---
+    ## PLACEHOLDER: if a no.constant-arg is added, all constants can at this
+    ## point be forced to be 'bnry' with an added level ''-level.
+    ## ---
     val <- setdiff(names(org_data), c(elim.set, row.id, unit.id, const))
     data <- org_data[, val, drop = FALSE]
     classy <- lapply(data, get_class)
@@ -255,6 +259,23 @@ get_label <- function(data){
     }
     data.frame(variable = Names, label = R, stringsAsFactors = FALSE)
 }
+
+## constant2bnry <- function(x, ref.level = "", ref.level2 = " "){
+##     v <- unique(x)
+##     if(length(v) != 1) stop("[constant2bnry] huh?")
+##     lev <- if(is.na(v)){
+##                c(ref.level, ref.level2)
+##            } else {
+##                if(v == ref.level) stop("[constant2bnry] ref.level value same as value")
+##                c(ref.level, v)
+##            }
+##     factor(x, levels = lev)
+## }
+## if(FALSE){
+##     levels(constant2bnry(1))
+##     constant2bnry(NULL)
+##     levels(constant2bnry(NA))
+## }
 
 if(FALSE){
     ## tests on ordering
