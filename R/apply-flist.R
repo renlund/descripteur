@@ -19,8 +19,16 @@ apply_flist <- function(x, flist, ..., xname = NULL){
     dots$xname <- r$variable
     for(k in names(flist)){ ## k = names(flist)[1]
         r[[k]] <- if(is.function(fnc <- flist[[k]])){
-                      ## fnc(x, ...)
-                      do.call(what = fnc, args = dots)
+                      ## do.call(what = fnc, args = dots)
+                      tryCatch(
+                          expr = do.call(what = fnc, args = dots),
+                          error = function(e){
+                              warning("[apply_flist] function '", k, "' cannot ",
+                                     "be applied to variable '", r$variable[1],
+                                     "'.")
+                              NA
+                          }
+                      )
                   } else {
                       tryCatch(as.character(flist[[k]]),
                                error = function(e) "*anomalie*")
