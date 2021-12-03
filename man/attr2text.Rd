@@ -10,6 +10,7 @@ attr2text(
   perc.sign = "\%",
   lessthan = "<",
   attr = c("size", "cc", "weight", "units", "info"),
+  units.name = "units",
   sep = ". ",
   vector = FALSE,
   rm.if.all = FALSE
