@@ -77,11 +77,12 @@ bling_fixer <- function(x = as.list(NULL)){
     if(is.null(lessthan <- x$lessthan)) lessthan <- "$<$"
     if(is.null(attr <- x$attr)) attr <- c("size", "cc", "weight",
                                           "units", "info")
+    if(is.null(units.name <- x$units.name)) units.name <- "units"
     if(is.null(sep <- x$sep)) sep <- ". "
     if(is.null(rm.if.all <- x$rm.if.all)) rm.if.all <- FALSE
     vector <- FALSE
     list(perc = perc, perc.sign = perc.sign, lessthan = lessthan,
-         attr = attr, sep = sep, vector = FALSE)
+         attr = attr, units.name, sep = sep, vector = FALSE)
 }
 
 ## - ##' determine sequence of colors
