@@ -12,6 +12,7 @@
 ##' @export
 attr2text <- function(dt, perc = FALSE, perc.sign = "%", lessthan = "<",
                       attr = c("size", "cc", "weight", "units", "info"),
+                      units.name = "units",
                       sep = ". ", vector = FALSE, rm.if.all = FALSE){
     if(nrow(dt) == 0) return("")
     da <- dtable_attr(dt, perc = perc, perc.sign = perc.sign,
@@ -27,7 +28,7 @@ attr2text <- function(dt, perc = FALSE, perc.sign = "%", lessthan = "<",
         if(m == "cc" & a == paste0("100", perc.sign)){
             if(rm.if.all) NULL else paste(text, a)
         } else if(m == "units" & a == N){
-            if(rm.if.all) NULL else paste("All units unique")
+            if(rm.if.all) NULL else paste0("All ", units.name, " unique")
         } else {
             b <- if(g) as.character(x[1, 3:(2+n)]) else NULL
             c <- if(g){
@@ -41,7 +42,7 @@ attr2text <- function(dt, perc = FALSE, perc.sign = "%", lessthan = "<",
         foo(m = "size", g = n>0, text = "Rows:"),
         foo("cc", n>0, "Complete Cases:"),
         foo("weight", n>0, "Weight:"),
-        foo("units", n>0, "Units:"),
+        foo("units", n>0, paste0(capitalize(units.name), ":")),
         if("info" %in% attr) attr(dt, "info") else NULL
     )
     if(vector) return(r)
@@ -50,6 +51,10 @@ attr2text <- function(dt, perc = FALSE, perc.sign = "%", lessthan = "<",
     if(R == "") NULL else R
 }
 
+capitalize <- function(s){
+    unlist(lapply(strsplit(s, ""), function(x){ x[1] <- toupper(x[1]);
+        paste0(x, collapse = "")}))
+}
 
 other2text <- function(dt, constant = TRUE, ignored = FALSE,
                        unknown = FALSE, rmus = TRUE){
