@@ -30,7 +30,7 @@
 ##' translate(s = sset, key = KeY, within = TRUE, rep1w = FALSE)
 ##' translate(s = sset, key = KeY, within = FALSE, rep1w = TRUE)
 ##' @export
-translate <- function(s, key, flexible = TRUE, within = FALSE,
+decipher <- function(s, key, flexible = TRUE, within = FALSE,
                       rep1w = TRUE, f2c = TRUE){
     n <- names(key)
     if(is.factor(s) & f2c) s <- as.character(s)
@@ -68,6 +68,17 @@ translate <- function(s, key, flexible = TRUE, within = FALSE,
     }
 }
 
-#' @rdname translate
+#' @rdname decipher
 #' @export
-decipher <- translate
+translate <- decipher
+
+## deciphactor <- function(x, key, ...){
+##     v <- if(is.factor(x)){
+##              levels(x)
+##          } else {
+##              as.character(unique(x[!is.na(x)]))
+##          }
+##     factor(decipher(x, key),
+##            levels = decipher())
+## ... no
+## }
