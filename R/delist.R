@@ -1,7 +1,7 @@
 ##' unlist alternative
 ##'
 ##' unlist a list of vectors, keeping vector names but not list names
-##' @param x
+##' @param x a list
 ##' @return vector
 ##' @examples
 ##' test <- list(foo = c("a" = 1), bar = c("b" = 2))

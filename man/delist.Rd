@@ -6,6 +6,9 @@
 \usage{
 delist(x)
 }
+\arguments{
+\item{x}{a list}
+}
 \value{
 vector
 }
