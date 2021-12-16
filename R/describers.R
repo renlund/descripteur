@@ -660,12 +660,13 @@ abbrev <- function(s, tmax = 31, ...){
 }
 
 abbrev2 <- function(a, b, tmax = 31, sep = ":", ...){
+    if(is.na(tmax)) tmax <- 31
     n2 <- floor(tmax/2)
     an <- nchar(a)
     bn <- nchar(b)
-    paste0(abbrev(a, max(n2, tmax-bn)),
+    paste0(abbrev(s = a, tmax = max(n2, tmax-bn)),
            sep,
-           abbrev(b, max(n2, tmax-an)))
+           abbrev(s = b, tmax = max(n2, tmax-an)))
 }
 
 latex_fix <- function(s){
