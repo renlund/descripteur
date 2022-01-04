@@ -713,8 +713,8 @@ dt_cname <- function(x, xname = NULL, ...){
     n <- length(rl)
     if(is.null(xname)) xname <- as.character(substitute(x))
     ## xname <- latex_fix(xname) ## XK removed 2018-01-11
-    a <- abbrev2(xname, rl[1], sep = ": ", ...)
-    b <- paste0("\\quad: ", abbrev(rl[-1], 25))
+    a <- abbrev2(a = xname, b = rl[1], sep = ": ", ...)
+    b <- paste0("\\quad: ", abbrev(rl[-1], ...))
     c(a, b)
 }
 attr(dt_cname, "dtable") <- "meta"
