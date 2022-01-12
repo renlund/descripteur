@@ -16,7 +16,7 @@ order_as <- function(given, wanted, incl.unordered = TRUE){
     .s <- "_." ## necessary feature (?) text below explains why
     if(any(grepl(paste0("_\\.[0-9]_\\.$"), given))){
         mess <- paste0("'order_as' uses suffix '", .s, "<number>", .s, "' ",
-                       "intervally hoping noone would ever use such a ",
+                       "internally hoping noone would ever use such a ",
                        "strange variable name, but if so then this might ",
                        "cause the ordering to fail. Please check the results ",
                        "(or rename your variables)")
