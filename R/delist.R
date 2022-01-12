@@ -24,3 +24,19 @@ delist <- function(x){
     }
     R
 }
+
+##' invert list of named characters
+##'
+##' switch names/values in a list of named vectors
+##' @param x a list of named vectors
+##' @examples
+##' test <- list(foo = c("a" = "first letter"),
+##'              bar = c("b" = "second letter",
+##'                      "c" = "third letter"))
+##' invert_list(test)
+##' @export
+invert_list <- function(x){
+    if(!is.list(x)) warning("'x' is not a list")
+    foo <- function(z) setNames(object = names(z), nm = z)
+    lapply(x, foo)
+}
