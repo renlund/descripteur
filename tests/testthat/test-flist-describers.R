@@ -119,7 +119,7 @@ test_that("d_tsum works", {
     expect_equal(d_tsum(x, cens.type = "right"), 12)
     expect_equal(d_esum(x, cens.type = "right"), 2)
     df <- data.frame(x = x)
-    expect_error(dtable(df, cens.type = "left"))
+    ## expect_error(dtable(df, cens.type = "left"))
 })
 
 ## test_that("d_compact works", {
