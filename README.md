@@ -1,5 +1,3 @@
-[![Travis-CI Build Status](https://travis-ci.org/.svg?branch=master)](https://travis-ci.org/)
-
 # descripteur
 
 The goal of descripteur is to make basic data description easy.
