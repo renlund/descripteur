@@ -1,3 +1,6 @@
+[![R build](https://github.com/renlund/descripteur/workflows/R/badge.svg)](https://github.com/renlund/descripteur/actions/workflows/r.yml)
+
+
 # descripteur
 
 The goal of descripteur is to make basic data description easy.

@@ -21,6 +21,10 @@ t_lr.p(x, glist, w = NULL, cens.type = "right", ...)
 \item{x}{vector}
 
 \item{glist}{a grouping list}
+
+\item{w}{weight}
+
+\item{cens.type}{type of censuring}
 }
 \description{
 various testing functions for surv types

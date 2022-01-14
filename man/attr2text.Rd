@@ -27,6 +27,8 @@ attr2text(
 
 \item{attr}{which attributes to extract}
 
+\item{units.name}{character, name of units}
+
 \item{sep}{separator between attributes for output}
 
 \item{vector}{return vector instead of a single string}

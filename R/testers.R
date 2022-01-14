@@ -159,6 +159,7 @@ t_surv_empty <- function(x, glist, ...) NA
 attr(t_surv_empty, "dtable") <- "test"
 
 ##' @describeIn t_surv p-value from Cox model
+##' @param cens.type type of censuring
 ##' @export
 t_HR.p <- function(x, glist, w = NULL, cens.type = "right", ...){
     warn_if_wrong_glist_length(glist, 2)
@@ -167,11 +168,12 @@ t_HR.p <- function(x, glist, w = NULL, cens.type = "right", ...){
     mod <- cph_model(x = x, glist = glist, w = w)
     beta <- mod$coefficients
     se <- sqrt(diag(mod$var))
-    as.numeric(pchisq((beta/se)^2, 1, lower.tail = FALSE)[1])
+    as.numeric(stats::pchisq((beta/se)^2, 1, lower.tail = FALSE)[1])
 }
 attr(t_HR.p, "dtable") <- "test"
 
 ##' @describeIn t_surv p-value from log-rank test
+##' @param w weight
 ##' @export
 t_lr.p <- function(x, glist, w = NULL, cens.type = "right", ...){
     warn_if_wrong_glist_length(glist, 2)
@@ -179,7 +181,7 @@ t_lr.p <- function(x, glist, w = NULL, cens.type = "right", ...){
     survcheck(x)
     if(is.null(w)) w <- rep(1, length(x))
     mod <- survival::survdiff(x ~ factorize_glist(glist))
-    as.numeric(pchisq(mod$chisq, df = 1, lower.tail = FALSE)[1])
+    as.numeric(stats::pchisq(mod$chisq, df = 1, lower.tail = FALSE)[1])
 }
 attr(t_lr.p, "dtable") <- "test"
 

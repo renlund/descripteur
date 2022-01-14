@@ -6,6 +6,7 @@
 ##' @param perc.sign percentage sign
 ##' @param lessthan 'strictly less than' sign
 ##' @param attr which attributes to extract
+##' @param units.name character, name of units
 ##' @param sep separator between attributes for output
 ##' @param vector return vector instead of a single string
 ##' @param rm.if.all exclude info on units if all unique

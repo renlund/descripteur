@@ -161,7 +161,7 @@ dtable <- function(data, type = NULL, guide = NULL,
             for(g in gvar$variable){ ## g <- gvar$variable[1]
                 x <- if(type %in% c("bnry", "catg")){
                          if(is.null(lev <- attr(guide, "levels")[[g]])){
-                             lev <- as.character(unique(na.omit(data[[g]])))
+                             lev <- as.character(unique(stats::na.omit(data[[g]])))
                          }
                          ## factor(data[[g]], levels = attr(guide, "levels")[[g]])
                          factor(data[[g]], levels = lev)
