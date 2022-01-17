@@ -25,7 +25,7 @@ apply_flist <- function(x, flist, ..., xname = NULL){
                           error = function(e){
                               warning("[apply_flist] function '", k, "' cannot ",
                                      "be applied to variable '", r$variable[1],
-                                     "'.")
+                                     "'. Error message:\n", e)
                               NA
                           }
                       )

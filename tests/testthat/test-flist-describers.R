@@ -119,7 +119,24 @@ test_that("d_tsum works", {
     expect_equal(d_tsum(x, cens.type = "right"), 12)
     expect_equal(d_esum(x, cens.type = "right"), 2)
     df <- data.frame(x = x)
-    ## expect_error(dtable(df, cens.type = "left"))
+    if(FALSE){
+        ## was confused as to why
+        ##   expect_error(dtable(df, cens.type = "left"))
+        ## failed:
+        survcheck(x)
+        check_right(x)
+        consurv(x, cens.type = "right")
+        consurv(x, cens.type = "left") ## error
+        d_tsum(x)
+        d_tsum(x, cens.type = "left") ## error
+        d_esum(x)
+        d_esum(x, cens.type = "left") ## error
+        d_rate(x)
+        d_rate(x, cens.type = "left") ## error
+        ## but! apply_flist now accepts errors (promotes them to warnings)
+        dtable(df, type = "surv", cens.type = "left")
+    }
+    expect_warning(dtable(df, cens.type = "left"))
 })
 
 ## test_that("d_compact works", {
