@@ -13,8 +13,8 @@
 
 <<"setup", cache = FALSE, echo = FALSE, include = FALSE>>=
 library(knitr)
-## library(descripteur)
-devtools::load_all()
+library(descripteur)
+## devtools::load_all()
 opts_chunk$set(include = TRUE,
                echo = TRUE,
                cache = FALSE)
@@ -612,10 +612,19 @@ dt <- dtables(data = df, useNA = "ifany", desc.flists = dlist,
 tmp1 <- dtable_prune(dt, rm = "variable", info = FALSE)
 tmp2 <- dtable_prune(tmp1, rm = "info", info = TRUE)
 tmp3 <- dtable_fnote(tmp2, info = "pinfo", fn.var = "p", format = TRUE)
-dtable_latex(tmp3, label = "tab:info2", grey = dt$variable,
+dtable_latex(tmp3, label = "tab:info2", grey = dt$variable, format = TRUE,
              caption = paste("Compact table with continuous and",
                              "categorical types."))
 @
+
+\newpage
+There is also a wrapper for this procedure in the function \texttt{dtables2latex}:
+<<results = 'asis', eval = TRUE>>=
+dtables2latex(dt, label = "tab:info3", grey = dt$variable,
+              caption = paste("Compact table created with ",
+                              "\\texttt{dtables2latex}."))
+@
+
 
 \clearpage
 \section{Additional Functions}

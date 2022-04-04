@@ -69,26 +69,51 @@ intersect_if_notnull <- function(a, b){
     }
 }
 
-##' standard dtables to latex operations
+##' dtables to latex code
 ##'
-##' helper function for common transformation of ungrouped dtables object into
-##'     latex output; remove column 'variable' and put 'info' in info attribute
-##' @param dt an object from \code{dtables}
-##' @param format argument passed to \code{dtable_latex}
+##' dtables to latex code
+##' @param dt a dtable
+##' @param format logical; do you want to format?
+##' @param format.param list of parameter values passed to format function
+##' @param n size indicator in table (set to NULL to suppress this)
 ##' @param ... arguments passed to \code{dtable_latex}
 ##' @export
+dtables2latex <- function(dt, format = TRUE, format.param = as.list(NULL),
+                          n = c(n = "size"), ...){
+    a1 <- dtable_prune(x = dt, rm = "variable")
+    a2 <- dtable_prune(x = a1, rm = "info", info = TRUE)
+    if("pinfo" %in% names(dt)){
+        a2 <- dtable_fnote(dt = a2, info = "pinfo", fn.var = "p",
+                           format = format, format.param = format.param)
+    }
+    if(!is.null(n)){
+        n <- n[1]
+        ref <- c(n = "size", units = "units", weight = "weight")
+        if(! n %in% ref){
+            s <- paste0("'n' must be one of: ", paste0(ref, collapse = ", "))
+            stop(s)
+        }
+        i <- which(n == ref)
+        nm <- if(!is.null(names(n)[1])) names(n)[1] else names(ref)[i]
+        A <- attr(a2, paste0("glist_", n))
+        names(a2)[names(a2) == "Summary"] <- paste0(nm, "=", A)
+    }
+    dtable_latex(a2, format = format, format.param = format.param, ...)
+}
+
+##' @describeIn dtables2latex deprecated function
+##' @export
 dtables2latex_ungrouped_helper <- function(dt, format = TRUE, ...){
+    message("deprecated function?")
     a1 <- dtable_prune(x = dt, rm = "variable")
     a2 <- dtable_prune(x = a1, rm = "info", info = TRUE)
     dtable_latex(a2, format = format, ...)
 }
 
-##' @describeIn dtables2latex_ungrouped_helper helper function for common
-##'     transformation of grouped dtables object into; in addition to
-##'     \code{dtables2latex_ungrouped_helper}, also put column 'pinfo' as a
-##'     footnote to column 'p' (and format)
+##' @describeIn dtables2latex deprecated function
 ##' @export
 dtables2latex_grouped_helper <- function(dt, format = TRUE, ...){
+    message("deprecated function?")
     a1 <- dtable_prune(x = dt, rm = "variable")
     a2 <- dtable_prune(x = a1, rm = "info", info = TRUE)
     a3 <- if("pinfo" %in% names(dt)){
