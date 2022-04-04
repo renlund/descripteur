@@ -27,8 +27,16 @@ dtable_fnote <- function(dt, info, fn.var,
     foo(fn.var)
     if(length(format.param)>0) format <- TRUE
     if(format){
-        dt <- do.call(dtable_format,
-                      c('dt' = list(dt), format.param))
+        ## dt <- do.call(dtable_format,
+        ##               c('dt' = list(dt), format.param))
+        ## No! ONLY format the fn.var variable
+        if(class(dt[[fn.var]]) %in% c("numeric", "integer")){
+            dt[[fn.var]] <- do.call(dformat_num,
+                                    c('x' = list(dt[[fn.var]]), format.param))
+        } else {
+            dt[[fn.var]] <- do.call(dformat_text,
+                                    c('x' = list(dt[[fn.var]]), format.param))
+        }
     }
     infot   <- unique(as.character(stats::na.omit(unlist(dt[[info]]))))
     i.infot <- as.numeric(factor(dt[[info]], levels = infot))
@@ -40,7 +48,7 @@ dtable_fnote <- function(dt, info, fn.var,
     attr(dt, info.attr) <- c(attr(dt, info.attr), sym.infot)
     fn_var <- dt[[fn.var]]
     new_var <- paste0(id_or_empty(fn_var), id_or_empty(symb2[i.infot]))
-    new_var[is.na(fn_var)] <- ""
+    new_var[is.na(fn_var) | fn_var == ""] <- ""
     dt[[fn.var]] <- new_var
     dtable_prune(dt, rm = info)
 }
