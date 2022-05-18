@@ -224,6 +224,7 @@ dformat_num <- function(x, dg = 1, ds = 2,
 dformat_text <- function(x, tmax = 30,
                          rep.key = NULL, add.key = TRUE,
                          ..., verbose = TRUE){
+    if(!"character" %in% class(x)) x <- as.character(x)
     args <- list(...)
     key <- c("\\\\_" = "_",
              "\\\\ldots" = "\\.\\.\\.",
