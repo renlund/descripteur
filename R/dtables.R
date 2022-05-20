@@ -72,7 +72,7 @@ intersect_if_notnull <- function(a, b){
 ##' dtables to latex code
 ##'
 ##' dtables to latex code
-##' @param dt a dtable
+##' @param dt a dtables
 ##' @param format logical; do you want to format?
 ##' @param format.param list of parameter values passed to format function
 ##' @param n size indicator in table (set to NULL to suppress this)
@@ -86,6 +86,11 @@ dtables2latex <- function(dt, format = TRUE, format.param = as.list(NULL),
         a2 <- dtable_fnote(dt = a2, info = "pinfo", fn.var = "p",
                            format = format, format.param = format.param)
     }
+    ## da <- dattr(a2)
+    ## if(length(i <- which(da == "desc")) == 1){
+    ##     da[i] <- paste0("desc:", tot.name) ## <-- new arg tot.name
+    ##     dattr(a2) <- da
+    ## }
     if(!is.null(n)){
         n <- n[1]
         ref <- c(n = "size", units = "units", weight = "weight")
@@ -96,6 +101,7 @@ dtables2latex <- function(dt, format = TRUE, format.param = as.list(NULL),
         i <- which(n == ref)
         nm <- if(!is.null(names(n)[1])) names(n)[1] else names(ref)[i]
         A <- attr(a2, paste0("glist_", n))
+        if(is.null(A)) A <- attr(a2, paste0(n))
         names(a2)[names(a2) == "Summary"] <- paste0(nm, "=", A)
     }
     dtable_latex(a2, format = format, format.param = format.param, ...)
@@ -151,4 +157,98 @@ dtables2file_helper <- function(dt, rm = NULL, reps = NULL, format = FALSE){
 ##' @export
 peek <- function(dt){
     dtables2file_helper(dt, format = TRUE)
+}
+
+##' data + vlist -> latex table (experimental)
+##'
+##' Create a dtables from data and make a nice table with "rgroup:s" using a
+##' list that groups variables
+##' @param data a data frame to be described
+##' @param guide a dtable guide
+##' @param var.list a variable list
+##' @param caption caption
+##' @param caption.lot caption for list of tables
+##' @param label label
+##' @param ... arguments passed to \code{dtables}
+##' @param format logical; want formatting?
+##' @param format.param list; formatting parameters
+##' @param n size indicator in table (set to NULL to suppress this)
+##' @param tot.name name of single column (if no glist)
+##' @examples
+##' n = 100
+##' d <- data.frame(
+##'     id = sprintf("id%s", 1:n),
+##'     age = rpois(n, 65),
+##'     sex = sample(c("M", "F"), n, replace = TRUE),
+##'     meas1 = rnorm(n, 10),
+##'     meas2 = rnorm(n, 20),
+##'     dag = as.Date("2020-01-01") + runif(n, min = 0, max = 365)
+##' )
+##' vlist = list(
+##'     "ID" = c(id = "Identity code"),
+##'     "Foo bar" = c(age = 'Age (years)',
+##'                   sex = 'Biological gender',
+##'                   dag = 'Index date'),
+##'     "Baz quuz" = c(meas1 = 'Hiphopinin',
+##'                    meas2 = 'Jazzerum')
+##' )
+##' g <- dtable_guide(d, unit.id = "id", no.bnry = TRUE)
+##' data_vlist2latex(data = d, guide = g, var.list = vlist)
+##' gl <- make_glist(x = "sex", ref = d)
+##' data_vlist2latex(data = d, guide = g, var.list = vlist,
+##'                  glist = gl, comp = TRUE, test = TRUE)
+##' @export
+data_vlist2latex <- function(data,
+                             guide = NULL,
+                             var.list = NULL,
+                             caption = NULL,
+                             caption.lot = caption,
+                             label = NULL,
+                             ...,
+                             format = TRUE,
+                             format.param = as.list(NULL),
+                             n = c(n = "size"),
+                             tot.name = "All"
+){
+    if(is.null(guide)) guide <- dtable_guide(data = data)
+    if(is.null(var.list)) stop("var.list cannot be NULL")
+    var.key <- delist(var.list)
+    guide$label <- decipher(s = guide$label, key = var.key)
+    dt <- dtables(data = data, guide = guide, ...)
+    oas <- order_as_list(given = dt$variable, wanted = var.list)
+    dt2 <- dt[oas$order, ]
+    da <- dattr(dt2)
+    if(length(i <- which(da == "desc")) == 1){
+        da[i] <- paste0("desc:", tot.name)
+        dattr(dt2) <- da
+    }
+    a1 <- dtable_prune(dt2, rm = c("variable", "Variables"))
+    a2 <- dtable_prune(a1, rm = "info", info = TRUE)
+    if("pinfo" %in% names(dt2)){
+        a2 <- dtable_fnote(a2, info = "pinfo", fn.var = "p",
+                           format = format, format.param = format.param)
+    }
+    if (!is.null(n)) {
+        n <- n[1]
+        ref <- c(n = "size", units = "units", weight = "weight")
+        if (!n %in% ref) {
+            s <- paste0("'n' must be one of: ", paste0(ref, collapse = ", "))
+            stop(s)
+        }
+        i <- which(n == ref)
+        nm <- if (!is.null(names(n)[1])){
+                  names(n)[1]
+              } else names(ref)[i]
+        A <- attr(a2, paste0("glist_", n))
+        if(is.null(A)) A <- attr(a2, paste0(n))
+        names(a2)[names(a2) == "Summary"] <- paste0(nm, "=", A)
+    }
+    ## x <- dtables2file_helper(dt2)
+    ## Add option to attach the data?
+    dtable_latex(a2, caption = caption, caption.lot = caption.lot,
+                 label = label, title = "Variables",
+                 format = format, format.param = format.param,
+                 rgroup = oas$list.name.values,
+                 n.rgroup = oas$list.name.lengths,
+                 rowname = dt2$Variables)
 }

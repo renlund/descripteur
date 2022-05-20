@@ -625,6 +625,26 @@ dtables2latex(dt, label = "tab:info3", grey = dt$variable,
                               "\\texttt{dtables2latex}."))
 @
 
+\clearpage
+\subsection{Variable list (experimental)}
+
+<<results = 'asis', eval = TRUE>>=
+vlist = list(
+    "Lorem ipsum" = c(c1 = "Cats Are Fun", c2 = "Cool", b1 = "Binary 1"),
+    "Foo bar" = c(b2 = "Bengt", b3 = "Bio", b4 = "Bam", b5 = "B before A",
+                  d1 = "Datum", d2 = "Doey", id = "IdEnTiFiEr"),
+    "Gargamel" = c(r1 = "RoYe", r2 = "RandomNessy",
+                   s1 = "Slipp", s2 = "Slopp")
+)
+g <- dtable_guide(df, unit.id = "id")
+data_vlist2latex(data = df, guide = g, var.list = vlist,
+                 caption = "Table made from data\\_vlist2latex",
+                 label = "tab:data_vlist2latex-1")
+data_vlist2latex(data = df, guide = g, var.list = vlist,
+                 glist = "b1", test = TRUE,
+                 caption = "Another table made from data\\_vlist2latex",
+                 label = "tab:data_vlist2latex-2")
+@
 
 \clearpage
 \section{Additional Functions}
@@ -633,7 +653,7 @@ dtables2latex(dt, label = "tab:info3", grey = dt$variable,
 
 \subsubsection{\texttt{dtable\_std}}
 This function calculates the standardized difference for all applicable
-variables.  Here we also pass \texttt{attr = FALSE} to \texttt{attr2text} to
+variables. Here we also pass \texttt{attr = FALSE} to \texttt{attr2text} to
 supress the inclusion of attributes in the table.
 
 <<results = 'asis'>>=

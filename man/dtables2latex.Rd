@@ -19,7 +19,7 @@ dtables2latex_ungrouped_helper(dt, format = TRUE, ...)
 dtables2latex_grouped_helper(dt, format = TRUE, ...)
 }
 \arguments{
-\item{dt}{a dtable}
+\item{dt}{a dtables}
 
 \item{format}{logical; do you want to format?}
 
