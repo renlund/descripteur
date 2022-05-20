@@ -12,7 +12,7 @@ print.dtable <- function(x, ...){
     a <- dattr(x)
     if(!is.null(a) & length(a) == length(x)){
         co <- utils::capture.output(print(as.data.frame(x), ...))
-        co.n <- max(nchar(co))
+        co.n <- max(nchar(as.character(co)))
         w <- options("width")$width
         cat(paste0(rep("-", min(co.n, w)), collapse = ""), sep = "")
         cat("\n## dtable attributes:\n")
@@ -22,7 +22,7 @@ print.dtable <- function(x, ...){
         names(r) <- names(x)
         print(r)
         co2 <- utils::capture.output(print(r))
-        co2.n <- max(nchar(co2))
+        co2.n <- max(nchar(as.character(co2)))
     } else {
         cat("\n## dtable attributes are not ok\n")
         co2.n <- 29
@@ -32,7 +32,7 @@ print.dtable <- function(x, ...){
     print(dtable_attr(x))
     if(!is.null(oth <- attr(x, "other"))){
         co3 <- utils::capture.output(print(dtable_attr(x)))
-        co3.n <- max(nchar(co3))
+        co3.n <- max(nchar(as.character(co3)))
         cat(paste0(rep("-", min(co3.n, w)), collapse = ""), sep = "")
         cat("\n## other types:\n  ")
         tmp <- lapply(oth, paste0, collapse = ", ")

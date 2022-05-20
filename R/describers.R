@@ -650,7 +650,7 @@ abbrev <- function(s, tmax = 31, ...){
     ## foo <- function(x, n) paste0(substring(x, 1, tmax-3))
     s_copy <- s
     for(k in seq_along(s)){
-        s_copy[k] <- if(nchar(s[k])>tmax){
+        s_copy[k] <- if(nchar(as.character(s[k]))>tmax){
                          paste0(substring(s[k], 1, tmax-3),"...")
                      } else {
                          s[k]
@@ -662,8 +662,8 @@ abbrev <- function(s, tmax = 31, ...){
 abbrev2 <- function(a, b, tmax = 31, sep = ":", ...){
     if(is.na(tmax)) tmax <- 31
     n2 <- floor(tmax/2)
-    an <- nchar(a)
-    bn <- nchar(b)
+    an <- nchar(as.character(a))
+    bn <- nchar(as.character(b))
     paste0(abbrev(s = a, tmax = max(n2, tmax-bn)),
            sep,
            abbrev(s = b, tmax = max(n2, tmax-an)))
