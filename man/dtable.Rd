@@ -67,6 +67,6 @@ create a description of variables of a given type in your
 }
 \section{Functions}{
 \itemize{
-\item \code{dtable_list}: create a list of dtable, one for each type wanted
-}}
+\item \code{dtable_list()}: create a list of dtable, one for each type wanted
 
+}}

@@ -21,9 +21,9 @@ various testing functions for catg types
 }
 \section{Functions}{
 \itemize{
-\item \code{t_cchisq.p}: chisquare test p-value
-}}
+\item \code{t_cchisq.p()}: chisquare test p-value
 
+}}
 \seealso{
 \code{\link{t_fisher.p}} and \code{\link{t_chisq.p}} which work for
     catg variables as well

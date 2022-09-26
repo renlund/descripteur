@@ -36,14 +36,14 @@ various comparer functions for surv types
 }
 \section{Functions}{
 \itemize{
-\item \code{c_rr}: rate ratio, 2 groups only
+\item \code{c_rr()}: rate ratio, 2 groups only
 
-\item \code{c_sstd}: standardized difference between the rates of two surv
+\item \code{c_sstd()}: standardized difference between the rates of two surv
 variables (difference in mean divided by 'average sd'-isch)
 
-\item \code{c_HR}: Hazard Ratio from Cox model
+\item \code{c_HR()}: Hazard Ratio from Cox model
 
-\item \code{c_HRCI}: Hazard Ratio and confidence interval (as character) from
+\item \code{c_HRCI()}: Hazard Ratio and confidence interval (as character) from
 Cox model
-}}
 
+}}

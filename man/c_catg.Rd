@@ -38,15 +38,15 @@ various comparer functions for catg types
 }
 \section{Functions}{
 \itemize{
-\item \code{c_pdiff}: difference in proportions, 2 groups only
+\item \code{c_pdiff()}: difference in proportions, 2 groups only
 
-\item \code{c_cOR}: odds ratios, 2 groups only
+\item \code{c_cOR()}: odds ratios, 2 groups only
 
-\item \code{c_cstd.each}: standardized differences (2 groups only) for each level
+\item \code{c_cstd.each()}: standardized differences (2 groups only) for each level
 
-\item \code{c_cstd}: standardized differences (2 groups only) for the variable
+\item \code{c_cstd()}: standardized differences (2 groups only) for the variable
+
 }}
-
 \references{
 \url{https://www.lerner.ccf.org/qhs/software/lib/stddiff.pdf}
 }

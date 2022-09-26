@@ -21,6 +21,6 @@ various testing functions for date types
 }
 \section{Functions}{
 \itemize{
-\item \code{t_date_empty}: empty test
-}}
+\item \code{t_date_empty()}: empty test
 
+}}

@@ -26,12 +26,12 @@ various comparer functions for real types
 }
 \section{Functions}{
 \itemize{
-\item \code{c_shift}: median shift measured in units of original IQR, 2 groups only
+\item \code{c_shift()}: median shift measured in units of original IQR, 2 groups only
 
-\item \code{c_rstd}: standardized difference (2 groups only) assuming
+\item \code{c_rstd()}: standardized difference (2 groups only) assuming
 independence
-}}
 
+}}
 \references{
 \url{https://www.lerner.ccf.org/qhs/software/lib/stddiff.pdf}
 }

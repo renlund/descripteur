@@ -70,6 +70,6 @@ process dtable into latex code via \code{Hmisc::latex}
 }
 \section{Functions}{
 \itemize{
-\item \code{dtable_list_latex}: create multiple latex tables from a dtable list
-}}
+\item \code{dtable_list_latex()}: create multiple latex tables from a dtable list
 
+}}

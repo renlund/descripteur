@@ -48,24 +48,24 @@ various functions for compact summary of variables
 }
 \section{Functions}{
 \itemize{
-\item \code{dt_empty_comp}: returns an empty string
+\item \code{dt_empty_comp()}: returns an empty string
 
-\item \code{dt_empty_meta}: returns an empty string
+\item \code{dt_empty_meta()}: returns an empty string
 
-\item \code{dt_wilcox.p}: wilcoxon test p-value
+\item \code{dt_wilcox.p()}: wilcoxon test p-value
 
-\item \code{dt_wilcox.p.info}: info on wilcoxon test p-value
+\item \code{dt_wilcox.p.info()}: info on wilcoxon test p-value
 
-\item \code{dt_kruskal.p}: kruskal-wallis test p-value
+\item \code{dt_kruskal.p()}: kruskal-wallis test p-value
 
-\item \code{dt_kruskal.p.info}: info on kruskal-wallis test p-value
+\item \code{dt_kruskal.p.info()}: info on kruskal-wallis test p-value
 
-\item \code{dt_fisher.p}: fishers exact test p-value
+\item \code{dt_fisher.p()}: fishers exact test p-value
 
-\item \code{dt_fisher.p.info}: info on fishers exact test p-value
+\item \code{dt_fisher.p.info()}: info on fishers exact test p-value
 
-\item \code{dt_chisq.p}: chisquare test p-value
+\item \code{dt_chisq.p()}: chisquare test p-value
 
-\item \code{dt_chisq.p.info}: info on chisquare test p-value
+\item \code{dt_chisq.p.info()}: info on chisquare test p-value
+
 }}
-

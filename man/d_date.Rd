@@ -22,8 +22,8 @@ various describing functions for date variables
 }
 \section{Functions}{
 \itemize{
-\item \code{d_dmin}: minimum
+\item \code{d_dmin()}: minimum
 
-\item \code{d_dmax}: maximum
+\item \code{d_dmax()}: maximum
+
 }}
-

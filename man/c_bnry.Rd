@@ -29,13 +29,13 @@ various comparer functions for bnry types
 }
 \section{Functions}{
 \itemize{
-\item \code{c_RR}: risk ratio, 2 groups only
+\item \code{c_RR()}: risk ratio, 2 groups only
 
-\item \code{c_OR}: odds ratio, 2 groups only
+\item \code{c_OR()}: odds ratio, 2 groups only
 
-\item \code{c_bstd}: standardized differences for binary variables, 2 groups only
+\item \code{c_bstd()}: standardized differences for binary variables, 2 groups only
+
 }}
-
 \references{
 \url{https://www.lerner.ccf.org/qhs/software/lib/stddiff.pdf}
 }

@@ -32,12 +32,12 @@ various describer functions for catg types
 }
 \section{Functions}{
 \itemize{
-\item \code{d_levels}: the levels of a catg variable
+\item \code{d_levels()}: the levels of a catg variable
 
-\item \code{d_percent}: percentage of each level (and missing possibly)
+\item \code{d_percent()}: percentage of each level (and missing possibly)
 
-\item \code{d_cn}: count of each level (and missing possibly)
+\item \code{d_cn()}: count of each level (and missing possibly)
 
-\item \code{d_cp}: the estimated proportion of each level
+\item \code{d_cp()}: the estimated proportion of each level
+
 }}
-

@@ -59,30 +59,30 @@ various describer functions for real types
 }
 \section{Functions}{
 \itemize{
-\item \code{d_n}: number of non-missing elements
+\item \code{d_n()}: number of non-missing elements
 
-\item \code{d_length}: length of vector
+\item \code{d_length()}: length of vector
 
-\item \code{d_missing}: Count missing
+\item \code{d_missing()}: Count missing
 
-\item \code{d_missing.perc}: Percent missing
+\item \code{d_missing.perc()}: Percent missing
 
-\item \code{d_sum}: sum of all elements, sample-weighted
+\item \code{d_sum()}: sum of all elements, sample-weighted
 
-\item \code{d_mean}: mean
+\item \code{d_mean()}: mean
 
-\item \code{d_sd}: standard deviation
+\item \code{d_sd()}: standard deviation
 
-\item \code{d_median}: median
+\item \code{d_median()}: median
 
-\item \code{d_min}: minimum
+\item \code{d_min()}: minimum
 
-\item \code{d_max}: maximum
+\item \code{d_max()}: maximum
 
-\item \code{d_IQR}: inter quartile range
+\item \code{d_IQR()}: inter quartile range
 
-\item \code{d_Q1}: first quartile
+\item \code{d_Q1()}: first quartile
 
-\item \code{d_Q3}: third quartile
+\item \code{d_Q3()}: third quartile
+
 }}
-

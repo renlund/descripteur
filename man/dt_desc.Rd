@@ -74,40 +74,40 @@ various functions for compact summary of variables
 }
 \section{Functions}{
 \itemize{
-\item \code{dt_empty_desc}: returns an empty string
+\item \code{dt_empty_desc()}: returns an empty string
 
-\item \code{dt_name}: returns name
+\item \code{dt_name()}: returns name
 
-\item \code{dt_bname}: returns name:ref for bnry
+\item \code{dt_bname()}: returns name:ref for bnry
 
-\item \code{dt_cname}: returns name:ref for catg
+\item \code{dt_cname()}: returns name:ref for catg
 
-\item \code{dt_Q}: quantiles
+\item \code{dt_Q()}: quantiles
 
-\item \code{dt_Q.info}: info for \code{dt_Q}
+\item \code{dt_Q.info()}: info for \code{dt_Q}
 
-\item \code{dt_msd}: mean and standard deviation
+\item \code{dt_msd()}: mean and standard deviation
 
-\item \code{dt_msd.info}: info for \code{dt_msd}
+\item \code{dt_msd.info()}: info for \code{dt_msd}
 
-\item \code{dt_bcp}: count and percentages (for bnry)
+\item \code{dt_bcp()}: count and percentages (for bnry)
 
-\item \code{dt_bcp.info}: info for \code{dt_bcp}
+\item \code{dt_bcp.info()}: info for \code{dt_bcp}
 
-\item \code{dt_ccp}: count and percentages (for catg)
+\item \code{dt_ccp()}: count and percentages (for catg)
 
-\item \code{dt_ccp.info}: info for \code{dt_ccp}
+\item \code{dt_ccp.info()}: info for \code{dt_ccp}
 
-\item \code{dt_date}: first and last date
+\item \code{dt_date()}: first and last date
 
-\item \code{dt_date.info}: info for \code{dt_date}
+\item \code{dt_date.info()}: info for \code{dt_date}
 
-\item \code{dt_rate}: rate of events
+\item \code{dt_rate()}: rate of events
 
-\item \code{dt_rate.info}: info for \code{dt_rate}
+\item \code{dt_rate.info()}: info for \code{dt_rate}
 
-\item \code{dt_event}: rate of events
+\item \code{dt_event()}: rate of events
 
-\item \code{dt_event.info}: info for \code{dt_rate}
+\item \code{dt_event.info()}: info for \code{dt_rate}
+
 }}
-

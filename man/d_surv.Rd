@@ -31,10 +31,10 @@ various describer functions for surv types
 }
 \section{Functions}{
 \itemize{
-\item \code{d_tsum}: sum of follow up time
+\item \code{d_tsum()}: sum of follow up time
 
-\item \code{d_esum}: sum of events
+\item \code{d_esum()}: sum of events
 
-\item \code{d_rate}: rate (d_esum / d_tsum)
+\item \code{d_rate()}: rate (d_esum / d_tsum)
+
 }}
-

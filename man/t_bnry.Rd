@@ -24,8 +24,8 @@ various testing functions for bnry types
 }
 \section{Functions}{
 \itemize{
-\item \code{t_fisher.p}: fisher test p-value
+\item \code{t_fisher.p()}: fisher test p-value
 
-\item \code{t_chisq.p}: chisquare test p-value
+\item \code{t_chisq.p()}: chisquare test p-value
+
 }}
-

@@ -30,13 +30,13 @@ various testing functions for real types
 }
 \section{Functions}{
 \itemize{
-\item \code{t_t.test.p}: t.test p-value, 2 groups only (could be made with weights
+\item \code{t_t.test.p()}: t.test p-value, 2 groups only (could be made with weights
 but not implemented yet)
 
-\item \code{t_wilcox.p}: wilcoxon test p.value
+\item \code{t_wilcox.p()}: wilcoxon test p.value
 
-\item \code{t_kruskal.p}: kruskal-wallis p-value, any number of groups
+\item \code{t_kruskal.p()}: kruskal-wallis p-value, any number of groups
 
-\item \code{t_anova.p}: ANOVA test p-value, any number of groups
+\item \code{t_anova.p()}: ANOVA test p-value, any number of groups
+
 }}
-

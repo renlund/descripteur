@@ -11,11 +11,15 @@ data_vlist2latex(
   caption = NULL,
   caption.lot = caption,
   label = NULL,
+  longtable = FALSE,
   ...,
   format = TRUE,
   format.param = as.list(NULL),
   n = c(n = "size"),
-  tot.name = "All"
+  tot.name = "All",
+  attach = FALSE,
+  attach.path = "table",
+  attach.name = NULL
 )
 }
 \arguments{
@@ -30,6 +34,8 @@ data_vlist2latex(
 \item{caption.lot}{caption for list of tables}
 
 \item{label}{label}
+
+\item{longtable}{use longtable?}
 
 \item{...}{arguments passed to \code{dtables}}
 

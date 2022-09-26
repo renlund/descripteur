@@ -31,10 +31,10 @@ various testing functions for surv types
 }
 \section{Functions}{
 \itemize{
-\item \code{t_surv_empty}: empty test
+\item \code{t_surv_empty()}: empty test
 
-\item \code{t_HR.p}: p-value from Cox model
+\item \code{t_HR.p()}: p-value from Cox model
 
-\item \code{t_lr.p}: p-value from log-rank test
+\item \code{t_lr.p()}: p-value from log-rank test
+
 }}
-

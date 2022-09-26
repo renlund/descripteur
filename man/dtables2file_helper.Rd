@@ -24,6 +24,6 @@ make a dtable ready to write to file
 }
 \section{Functions}{
 \itemize{
-\item \code{peek}: quick peek at dtable (in particular dtables)
-}}
+\item \code{peek()}: quick peek at dtable (in particular dtables)
 
+}}

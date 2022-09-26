@@ -32,12 +32,12 @@ various describer functions for bnry types
 }
 \section{Functions}{
 \itemize{
-\item \code{d_ref_level}: return the reference level of a bnry factor
+\item \code{d_ref_level()}: return the reference level of a bnry factor
 
-\item \code{d_bn}: number of occurrences of the reference value
+\item \code{d_bn()}: number of occurrences of the reference value
 
-\item \code{d_bp}: proportion of occurrences of the reference value
+\item \code{d_bp()}: proportion of occurrences of the reference value
 
-\item \code{d_odds}: the odds of the reference level
+\item \code{d_odds()}: the odds of the reference level
+
 }}
-

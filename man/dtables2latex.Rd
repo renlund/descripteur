@@ -34,8 +34,8 @@ dtables to latex code
 }
 \section{Functions}{
 \itemize{
-\item \code{dtables2latex_ungrouped_helper}: deprecated function
+\item \code{dtables2latex_ungrouped_helper()}: deprecated function
 
-\item \code{dtables2latex_grouped_helper}: deprecated function
+\item \code{dtables2latex_grouped_helper()}: deprecated function
+
 }}
-
