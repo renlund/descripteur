@@ -169,6 +169,7 @@ peek <- function(dt){
 ##' @param caption caption
 ##' @param caption.lot caption for list of tables
 ##' @param label label
+##' @param longtable use longtable?
 ##' @param ... arguments passed to \code{dtables}
 ##' @param format logical; want formatting?
 ##' @param format.param list; formatting parameters
@@ -204,11 +205,15 @@ data_vlist2latex <- function(data,
                              caption = NULL,
                              caption.lot = caption,
                              label = NULL,
+                             longtable = FALSE,
                              ...,
                              format = TRUE,
                              format.param = as.list(NULL),
                              n = c(n = "size"),
-                             tot.name = "All"
+                             tot.name = "All",
+                             attach = FALSE,
+                             attach.path = "table",
+                             attach.name = NULL
 ){
     if(is.null(guide)) guide <- dtable_guide(data = data)
     if(is.null(var.list)) stop("var.list cannot be NULL")
@@ -243,11 +248,19 @@ data_vlist2latex <- function(data,
         if(is.null(A)) A <- attr(a2, paste0(n))
         names(a2)[names(a2) == "Summary"] <- paste0(nm, "=", A)
     }
+    if(attach){
+        if(is.null(attach.name)) attach.name <- gsub(":", "-", label, fixed = TRUE)
+        fp <- file.path(attach.path, paste0(attach.name, ".csv"))
+        utils::write.csv2(x = peek(dt), file = fp, row.names = FALSE)
+        caption = paste0(caption, " \\attachfile{", fp, "}")
+    }
     ## x <- dtables2file_helper(dt2)
     ## Add option to attach the data?
-    dtable_latex(a2, caption = caption, caption.lot = caption.lot,
+    dtable_latex(a2, caption = caption,
+                 caption.lot = caption.lot,
                  label = label, title = "Variables",
                  format = format, format.param = format.param,
+                 longtable = longtable,
                  rgroup = oas$list.name.values,
                  n.rgroup = oas$list.name.lengths,
                  rowname = dt2$Variables)
