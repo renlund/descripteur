@@ -2,27 +2,25 @@
 #' @description Determine how to describe a data frame
 #' @param data a data frame
 #' @param elim.set names of variables to exclude from description
-#' @param catg.tol only describe categorical data with no more than this
-#'   many unique values
-#' @param real.tol force numeric data with few (\eqn{<=} \code{real.tol}) unique data
-#'   points to be described as categorical
+#' @param catg.tol only describe categorical data with no more than this many
+#'     unique values
+#' @param real.tol force numeric data with few (\eqn{<=} \code{real.tol}) unique
+#'     data points to be described as categorical
 #' @param as.is if TRUE ignore all tolerance parameters
 #' @param no.bnry if TRUE, there will be no distinction between 'bnry' and
 #'     'catg', they will all be 'catg' (default \code{FALSE})
-#' @param reduce.levels if  \code{TRUE}, empty levels will be removed
+#' @param reduce.levels if \code{TRUE}, empty levels will be removed
 #' @param row.id the row identifier, does not really do much at this point
 #' @param unit.id the unit identifier, this can later provide information on how
 #'     many unique units there are in a table or subgroups thereof
 #' @return a data frame describing each variable in the data set (excluding
 #'     \code{elim.set}, \code{id}, and \code{unit.id}). each variable has
-#'     \itemize{
-#'       \item{type}{this decides how other descripteur functions handles the variables}
-#'       \item{imposed_class}{this is the class we impose}
-#'       \item{original_class}{what the variable was}
-#'       \item{has_missing}{is there missing in the data frame for this variable}
-#'     }
-#'    The return object will also hold some information on id-variables and
-#'     factorial levels within its attributes
+#'     \itemize{ \item{type}{this decides how other descripteur functions
+#'     handles the variables} \item{imposed_class}{this is the class we impose}
+#'     \item{original_class}{what the variable was} \item{has_missing}{is there
+#'     missing in the data frame for this variable} } The return object will
+#'     also hold some information on id-variables and factorial levels within
+#'     its attributes
 #' @export
 dtable_guide <- function(data, elim.set = NULL,
                          catg.tol = 20, real.tol = 5,
@@ -44,7 +42,7 @@ dtable_guide <- function(data, elim.set = NULL,
             n_unique(x) <= 1
         }
     }
-    const <- names(data)[unlist(lapply(data, n_is_1))] ## MOVED down
+    const <- names(data)[unlist(lapply(data, n_is_1))]
     ## ---
     ## PLACEHOLDER: if a no.constant-arg is added, all constants can at this
     ## point be forced to be 'bnry' with an added level ''-level.

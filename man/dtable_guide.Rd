@@ -21,18 +21,18 @@ dtable_guide(
 
 \item{elim.set}{names of variables to exclude from description}
 
-\item{catg.tol}{only describe categorical data with no more than this
-many unique values}
+\item{catg.tol}{only describe categorical data with no more than this many
+unique values}
 
-\item{real.tol}{force numeric data with few (\eqn{<=} \code{real.tol}) unique data
-points to be described as categorical}
+\item{real.tol}{force numeric data with few (\eqn{<=} \code{real.tol}) unique
+data points to be described as categorical}
 
 \item{as.is}{if TRUE ignore all tolerance parameters}
 
 \item{no.bnry}{if TRUE, there will be no distinction between 'bnry' and
 'catg', they will all be 'catg' (default \code{FALSE})}
 
-\item{reduce.levels}{if  \code{TRUE}, empty levels will be removed}
+\item{reduce.levels}{if \code{TRUE}, empty levels will be removed}
 
 \item{row.id}{the row identifier, does not really do much at this point}
 
@@ -42,14 +42,12 @@ many unique units there are in a table or subgroups thereof}
 \value{
 a data frame describing each variable in the data set (excluding
     \code{elim.set}, \code{id}, and \code{unit.id}). each variable has
-    \itemize{
-      \item{type}{this decides how other descripteur functions handles the variables}
-      \item{imposed_class}{this is the class we impose}
-      \item{original_class}{what the variable was}
-      \item{has_missing}{is there missing in the data frame for this variable}
-    }
-   The return object will also hold some information on id-variables and
-    factorial levels within its attributes
+    \itemize{ \item{type}{this decides how other descripteur functions
+    handles the variables} \item{imposed_class}{this is the class we impose}
+    \item{original_class}{what the variable was} \item{has_missing}{is there
+    missing in the data frame for this variable} } The return object will
+    also hold some information on id-variables and factorial levels within
+    its attributes
 }
 \description{
 Determine how to describe a data frame

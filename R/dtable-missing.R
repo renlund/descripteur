@@ -25,8 +25,8 @@ dtable_missing <- function(data = NULL, v = NULL, guide = NULL, glist = NULL,
     if(N == 0) stop("empty data set")
     if(is.null(guide)) guide <- dtable_guide(df)
     guide$type[!guide$type %in% c("unit id.", "row id.")] <- "real"
+    no_miss <- guide$label[!guide$has_missing]
     if(only.with){
-        no_miss <- guide$label[!guide$has_missing]
         guide <- subset(guide, guide$has_missing)
         if(nrow(guide) == 0) {
             message("there are no missing")
@@ -80,4 +80,3 @@ get_variables <- function(x = NULL, data = NULL){
         subset(data, TRUE,  select = vars)
     }
 }
-
