@@ -247,8 +247,17 @@ make_bnry <- function(x){
     rev <- FALSE ## let this be a setting in opts_desc ??
     a <- "trying to give binary stats on a non-binary variable"
     if(is.factor(x)){
-        if(length(levels(x)) == 2){
-            if(rev) return(factor(x, levels = rev(levels(x))))
+        x.lev <- levels(x)
+        ## BEGIN TEST -------------------------------
+        ## allow constants to be described as bnry?
+        if(length(x.lev) == 0){
+            return(factor(x, levels = c("", " ")))
+        } else if(length(x.lev) == 1){
+            ref <- if(x.lev != "") "" else " "
+            return(factor(x, levels = c(ref, x.lev)))
+            ## END ----------------------------------
+        } else if(length(x.lev) == 2){
+            if(rev) return(factor(x, levels = rev(x.lev)))
             if(!rev) return(x)
         } else {
             if(length(unique(stats::na.omit(x))) == 2){
@@ -259,12 +268,22 @@ make_bnry <- function(x){
                 if(!rev) return(factor(x, levels = lev))
                 warning(b)
             } else {
-                stop(a)
+                stop(a, ".")
             }
         }
     }
     lev <- sort(stats::na.omit(unique(x)))
     if(rev) lev <- rev(lev)
+    ## BEGIN TEST -----------------------------
+    if(length(lev) <= 1){
+        if(length(lev) == 0){
+            lev <- c("", " ")
+        } else {
+            ref <- if(lev != "") "" else " "
+            lev <- c(ref, lev)
+        }
+    }
+    ## END -------------------------------------
     if(length(lev) != 2){
         stop(a)
     }
@@ -748,6 +767,36 @@ dt_Q.info <- function(x, useNA = FALSE, ...){
     dt_Q_helper(x, useNA = useNA, info = TRUE)
 }
 attr(dt_Q.info, "dtable") <- "meta" ## "footnote" ?
+
+## ------------------------------------------------------------------------- ##
+dt_MedRange_helper <- function(x, useNA, info, ...){
+    if(info){
+        a <- "Numeric variables: median(min-max)"
+        if(useNA) paste0(a, ". ", NA_text_string()) else a
+    } else {
+        NAtxt <- if(useNA) NA_txt(x) else NULL
+        Q2 <- d_median(x = x, ...)
+        m <- d_min(x = x, ...)
+        M <- d_max(x = x, ...)
+        paste0(roundisch(Q2, t = 0),
+               " (", roundisch(m, t = 0), " - ",
+               roundisch(M, t = 0),")", NAtxt)
+    }
+}
+
+##' @describeIn dt_desc med (min-max)
+##' @export
+dt_MedRange <- function(x, useNA = FALSE, ...){
+    dt_MedRange_helper(x, useNA = useNA, info = FALSE, ...)
+}
+attr(dt_MedRange, "dtable") <- "desc"
+
+##' @describeIn dt_desc info for \code{dt_MedRange}
+##' @export
+dt_MedRange.info <- function(x, useNA = FALSE, ...){
+    dt_MedRange_helper(x, useNA = useNA, info = TRUE)
+}
+attr(dt_MedRange.info, "dtable") <- "meta" ## "footnote" ?
 
 ## ------------------------------------------------------------------------- ##
 dt_msd_helper <- function(x, useNA, info, ...){
