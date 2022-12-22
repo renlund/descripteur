@@ -27,7 +27,7 @@ dtable <- function(data, type = NULL, guide = NULL,
                    desc = NULL, desc.flist = NULL,
                    comp = NULL, comp.flist = NULL,
                    test = NULL, test.flist = NULL,
-                   glist = NULL, w = NULL, useNA = "no", ...){
+                   glist = NULL, w = NULL, useNA = "ifany", ...){
     if(!useNA %in% c("ifany", "always", "no")){
         message("wrong useNA specification (set to 'no')")
         useNA <- "no"

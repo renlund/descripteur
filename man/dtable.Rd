@@ -19,7 +19,7 @@ dtable(
   test.flist = NULL,
   glist = NULL,
   w = NULL,
-  useNA = "no",
+  useNA = "ifany",
   ...
 )
 }
