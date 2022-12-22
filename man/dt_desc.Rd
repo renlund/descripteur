@@ -8,6 +8,8 @@
 \alias{dt_cname}
 \alias{dt_Q}
 \alias{dt_Q.info}
+\alias{dt_MedRange}
+\alias{dt_MedRange.info}
 \alias{dt_msd}
 \alias{dt_msd.info}
 \alias{dt_bcp}
@@ -35,6 +37,10 @@ dt_cname(x, xname = NULL, ...)
 dt_Q(x, useNA = FALSE, ...)
 
 dt_Q.info(x, useNA = FALSE, ...)
+
+dt_MedRange(x, useNA = FALSE, ...)
+
+dt_MedRange.info(x, useNA = FALSE, ...)
 
 dt_msd(x, useNA = FALSE, ...)
 
@@ -85,6 +91,10 @@ various functions for compact summary of variables
 \item \code{dt_Q()}: quantiles
 
 \item \code{dt_Q.info()}: info for \code{dt_Q}
+
+\item \code{dt_MedRange()}: med (min-max)
+
+\item \code{dt_MedRange.info()}: info for \code{dt_MedRange}
 
 \item \code{dt_msd()}: mean and standard deviation
 

@@ -59,7 +59,9 @@ round_helper <- function(x, t = 0.1, scientific = FALSE,
     if(is.na(x)) return("")
     if(x==0) return(0)
     if(abs(x)>=1) return(round(x, digit1))
+    ## if(abs(x)>=1) sprintf(paste0("%.", digit1, "f"), x) ## use this instead?
     if(abs(x)>=t) return(signif(x, digit2))
+    ## if(abs(x)>=t) sprintf(paste0("%.", digit2, "g"), x) ## use this instead?
     if(scientific){
         format(x, digits = digit2, scientific = TRUE)
     } else {
