@@ -12,6 +12,8 @@
 \alias{dt_fisher.p.info}
 \alias{dt_chisq.p}
 \alias{dt_chisq.p.info}
+\alias{dt_lr.p}
+\alias{dt_lr.p.info}
 \title{various functions for compact summary of variables}
 \usage{
 dt_comp(...)
@@ -35,6 +37,10 @@ dt_fisher.p.info(x, glist, ...)
 dt_chisq.p(x, glist, ...)
 
 dt_chisq.p.info(x, glist, ...)
+
+dt_lr.p(x, glist, ...)
+
+dt_lr.p.info(x, glist, ...)
 }
 \arguments{
 \item{...}{to be able to tolerate unnecessary arguments}
@@ -67,5 +73,9 @@ various functions for compact summary of variables
 \item \code{dt_chisq.p()}: chisquare test p-value
 
 \item \code{dt_chisq.p.info()}: info on chisquare test p-value
+
+\item \code{dt_lr.p()}: logrank test p-value
+
+\item \code{dt_lr.p.info()}: info on logrank test p-value
 
 }}

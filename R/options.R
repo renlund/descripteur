@@ -70,7 +70,7 @@ desc_restore <- function(){
                "test_catg"  = flist(c("levels" = "d_levels",
                                          "diff" = "t_cchisq.p")),
                "test_date"  = flist(c("NA" = "t_date_empty")),
-               "test_surv"  = flist(c("NA" = "t_surv_empty")),
+               "test_surv"  = flist(c("logrank" = "t_lr.p")),
                ## describe compact --------------------------------------------
                "describe_real_compact" = flist(c("Variables" = "dt_name",
                                                  "info" = "dt_Q.info",
@@ -112,8 +112,8 @@ desc_restore <- function(){
                                              "pinfo" = "dt_empty_meta",
                                              "p" = "dt_empty_comp")),
                "test_surv_compact" = flist(c("Variables" = "dt_name",
-                                             "pinfo" = "dt_empty_meta",
-                                             "p" = "dt_empty_comp")),
+                                             "pinfo" = "dt_lr.p.info",
+                                             "p" = "dt_lr.p")),
                ## other -------------------------------------------------------
                "warn_if_weight_not_used" = TRUE,
                "warn_if_wrong_glist_length" = TRUE

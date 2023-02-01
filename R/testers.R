@@ -319,3 +319,26 @@ dt_chisq.p.info <- function(x, glist, ...){
     dt_chisq.p_helper(x = x, glist = glist, info = TRUE)
 }
 attr(dt_chisq.p.info, "dtable") <- "meta"
+
+## ----------------------------------------------------------------------------
+dt_lr.p_helper <- function(x, glist, info, ...){
+    if(info){
+        "Logrank test"
+    } else {
+        t_lr.p(x = x, glist = glist, ...)
+    }
+}
+
+##' @describeIn dt_comp logrank test p-value
+##' @export
+dt_lr.p <- function(x, glist, ...){
+    dt_lr.p_helper(x = x, glist = glist, info = FALSE, ...)
+}
+attr(dt_lr.p, "dtable") <- "test"
+
+##' @describeIn dt_comp info on logrank test p-value
+##' @export
+dt_lr.p.info <- function(x, glist, ...){
+    dt_lr.p_helper(x = x, glist = glist, info = TRUE)
+}
+attr(dt_lr.p.info, "dtable") <- "meta"
