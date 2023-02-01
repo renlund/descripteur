@@ -3,51 +3,45 @@
 \name{decipher}
 \alias{decipher}
 \alias{translate}
-\title{translate}
+\title{replace selected values}
 \usage{
-decipher(s, key, flexible = TRUE, within = FALSE, rep1w = TRUE, f2c = TRUE)
+decipher(x, key, flexible = TRUE, within = FALSE)
 
-translate(s, key, flexible = TRUE, within = FALSE, rep1w = TRUE, f2c = TRUE)
+translate(x, key, flexible = TRUE, within = FALSE)
 }
 \arguments{
-\item{s}{vector to translate}
+\item{x}{Character (or factor) vector}
 
-\item{key}{translation key}
+\item{key}{Named character vector; where (typically) the names corresponds
+to values appearing in x, and the values are those we want as
+replacements. However, if \code{flexible = TRUE}, then a check is
+performed to see if it makes more sense to invert the key.}
 
-\item{flexible}{allow the key to be inversed if that seems more plausible?}
+\item{flexible}{Logical; if TRUE the key can be inverted}
 
-\item{within}{logical; use \code{gsub} to translate within strings?}
-
-\item{rep1w}{logical; if \code{within = TRUE}, should replacement within
-particular entry occur only once?}
-
-\item{f2c}{should factors be as character? (default \code{TRUE})}
+\item{within}{Logical; if TRUE occurences of the keyed values within a
+string can be replaced. Such occurences must be encapsulated by
+beginning of line, space characters, punctuation characters or end of
+line, so that replacement does not take place within words.}
 }
 \value{
-vector
+vector of same length and class as s (character or factor)
 }
 \description{
-translate by key
-}
-\details{
-if you  have a key \code{key <- c('a'  = 'A', 'b' = 'B')} you  can use it to
-    translate \code{s  <- c('a', 'b',  'a')} to \code{c('A', 'B',  'A')} via
-    \code{key[v]}, which is  nice. But if \code{s <- c('a',  'b', 'c')} then
-    \code{key[s]} is  \code{c('A', 'B', NA)}. The  function \code{translate}
-    will  make sure  that translations  occur whenever  a corresponding  key
-    entry exists, else keep the orginal value.
+Change values that corresponds to those of a key.
 }
 \examples{
-kEy = c("foo" = "Foo la la", "bar" = "Bar di da",
-        "baz" = "baz", "quz" = "Quz")
-sset = c("foo", "bar", "baz", "quz")[c(2,1,1,4,1,2,2,3,2,3)]
-table(new = translate(s = sset, key = kEy), old = sset, useNA = "ifany")
-sset = c("Foo la la", "baz", "Quz")
-table(new = translate(s = sset, key = kEy), old = sset, useNA = "ifany")
-## 'within = TRUE' uses gsub to look WITHIN strings
-KeY <- c("foo" = "The Foo", "bar" = "The Bar", "a" = "A")
-sset <- c("I have foo", "no bar today", "i got an a", "foo", "a bar")
-translate(s = sset, key = KeY, within = TRUE, rep1w = TRUE)
-translate(s = sset, key = KeY, within = TRUE, rep1w = FALSE)
-translate(s = sset, key = KeY, within = FALSE, rep1w = TRUE)
+x <- c("foo", "foo!", "A foo", "A foo and two bar",
+       "football", "barely", "bar")
+key <- c(foo = "yay", bar = "bohnanza")
+data.frame(
+  x = x,
+  d0 = key[x], ## useful only if all values of s exists in the key
+  d1 = decipher(x, key),
+  d2 = decipher(x, key, within = TRUE)
+)
+x <- factor(c(1,3,2), levels = 1:3,
+            labels = c("foo", "bar", "baz"))
+key <- c(A = "foo", C = "baz")
+str(data.frame(x = x, d = decipher(x, key)))
 }
