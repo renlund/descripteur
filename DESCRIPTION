@@ -14,6 +14,7 @@ Suggests: knitr,
     testthat,
     Hmisc,
     survival,
-    devtools
+    devtools,
+    kableExtra
 VignetteBuilder: knitr
 RoxygenNote: 7.2.3
