@@ -218,7 +218,7 @@ data_vlist2latex <- function(data,
     if(is.null(guide)) guide <- dtable_guide(data = data)
     if(is.null(var.list)) stop("var.list cannot be NULL")
     var.key <- delist(var.list)
-    guide$label <- decipher(s = guide$label, key = var.key)
+    guide$label <- decipher(x = guide$label, key = var.key)
     dt <- dtables(data = data, guide = guide, ...)
     oas <- order_as_list(given = dt$variable, wanted = var.list)
     dt2 <- dt[oas$order, ]

@@ -77,6 +77,36 @@ decipher <- function (x, key, flexible = TRUE, within = FALSE) {
 #' @export
 translate <- decipher
 
+## Note: 'properties' is from the rqr-package (which I always just copy into the
+## packages that need them, they are simple and I do not want the dependency)
+## usually, I put them in a file 'rqr-functions.R', perhaps that should be done
+## here as well
+properties <- function (x, nm = NULL, class = NULL, length = NULL, na.ok = NULL) {
+    if (is.null(nm))
+        nm <- paste0(as.character(substitute(x)), collapse = " ")
+    if (!is.null(class)) {
+        s <- sprintf("\n%s fails to be in class {%s}", nm, paste0(class,
+            collapse = ", "))
+        if (!any(class(x) %in% class))
+            stop(s)
+    }
+    if (!is.null(length)) {
+        s <- sprintf("\n%s fails to have length in {%s}", nm,
+            paste0(length, collapse = ", "))
+        if (!length(x) %in% length)
+            stop(s)
+    }
+    if (!is.null(na.ok)) {
+        if (!na.ok) {
+            s <- sprintf("\n%s contains missing values", nm)
+            if (any(is.na(x)))
+                stop(s)
+        }
+    }
+    invisible(TRUE)
+}
+
+
 ##:# translate by key
 ##:#
 ##:# if you  have a key \code{key <- c('a'  = 'A', 'b' = 'B')} you  can use it to
