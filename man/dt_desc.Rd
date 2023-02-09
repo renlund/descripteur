@@ -32,7 +32,7 @@ dt_name(x, xname = NULL, ...)
 
 dt_bname(x, xname = NULL, ...)
 
-dt_cname(x, xname = NULL, ...)
+dt_cname(x, xname = NULL, indent = "\\\\quad", ...)
 
 dt_Q(x, useNA = FALSE, ...)
 
@@ -72,6 +72,8 @@ dt_event.info(x, useNA = FALSE, ...)
 \item{x}{the data}
 
 \item{xname}{name of variable}
+
+\item{indent}{code for indentation}
 
 \item{useNA}{display information on missing}
 }

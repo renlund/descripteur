@@ -725,15 +725,16 @@ dt_bname <- function(x, xname = NULL, ...){
 attr(dt_bname, "dtable") <- "meta"
 
 ##' @describeIn dt_desc returns name:ref for catg
+##' @param indent code for indentation
 ##' @export
-dt_cname <- function(x, xname = NULL, ...){
+dt_cname <- function(x, xname = NULL, indent = "\\quad", ...){
     ## rl <- latex_fix(levels(make_catg(x))) ## XK removed 2018-01-11
     rl <- levels(make_catg(x))
     n <- length(rl)
     if(is.null(xname)) xname <- as.character(substitute(x))
     ## xname <- latex_fix(xname) ## XK removed 2018-01-11
     a <- abbrev2(a = xname, b = rl[1], sep = ": ", ...)
-    b <- paste0("\\quad: ", abbrev(rl[-1], ...))
+    b <- paste0(indent, ": ", abbrev(rl[-1], ...))
     c(a, b)
 }
 attr(dt_cname, "dtable") <- "meta"
