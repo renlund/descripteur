@@ -2,7 +2,7 @@
 % Please edit documentation in R/dtable-latex_format.R
 \name{dtable_format}
 \alias{dtable_format}
-\title{formating}
+\title{formatting}
 \usage{
 dtable_format(dt, ...)
 }

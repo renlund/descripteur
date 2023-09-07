@@ -258,7 +258,7 @@ dformat_text <- function(x, tmax = 30,
 }
 
 
-##' formating
+##' formatting
 ##'
 ##' formatting of dtables and data.frames
 ##' @param dt a dtable or such
@@ -283,6 +283,7 @@ dtable_format <- function(dt, ...){
         DT[ps] <- do.call(what = lapply, args = Arg)
         indx <- setdiff(indx, ps)
     }
+    ## dots[['maybe.p']] <- FALSE ## ? why not have this here ?
     Arg <- c(list('X' = DT[, indx, drop = FALSE],
                   'FUN' = dformat_num),
              dots)
@@ -296,6 +297,15 @@ dtable_format <- function(dt, ...){
     DT
 }
 
+if(FALSE){
+    n <- 10000
+    tmp <- rep(0:1, each = n/2)
+    d <- data.frame(gr = ifelse(tmp == 0, "A", "B"),
+                    x = rnorm(n, ifelse(tmp == 0, 0, 1), 1))
+    dt <- dtable(d, type = "real", glist = "gr", test = TRUE)
+    dt[,2] <- dt[,2]/10000
+    dtable_format(dt)
+}
 
 ## - # this sets up the format defaults for dtable_latex
 format_fixer <- function(x = as.list(NULL)){
