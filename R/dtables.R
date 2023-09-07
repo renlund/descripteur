@@ -142,7 +142,7 @@ dtables2latex_grouped_helper <- function(dt, format = TRUE, ...){
 ##' @export
 dtables2file_helper <- function(dt, rm = NULL, reps = NULL, format = FALSE){
     if(is.null(reps)) reps <- c("   " = "\\quad:", "%" = "\\%")
-    if(is.null(rm)) rm <- intersect(names(dt), c("variable", "pinfo", "p", "info"))
+    if(is.null(rm)) rm <- intersect(names(dt), c("variable", "pinfo", "info"))
     a1 <- dtable_prune(dt, rm = rm)
     if(format) a1 <- dtable_format(a1)
     for(i in seq_along(reps)){
