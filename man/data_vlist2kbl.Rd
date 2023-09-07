@@ -14,7 +14,8 @@ data_vlist2kbl(
   format = TRUE,
   format.param = as.list(NULL),
   n = c(n = "size"),
-  tot.name = "All"
+  tot.name = "All",
+  kbl.format = NULL
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ data_vlist2kbl(
 \item{n}{size indicator in table (set to NULL to suppress this)}
 
 \item{tot.name}{name of single column (if no glist)}
+
+\item{kbl.format}{character; format passed to \code{kableExtra::kbl}}
 }
 \description{
 Create a dtables from data and make a nice table with "rgroup:s" using a

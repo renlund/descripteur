@@ -12,6 +12,7 @@
 ##' @param format.param list; formatting parameters
 ##' @param n size indicator in table (set to NULL to suppress this)
 ##' @param tot.name name of single column (if no glist)
+##' @param kbl.format character; format passed to \code{kableExtra::kbl}
 ##' @export
 data_vlist2kbl <- function(data,
                            guide = NULL,
@@ -22,8 +23,17 @@ data_vlist2kbl <- function(data,
                            format = TRUE,
                            format.param = as.list(NULL),
                            n = c(n = "size"),
-                           tot.name = "All"
+                           tot.name = "All",
+                           kbl.format = NULL
 ){
+    if(is.null(kbl.format)) kbl.format = "html"
+    ok.kbl.formats <- c('latex', 'html', 'pipe', 'simple','rst')
+    if( !(kbl.format %in% ok.kbl.formats) ){
+        s <- paste0("kbl.format should be one of {",
+                    paste0(ok.kbl.formats, collapse = ", "), "}")
+        stop(s)
+    }
+    perc.code <- if(kbl.format == "latex") "\\%" else "%"
     if(is.null(guide)){
         guide <- dtable_guide(data = data)
         guide$label <- decipher(x = guide$label, key = var.key)
@@ -33,7 +43,7 @@ data_vlist2kbl <- function(data,
     dots <- list(...) ## dots <- as.list(NULL) ## for testing
     dt <- do.call(what = "dtables",
                   args = c(list(data = data, guide = guide,
-                                indent = "", perc.sign = "%"),
+                                indent = "", perc.sign = perc.code),
                            dots))
     oas <- order_as_list(given = dt$variable, wanted = var.list)
     dt2 <- dt[oas$order, ]
@@ -52,7 +62,9 @@ data_vlist2kbl <- function(data,
         fn2 <- factor(fn)
         dt2 <- dtable_prune(dt2, rm = "pinfo")
         dt2$p <- ifelse(test = dt2$p != "",
-                        yes = paste(dt2$p, footnote_marker_symbol(as.numeric(fn2))),
+                        yes = paste(dt2$p,
+                                    kableExtra::footnote_marker_symbol(x = as.numeric(fn2),
+                                                                       format = kbl.format)),
                         no = dt2$p)
     } else {
         fn2 <- NULL
@@ -74,7 +86,7 @@ data_vlist2kbl <- function(data,
     }
     pr <- setNames(oas$list.name.lengths, nm = oas$list.name.values)
     ind <- which(grepl("^:", dt2$Variables))
-    k <- kableExtra::kbl(dt2, caption = caption, escape = FALSE)
+    k <- kableExtra::kbl(x = dt2, format = kbl.format, caption = caption, escape = FALSE)
     k <- kableExtra::pack_rows(kable_input = k, index = pr)
     k <- kableExtra::add_indent(kable_input = k, position = ind)
     k <- kableExtra::add_header_above(kable_input = k,
