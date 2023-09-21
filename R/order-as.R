@@ -1,4 +1,14 @@
-## order_as / order_as_list should possibly be replaced with align
+##' ordering of vector
+##'
+##' Order a given vector, which may contain duplicates, according to the wanted
+##'   order given by some other vector. Supercedes 'order_as' and
+##'   'order_by_list' in a single function.
+##' @param x the vector that needs ordering
+##' @param template the wanted order
+##' @param group possible grouping
+##' @param all logical; should given elements not in template be kept?
+##' @param outgroup group name of elements not in template (if kept)
+##' @export
 align <- function(x, template = NULL, group = NULL, all = TRUE, outgroup = ".Other"){
     if(length(x) == 0){
         warning("zero length input makes no sense")
@@ -8,7 +18,7 @@ align <- function(x, template = NULL, group = NULL, all = TRUE, outgroup = ".Oth
         if(length(group) != length(template)){
             stop("template and group of the same length, please")}
     }
-    if(is.null(template)) template = sort(x)
+    if(is.null(template)) template = sort(unique(x))
     m <- match(x, template)
     distinct_m <- sort(unique(na.omit(m)))
     order <- rep(NA_integer_, length(x))
@@ -48,6 +58,56 @@ align <- function(x, template = NULL, group = NULL, all = TRUE, outgroup = ".Oth
     }
 }
 
+vlist2df <- function(vlist){
+    d <- delist(vlist)
+    data.frame(
+        term = as.character(d),
+        label = names(d),
+        group = rep(names(vlist), unlist(lapply(vlist, length)))
+    )
+}
+
+df2vlist <- function(df, term = "term", label = "label", group = "group"){
+    d <- df[, c(term, label, group)]
+    names(d) <- c("term", "label", "group")
+    L <- as.list(NULL)
+    if(any(duplicated(v <- rle(d$group)$values))){
+        s <- paste0("group values in df not contiguously arranged")
+        stop(s)
+    }
+    for(i in seq_along(v)){
+        tmp <- d[d$group == v[i], ]
+        L[[v[i]]] <- setNames(tmp$term, nm = tmp$label)
+    }
+    L
+}
+
+if(FALSE){
+
+    x <- c("bar", "foo", "foo", "apa", "apa", "quuz")
+    w <- c("foo", "bar", "quuz")
+    g <- c("A-team", "B-team", "B-team")
+    L <- list("A-team" = c(Foo = w[1]),
+              "B-team" = c(Bar = w[2], Quuz = w[3]))
+
+    (df <- vlist2df(L))
+    df2vlist(df)
+    identical(L, df2vlist(vlist2df(L)))
+
+    align(x, template = w)
+    align(x, template = w, group = g)
+    align(x, template = w, group = g, outgroup = "Monkeyz")
+    align(x, template = w, group = g, all = FALSE)
+
+
+    oas <- align(x, template = df$term, group = df$group)
+    setNames(oas$group.rle$lengths, nm = oas$group.rle$values)
+
+    order_as(x, w)
+    order_by_list(x, L)
+
+
+}
 
 ##' ordering of vector
 ##'
@@ -64,6 +124,7 @@ align <- function(x, template = NULL, group = NULL, all = TRUE, outgroup = ".Oth
 ##' g[order_as(given = g, wanted = letters[1:4], incl.unordered = FALSE)]
 ##' @export
 order_as <- function(given, wanted, incl.unordered = TRUE){
+    .Deprecated(new = "align")
     .s <- "_." ## necessary feature (?) text below explains why
     if(any(grepl(paste0("_\\.[0-9]_\\.$"), given))){
         mess <- paste0("'order_as' uses suffix '", .s, "<number>", .s, "' ",
@@ -109,6 +170,7 @@ order_as <- function(given, wanted, incl.unordered = TRUE){
         indx
     }
 }
+
 ##' ordering of vector by list
 ##'
 ##' order a given vector, which may contain duplicates, according to the
@@ -133,6 +195,7 @@ order_as <- function(given, wanted, incl.unordered = TRUE){
 ##' @export
 order_by_list <- function(given, wanted, incl.unordered = TRUE,
                           unordered.label = "Unlabelled"){
+    .Deprecated(new = "align")
     if(!is.list(wanted)) stop("'wanted' should be a list")
     stxt <- paste0("\ncant have 'unordered.label' already ",
                    "be a name in 'wanted'\n")

@@ -45,7 +45,9 @@ data_vlist2kbl <- function(data,
                   args = c(list(data = data, guide = guide,
                                 indent = "", perc.sign = perc.code),
                            dots))
-    oas <- order_as_list(given = dt$variable, wanted = var.list)
+    ## oas <- order_as_list(given = dt$variable, wanted = var.list)
+    dfv <- vlist2df(var.list)
+    oas <- align(dt$variable, template = dfv$term, group = dfv$group)
     dt2 <- dt[oas$order, ]
     rownames(dt2) <- NULL ## kbl seems to want to print rownames unless thay are 1:n
     da <- dattr(dt2)
@@ -84,7 +86,8 @@ data_vlist2kbl <- function(data,
         if(is.null(A)) A <- attr(dt2, paste0(n))
         names(dt2)[names(dt2) == "Summary"] <- paste0(nm, "=", A)
     }
-    pr <- setNames(oas$list.name.lengths, nm = oas$list.name.values)
+    ## pr <- setNames(oas$list.name.lengths, nm = oas$list.name.values)
+    pr <- setNames(oas$group.rle$lengths, nm = oas$group.rle$values)
     ind <- which(grepl("^:", dt2$Variables))
     k <- kableExtra::kbl(x = dt2, format = kbl.format, caption = caption, escape = FALSE)
     k <- kableExtra::pack_rows(kable_input = k, index = pr)

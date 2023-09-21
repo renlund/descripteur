@@ -220,7 +220,9 @@ data_vlist2latex <- function(data,
     var.key <- delist(var.list)
     guide$label <- decipher(x = guide$label, key = var.key)
     dt <- dtables(data = data, guide = guide, ...)
-    oas <- order_as_list(given = dt$variable, wanted = var.list)
+    ## oas <- order_as_list(given = dt$variable, wanted = var.list)
+    dfv <- vlist2df(var.list)
+    oas <- align(dt$variable, template = dfv$term, group = dfv$group)
     dt2 <- dt[oas$order, ]
     da <- dattr(dt2)
     if(length(i <- which(da == "desc")) == 1){
@@ -261,7 +263,9 @@ data_vlist2latex <- function(data,
                  label = label, title = "Variables",
                  format = format, format.param = format.param,
                  longtable = longtable,
-                 rgroup = oas$list.name.values,
-                 n.rgroup = oas$list.name.lengths,
+                 ## rgroup = oas$list.name.values,
+                 ## n.rgroup = oas$list.name.lengths,
+                 rgroup = oas$group.rle$values,
+                 n.rgroup = oas$group.rle$lengths,
                  rowname = dt2$Variables)
 }
