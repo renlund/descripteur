@@ -127,11 +127,13 @@ dtable_prune <- function(x, rm = NULL, keep = NULL, info = FALSE,
             infot <- unique(infot)
         }
     }
-    r <- x[,-rm, drop = FALSE]
-    names(r) <- names(x)[-rm]
-    dattr(r) <- dattr(x)[-rm]
-    attributes(r) <- concatenate_attributes(r, old_attr)
-    if(info) attr(r, info.attr) <- c(attr(r, info.attr), infot)
+    if(length(rm) > 0){
+        r <- x[,-rm, drop = FALSE]
+        names(r) <- names(x)[-rm]
+        dattr(r) <- dattr(x)[-rm]
+        attributes(r) <- concatenate_attributes(r, old_attr)
+        if(info) attr(r, info.attr) <- c(attr(r, info.attr), infot)
+    } else r <- x
     r
 }
 

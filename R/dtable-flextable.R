@@ -1,7 +1,7 @@
 ##' turn dtables to flextable
 ##'
 ##' A function to turn a dtables into a flextable. Note: you probably want to
-##' create you dtables with \code{dtables( ... , indent = "", perc.sign = "%")},
+##' create you dtables with \code{dtables( ... , indent = '', perc.sign = '%')},
 ##' i.e. set parameters 'indent' and 'perc.sign' to NOT give the default LaTeX
 ##' code for indentation and percentage sign.
 ##' @param object A return object from \code{dtables}
@@ -286,5 +286,8 @@ if(FALSE){
     ## ft
     ## print(ft, preview = "docx")
     ## print(ft, preview = "pdf", latex_engine = "xelatex")
+
+    test <- data.frame(x="a",y=2)
+    rbind(test[NA, ][1, ], test)
 
 }
