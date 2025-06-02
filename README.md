@@ -5,6 +5,8 @@
 
 The goal of descripteur is to make basic data description easy.
 
+**NOTE** this package is being reborn in another package 'dable'
+
 ## Features
 
  + describe data with arbitrary set of describing functions
